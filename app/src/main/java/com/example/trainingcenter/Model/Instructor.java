@@ -1,6 +1,4 @@
-package com.example.trainingcenter.Users;
-
-import com.example.trainingcenter.Utils.PictureObject;
+package com.example.trainingcenter.Model;
 
 import java.util.regex.Pattern;
 

@@ -1,4 +1,4 @@
-package com.example.trainingcenter.Utils;
+package com.example.trainingcenter.Model;
 
 public class PictureObject {
     private String picturePath;

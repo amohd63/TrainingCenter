@@ -1,5 +1,4 @@
-package com.example.trainingcenter.Users;
-import com.example.trainingcenter.Utils.*;
+package com.example.trainingcenter.Model;
 import android.util.Patterns;
 
 public class User {
