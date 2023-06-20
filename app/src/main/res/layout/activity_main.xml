@@ -10,11 +10,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of d0793e3 (commit_test login and signup)
         android:text="Hello World!"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+<<<<<<< HEAD
 =======
         android:text="Home"
         android:textSize="36sp"
@@ -24,5 +28,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 >>>>>>> parent of 2ccc8db (commit_test login and signup)
+=======
+>>>>>>> parent of d0793e3 (commit_test login and signup)
 
 </androidx.constraintlayout.widget.ConstraintLayout>

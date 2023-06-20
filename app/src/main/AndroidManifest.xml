@@ -13,12 +13,15 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             android:name=".View.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".View.SignupActivity"
             android:exported="false" />
         <activity
+=======
+>>>>>>> parent of d0793e3 (commit_test login and signup)
 =======
 >>>>>>> parent of d0793e3 (commit_test login and signup)
 =======
