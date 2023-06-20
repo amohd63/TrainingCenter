@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "162030216968",
+    "project_id": "training-center-new",
+    "storage_bucket": "training-center-new.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162030216968:android:ebf3dc5fb26c05c511eebd",
+        "android_client_info": {
+          "package_name": "com.example.trainingcenter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162030216968-8gua25jg7m0khnukvm9oc11h7ll55dto.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1NuIKi1wGYRWl5Z3SVm3Pq07mg7HF_Es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162030216968-8gua25jg7m0khnukvm9oc11h7ll55dto.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
