@@ -10,13 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrainingCenter">
         <activity
+            android:name=".View.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".View.SignupActivity"
+            android:exported="false" />
+        <activity
             android:name=".View.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
