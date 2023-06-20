@@ -8,6 +8,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -16,6 +18,8 @@ import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,13 +44,28 @@ public class LoginActivity extends AppCompatActivity {
     private EditText loginEmail, loginPassword;
     private TextView signupRedirectText;
     private Button loginButton;
+
+    private CheckBox rememberMe;
     private FirebaseAuth auth;
     TextView forgotPassword;
     GoogleSignInButton googleBtn;
     GoogleSignInOptions gOptions;
     GoogleSignInClient gClient;
 
+    private static final String SHARED_PREFS = "sharedPrefs";
+    private static final String KEY = "myKey";
 
+    public static void saveData(Context context, String text) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY, text);
+        editor.apply();
+    }
+
+    public static String loadData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        return sharedPreferences.getString(KEY, "NULL");
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +77,16 @@ public class LoginActivity extends AppCompatActivity {
         signupRedirectText = findViewById(R.id.signUpRedirectText);
         forgotPassword = findViewById(R.id.forgot_password);
         googleBtn = findViewById(R.id.googleBtn);
+        rememberMe = findViewById(R.id.rememberMe);
 
         auth = FirebaseAuth.getInstance();
+
+        if(!loadData(getApplicationContext()).equals("NULL") && !loadData(getApplicationContext()).equals("false")){
+            loginEmail.setText(loadData(getApplicationContext()));
+        }
+        else {
+            loginEmail.setText("");
+        }
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,8 +119,35 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     loginEmail.setError("Please enter correct email");
                 }
+                if(rememberMe.isChecked()){
+                    saveData(getApplicationContext(), loginEmail.getText().toString());
+                }
+                else if(!rememberMe.isChecked()){
+                    saveData(getApplicationContext(), "false");
+                }
+//                rememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                        if(compoundButton.isChecked()){
+//                            SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
+//                            SharedPreferences.Editor editor = preferences.edit();
+//                            editor.putString("remember", loginEmail.getText().toString());
+//                            editor.apply();
+//
+//                        }
+//                        else if (!compoundButton.isChecked()){
+//                            SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
+//                            SharedPreferences.Editor editor = preferences.edit();
+//                            editor.putString("remember", "false");
+//                            editor.apply();
+//
+//                        }
+//                    }
+//                });
             }
         });
+
+
 
         signupRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override

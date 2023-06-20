@@ -17,6 +17,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
@@ -44,9 +47,14 @@ public class SignUpActivity extends AppCompatActivity {
                 if (user.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
                 }
-                if (pass.isEmpty()){
+                else if (pass.isEmpty()){
                     signupPassword.setError("Password cannot be empty");
-                } else{
+                }
+                else if (!validatePassword(pass)){
+                    signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
+                            "It must contain at least one number, one lowercase letter, and one uppercase letter.");
+                }
+                else{
                     auth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -70,5 +78,17 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public static boolean validatePassword(String pass) {
+        // Minimum 8 characters and maximum 15 characters
+        if (pass.length() < 8 || pass.length() > 15) {
+            return false;
+        }
+
+        // At least one number, one lowercase letter, and one uppercase letter
+        Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).+$");
+        Matcher matcher = pattern.matcher(pass);
+        System.out.println(matcher.matches());
+        return matcher.matches();
     }
 }
