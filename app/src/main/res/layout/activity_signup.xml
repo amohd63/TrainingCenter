@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/sqlsignbkg"
-    tools:context=".SignupActivity">
+    tools:context=".View.SignupActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:layout_marginTop="30dp"
                 android:padding="8dp"
                 android:hint="Email"
-                android:drawableLeft="@drawable/ic_baseline_email_24"
+                android:drawableLeft="@drawable/baseline_email_24"
                 android:drawablePadding="8dp"/>
 
             <EditText
@@ -42,7 +42,7 @@
                 android:padding="8dp"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:drawableLeft="@drawable/ic_baseline_lock_24"
+                android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"/>
 
             <EditText
@@ -54,7 +54,7 @@
                 android:padding="8dp"
                 android:hint="Confirm Password"
                 android:inputType="textPassword"
-                android:drawableLeft="@drawable/ic_baseline_password_24"
+                android:drawableLeft="@drawable/baseline_password_24"
                 android:drawablePadding="8dp"/>
 
             <Button
