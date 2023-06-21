@@ -63,7 +63,11 @@ public class User {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public boolean isValidFirstName() {
+    public boolean isValidFirstName_2() {
+        return firstName.length() >= 3 && firstName.length() <= 20;
+    }
+
+    public static boolean isValidName(String firstName) {
         return firstName.length() >= 3 && firstName.length() <= 20;
     }
 

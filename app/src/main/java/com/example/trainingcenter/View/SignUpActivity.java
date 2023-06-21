@@ -27,33 +27,13 @@ public class SignUpActivity extends AppCompatActivity {
 
         loginRedirectText = findViewById(R.id.loginRedirectText_admin);
 
-        btnInstructor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SignUpActivity.this, SignUp_Instructor_Activity.class));
-            }
-        });
+        btnInstructor.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignUp_Instructor_Activity.class)));
 
-        btnAdmin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SignUpActivity.this, SignUp_Admin_Activity.class));
-            }
-        });
+        btnAdmin.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignUp_Admin_Activity.class)));
 
-        btnTrainee.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(SignUpActivity.this, SignUp_Trainee_Activity.class));
-            }
-        });
+        btnTrainee.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignUp_Trainee_Activity.class)));
 
-        loginRedirectText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
-            }
-        });
+        loginRedirectText.setOnClickListener(view -> startActivity(new Intent(SignUpActivity.this, LoginActivity.class)));
 
     }
 }

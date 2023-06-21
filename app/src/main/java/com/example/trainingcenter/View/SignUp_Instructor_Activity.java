@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.trainingcenter.Model.User;
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
 public class SignUp_Instructor_Activity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName;
     private Button signupButton;
     private TextView loginRedirectText;
 
@@ -37,15 +38,33 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
         signupPassword = findViewById(R.id.signup_password_instructor);
         signupButton = findViewById(R.id.signup_button_instructor);
         loginRedirectText = findViewById(R.id.loginRedirectText_instructor);
+        signupPasswordConfirm = findViewById(R.id.signup_password_admin_confirm);
+        firstName = findViewById(R.id.firstName);
+        lastName = findViewById(R.id.lastName);
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String user = signupEmail.getText().toString().trim();
+                String email = signupEmail.getText().toString().trim();
                 String pass = signupPassword.getText().toString().trim();
+                String pass_conf = signupPasswordConfirm.getText().toString().trim();
+                String firstName_str = firstName.getText().toString().trim();
+                String lastName_str = lastName.getText().toString().trim();
 
-                if (user.isEmpty()){
+                if(!User.isValidName(firstName_str)){
+                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                }
+                else if(!User.isValidName(lastName_str)){
+                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                }
+                else if (email.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
+                }
+                else if (pass_conf.isEmpty()){
+                    signupPasswordConfirm.setError("You must confirm your Password");
+                }
+                else if (!pass_conf.equals(pass)){
+                    signupPassword.setError("Passwords must match");
                 }
                 else if (pass.isEmpty()){
                     signupPassword.setError("Password cannot be empty");
@@ -55,7 +74,7 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
                 }
                 else{
-                    auth.createUserWithEmailAndPassword(user, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {

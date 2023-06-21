@@ -57,6 +57,43 @@
                 android:padding="8dp"
                 android:textColor="@color/black" />
 
+            <EditText
+                android:id="@+id/signup_password_admin_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/custom_edittext"
+                android:drawableLeft="@drawable/baseline_lock_24"
+                android:drawablePadding="8dp"
+                android:hint="Confirm Password"
+                android:padding="8dp"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/firstName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/custom_edittext"
+                android:drawableLeft="@drawable/baseline_drive_file_rename_outline_24"
+                android:drawablePadding="8dp"
+                android:hint="First Name"
+                android:inputType="text"
+                android:padding="8dp"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/lastName"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/custom_edittext"
+                android:drawableLeft="@drawable/baseline_drive_file_rename_outline_24"
+                android:drawablePadding="8dp"
+                android:hint="Last Name"
+                android:padding="8dp"
+                android:textColor="@color/black" />
+
             <Button
                 android:id="@+id/signup_button_instructor"
                 android:layout_width="match_parent"
