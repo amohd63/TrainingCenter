@@ -5,17 +5,15 @@ public class User {
     private String email;
     private String firstName;
     private String lastName;
-    private String password;
     private PictureObject pictureObj;
 
     public User() {
     }
 
-    public User(String email, String firstName, String lastName, String password, PictureObject pictureObj) {
+    public User(String email, String firstName, String lastName, PictureObject pictureObj) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
         this.pictureObj = pictureObj;
     }
 
@@ -43,14 +41,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public PictureObject getPictureObj() {
         return pictureObj;
     }
@@ -73,11 +63,5 @@ public class User {
 
     public boolean isValidLastName() {
         return lastName.length() >= 3 && lastName.length() <= 20;
-    }
-
-    public boolean isValidPassword() {
-        // Minimum 8 characters, at least one uppercase letter, one lowercase letter, and one digit
-        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,15}$";
-        return password.matches(passwordPattern);
     }
 }

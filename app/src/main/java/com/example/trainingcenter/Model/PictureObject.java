@@ -3,6 +3,9 @@ package com.example.trainingcenter.Model;
 public class PictureObject {
     private String picturePath;
 
+    public PictureObject() {
+    }
+
     public PictureObject(String picturePath) {
         this.picturePath = picturePath;
     }

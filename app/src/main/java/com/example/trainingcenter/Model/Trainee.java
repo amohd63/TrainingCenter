@@ -6,7 +6,6 @@ public class Trainee extends User{
     private String email;
     private String firstName;
     private String lastName;
-    private String password;
     private PictureObject pictureObj;
     private String mobileNumber;
     private String address;
@@ -14,8 +13,8 @@ public class Trainee extends User{
     public Trainee() {
     }
 
-    public Trainee(String email, String firstName, String lastName, String password, PictureObject pictureObj, String mobileNumber, String address) {
-        super(email, firstName, lastName, password, pictureObj);
+    public Trainee(String email, String firstName, String lastName, PictureObject pictureObj, String mobileNumber, String address) {
+        super(email, firstName, lastName, pictureObj);
         this.mobileNumber = mobileNumber;
         this.address = address;
     }
