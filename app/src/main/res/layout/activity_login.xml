@@ -22,7 +22,8 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/custom_edittext"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="24dp"
+            android:gravity="center">
 
             <TextView
                 android:id="@+id/loginText"
@@ -32,13 +33,26 @@
                 android:textAlignment="center"
                 android:textColor="@color/lavender"
                 android:textSize="36sp"
+                android:layout_marginBottom="40dp"
                 android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="120dp">
+
+                <ImageView
+                    android:id="@+id/login_personalphoto"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    app:srcCompat="@drawable/signup_default" />
+            </androidx.cardview.widget.CardView>
 
             <EditText
                 android:id="@+id/login_email"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/custom_edittext"
                 android:drawableLeft="@drawable/baseline_person_24"
                 android:drawablePadding="8dp"

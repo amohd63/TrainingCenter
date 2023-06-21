@@ -11,8 +11,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
+
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -20,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +40,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -43,9 +53,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText loginEmail, loginPassword;
     private TextView signupRedirectText;
     private Button loginButton;
-
+    private FirebaseFirestore db;
     private CheckBox rememberMe;
     private FirebaseAuth auth;
+    private ImageView personalPhoto;
     TextView forgotPassword;
     GoogleSignInButton googleBtn;
     GoogleSignInOptions gOptions;
@@ -65,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         return sharedPreferences.getString(KEY, "NULL");
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,15 +89,48 @@ public class LoginActivity extends AppCompatActivity {
         forgotPassword = findViewById(R.id.forgot_password);
         googleBtn = findViewById(R.id.googleBtn);
         rememberMe = findViewById(R.id.rememberMe);
+        personalPhoto = findViewById(R.id.login_personalphoto);
 
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        if(!loadData(getApplicationContext()).equals("NULL") && !loadData(getApplicationContext()).equals("false")){
+        if (!loadData(getApplicationContext()).equals("NULL") && !loadData(getApplicationContext()).equals("false")) {
             loginEmail.setText(loadData(getApplicationContext()));
+        } else {
+            //loginEmail.setText("");
         }
-        else {
-            loginEmail.setText("");
-        }
+
+        loginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    final String[] documentData = new String[1];
+                    DocumentReference docRef = db.collection("Admin").document(loginEmail.getText().toString());
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    documentData[0] = document.getString("personalPhoto");
+                                    Picasso.get().load(documentData[0]).into(personalPhoto);
+                                } else {
+                                }
+                            } else {
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+
+//        loginPassword.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,15 +163,13 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     loginEmail.setError("Please enter correct email");
                 }
-                if(rememberMe.isChecked()){
+                if (rememberMe.isChecked()) {
                     saveData(getApplicationContext(), loginEmail.getText().toString());
-                }
-                else if(!rememberMe.isChecked()){
+                } else if (!rememberMe.isChecked()) {
                     saveData(getApplicationContext(), "false");
                 }
             }
         });
-
 
 
         signupRedirectText.setOnClickListener(new View.OnClickListener() {
@@ -151,14 +194,14 @@ public class LoginActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         String userEmail = emailBox.getText().toString();
 
-                        if (TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()){
+                        if (TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
                             Toast.makeText(LoginActivity.this, "Enter your registered email id", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         auth.sendPasswordResetEmail(userEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     Toast.makeText(LoginActivity.this, "Check your email", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 } else {
@@ -174,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-                if (dialog.getWindow() != null){
+                if (dialog.getWindow() != null) {
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
                 }
                 dialog.show();
@@ -185,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
         gClient = GoogleSignIn.getClient(this, gOptions);
 
         GoogleSignInAccount gAccount = GoogleSignIn.getLastSignedInAccount(this);
-        if (gAccount != null){
+        if (gAccount != null) {
             finish();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -194,7 +237,7 @@ public class LoginActivity extends AppCompatActivity {
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK){
+                        if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
                             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                             try {
@@ -202,7 +245,7 @@ public class LoginActivity extends AppCompatActivity {
                                 finish();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
-                            } catch (ApiException e){
+                            } catch (ApiException e) {
                                 Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                             }
                         }
