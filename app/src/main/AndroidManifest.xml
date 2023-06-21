@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrainingCenter">
         <activity
+            android:name=".View.SignUp_Instructor_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".View.SignUp_Trainee_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".View.SignUp_Admin_Activity"
+            android:exported="false" />
+        <activity
             android:name=".View.InitialActivity"
             android:exported="true">
             <intent-filter>
@@ -23,10 +32,10 @@
             android:exported="false" />
         <activity
             android:name=".View.SignUpActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".View.MainActivity"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>
