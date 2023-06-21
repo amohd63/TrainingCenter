@@ -19,7 +19,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -125,25 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                 else if(!rememberMe.isChecked()){
                     saveData(getApplicationContext(), "false");
                 }
-//                rememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                    @Override
-//                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                        if(compoundButton.isChecked()){
-//                            SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
-//                            SharedPreferences.Editor editor = preferences.edit();
-//                            editor.putString("remember", loginEmail.getText().toString());
-//                            editor.apply();
-//
-//                        }
-//                        else if (!compoundButton.isChecked()){
-//                            SharedPreferences preferences = getSharedPreferences("checkbox", MODE_PRIVATE);
-//                            SharedPreferences.Editor editor = preferences.edit();
-//                            editor.putString("remember", "false");
-//                            editor.apply();
-//
-//                        }
-//                    }
-//                });
             }
         });
 
