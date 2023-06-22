@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     final String[] documentData = new String[1];
-                    DocumentReference docRef = db.collection("Admin").document(loginEmail.getText().toString());
+                    DocumentReference docRef = db.collection("User").document(loginEmail.getText().toString());
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {

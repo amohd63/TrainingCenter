@@ -44,7 +44,7 @@ public class SignUp_Admin_Activity extends AppCompatActivity {
     private TextView loginRedirectText;
     private ImageView personalPhoto;
     private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "";
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
     Uri selectedImageUri;
 
     @Override
@@ -127,7 +127,7 @@ public class SignUp_Admin_Activity extends AppCompatActivity {
 //                                    Toast.makeText(SignUp_Admin_Activity.this, "Not added", Toast.LENGTH_SHORT).show();
 //                                }
 //                            });
-                    db.collection("Admin").document(email).set(user);
+                    db.collection("User").document(email).set(user);
                 }
 
             }

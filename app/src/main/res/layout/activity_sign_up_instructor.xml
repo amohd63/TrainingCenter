@@ -35,6 +35,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/lavender"
                     android:textSize="36sp"
+                    android:layout_marginBottom="40dp"
                     android:textStyle="bold" />
 
                 <androidx.cardview.widget.CardView
@@ -56,7 +57,7 @@
                     android:id="@+id/signup_email_instructor"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/custom_edittext"
                     android:drawableLeft="@drawable/baseline_person_24"
                     android:drawablePadding="8dp"
@@ -155,6 +156,7 @@
                     android:id="@+id/degreeRadioGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
 
                     <RadioButton
@@ -175,6 +177,35 @@
                         android:layout_height="wrap_content"
                         android:text="PhD" />
                 </RadioGroup>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp">
+
+                    <EditText
+                        android:id="@+id/course"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:background="@drawable/custom_edittext"
+                        android:drawableLeft="@drawable/baseline_drive_file_rename_outline_24"
+                        android:drawablePadding="8dp"
+                        android:hint="Add course"
+                        android:padding="8dp"
+                        android:layout_weight="2"
+                        android:textColor="@color/black"/>
+
+                    <Button
+                        android:id="@+id/add_course"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:text="Add course"
+                        android:textSize="18sp"
+                        app:cornerRadius="20dp"
+                        android:backgroundTint="@color/lavender"/>
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/signup_button_instructor"

@@ -36,7 +36,8 @@
                     android:textAlignment="center"
                     android:textColor="@color/lavender"
                     android:textSize="36sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginBottom="40dp"/>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
@@ -56,7 +57,7 @@
                     android:id="@+id/signup_email_trainee"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/custom_edittext"
                     android:drawableLeft="@drawable/baseline_person_24"
                     android:drawablePadding="8dp"

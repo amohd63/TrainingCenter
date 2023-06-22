@@ -26,6 +26,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +40,7 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
     private FirebaseFirestore db;
     private ImageView personalPhoto;
     private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "";
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
     Uri selectedImageUri;
 
     @Override
@@ -119,8 +121,17 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
                             }
                         }
                     });
+                    Map<String, Object> user = new HashMap<>();
+                    user.put("email", email);
+                    user.put("firstName", firstName_str);
+                    user.put("lastName", lastName_str);
+                    user.put("personalPhoto", imgUrl);
+                    db.collection("User").document(email).set(user);
+                    user.clear();
+                    user.put("mobileNumber", phoneNum);
+                    user.put("address", address);
+                    db.collection("User").document(email).collection("Trainee").document(email).set(user);
                 }
-
             }
         });
 

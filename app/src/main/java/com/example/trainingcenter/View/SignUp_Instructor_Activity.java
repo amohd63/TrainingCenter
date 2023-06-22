@@ -32,22 +32,25 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignUp_Instructor_Activity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField, specializationField;
-    private Button signupButton;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField, specializationField, courseField;
+    private Button signupButton, addCourse;
     private TextView loginRedirectText;
     private RadioGroup degreeRadioGroup;
     private FirebaseFirestore db;
     private ImageView personalPhoto;
     String degree = "";
     private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "";
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
+    private ArrayList<String> instructorCourses = new ArrayList<>();
     Uri selectedImageUri;
 
     @Override
@@ -69,6 +72,10 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
         personalPhoto = findViewById(R.id.personalPhoto);
         specializationField = findViewById(R.id.specialization);
         degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
+        addCourse = findViewById(R.id.add_course);
+        courseField = findViewById(R.id.course);
+
+
         degree = "";
         degreeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -82,6 +89,15 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
         });
 
 
+
+        addCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                instructorCourses.add(courseField.getText().toString());
+                courseField.setText("");
+                courseField.setHint("Add course");
+            }
+        });
 
         personalPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,17 +166,30 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
 //                    signupPassword.setBackgroundColor(Color.RED);
                 }
                 else{
-                    auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(SignUp_Instructor_Activity.this, LoginActivity.class));
-                            } else {
-                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+//                    auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<AuthResult> task) {
+//                            if (task.isSuccessful()) {
+//                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
+//                                startActivity(new Intent(SignUp_Instructor_Activity.this, LoginActivity.class));
+//                            } else {
+//                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
+                    Map<String, Object> user = new HashMap<>();
+                    user.put("email", email);
+                    user.put("firstName", firstName_str);
+                    user.put("lastName", lastName_str);
+                    user.put("personalPhoto", imgUrl);
+                    db.collection("User").document(email).set(user);
+                    user.clear();
+                    user.put("mobileNumber", phoneNum);
+                    user.put("address", address);
+                    user.put("specialization", specialization);
+                    user.put("degree", degree);
+                    user.put("courses", instructorCourses);
+                    db.collection("User").document(email).collection("Instructor").document(email).set(user);
                 }
 
             }
