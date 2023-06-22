@@ -43,7 +43,6 @@ public class SignUp_Admin_Activity extends AppCompatActivity {
     private Button signupButton;
     private TextView loginRedirectText;
     private ImageView personalPhoto;
-    private final int PICK_IMAGE_REQUEST = 10;
     private final int GALLERY_REQ_CODE = 1000;
     private String imgUrl = "";
     Uri selectedImageUri;
@@ -52,7 +51,6 @@ public class SignUp_Admin_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_admin);
-        selectedImageUri = Uri.EMPTY;
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         signupEmail = findViewById(R.id.signup_email_admin);
@@ -178,7 +176,6 @@ public class SignUp_Admin_Activity extends AppCompatActivity {
         // At least one number, one lowercase letter, and one uppercase letter
         Pattern pattern = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).+$");
         Matcher matcher = pattern.matcher(pass);
-        System.out.println(matcher.matches());
         return matcher.matches();
     }
 }

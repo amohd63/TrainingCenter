@@ -1,13 +1,17 @@
 package com.example.trainingcenter.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +21,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +35,11 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
     private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName;
     private Button signupButton;
     private TextView loginRedirectText;
+    private FirebaseFirestore db;
+    private ImageView personalPhoto;
+    private final int GALLERY_REQ_CODE = 1000;
+    private String imgUrl = "";
+    Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +49,22 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         signupEmail = findViewById(R.id.signup_email_instructor);
         signupPassword = findViewById(R.id.signup_password_instructor);
+        db = FirebaseFirestore.getInstance();
         signupButton = findViewById(R.id.signup_button_instructor);
         loginRedirectText = findViewById(R.id.loginRedirectText_instructor);
         signupPasswordConfirm = findViewById(R.id.signup_password_admin_confirm);
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
+
+        personalPhoto = findViewById(R.id.personalPhoto);
+        personalPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent iGallery = new Intent(Intent.ACTION_PICK);
+                iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(iGallery, GALLERY_REQ_CODE);
+            }
+        });
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +121,30 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            if (requestCode == GALLERY_REQ_CODE){
+                selectedImageUri = data.getData();
+                String fileName = String.valueOf(System.currentTimeMillis());
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + fileName);
+                storageRef.putFile(selectedImageUri)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            storageRef.getDownloadUrl()
+                                    .addOnSuccessListener(uri -> {
+                                        String imageUrl = uri.toString();
+                                        Picasso.get().load(imageUrl).into(personalPhoto);
+                                        imgUrl = uri.toString();
+                                    })
+                                    .addOnFailureListener(exception -> {
+                                    });
+                        })
+                        .addOnFailureListener(exception -> {
+                        });
+            }
+        }
     }
     public static boolean validatePassword(String pass) {
         // Minimum 8 characters and maximum 15 characters
