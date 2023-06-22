@@ -192,18 +192,19 @@
                         android:drawableLeft="@drawable/baseline_drive_file_rename_outline_24"
                         android:drawablePadding="8dp"
                         android:hint="Add course"
-                        android:padding="8dp"
                         android:layout_weight="2"
+                        android:layout_margin="3dp"
                         android:textColor="@color/black"/>
 
                     <Button
                         android:id="@+id/add_course"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="55dp"
                         android:layout_weight="1"
                         android:text="Add course"
                         android:textSize="18sp"
                         app:cornerRadius="20dp"
+                        android:layout_margin="3dp"
                         android:backgroundTint="@color/lavender"/>
                 </LinearLayout>
 

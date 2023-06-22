@@ -166,17 +166,17 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
 //                    signupPassword.setBackgroundColor(Color.RED);
                 }
                 else{
-//                    auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<AuthResult> task) {
-//                            if (task.isSuccessful()) {
-//                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
-//                                startActivity(new Intent(SignUp_Instructor_Activity.this, LoginActivity.class));
-//                            } else {
-//                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
+                    auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(SignUp_Instructor_Activity.this, LoginActivity.class));
+                            } else {
+                                Toast.makeText(SignUp_Instructor_Activity.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                     Map<String, Object> user = new HashMap<>();
                     user.put("email", email);
                     user.put("firstName", firstName_str);
