@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class SignUp_Trainee_Activity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField;
     private Button signupButton;
     private TextView loginRedirectText;
     private FirebaseFirestore db;
@@ -56,6 +56,8 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
         personalPhoto = findViewById(R.id.personalPhoto);
+        phoneNumField = findViewById(R.id.phoneNumber);
+        addressField = findViewById(R.id.address);
         personalPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,6 +76,8 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
                 String pass_conf = signupPasswordConfirm.getText().toString().trim();
                 String firstName_str = firstName.getText().toString().trim();
                 String lastName_str = lastName.getText().toString().trim();
+                String phoneNum = phoneNumField.getText().toString().trim();
+                String address = addressField.getText().toString().trim();
 
                 if(!User.isValidName(firstName_str)){
                     firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
@@ -92,6 +96,12 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
                 }
                 else if (!pass_conf.equals(pass)){
                     signupPassword.setError("Passwords must match");
+                }
+                else if (phoneNum.isEmpty()){
+                    phoneNumField.setError("This field is required");
+                }
+                else if (address.isEmpty()){
+                    addressField.setError("This field is required");
                 }
                 else if (!validatePassword(pass)){
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +

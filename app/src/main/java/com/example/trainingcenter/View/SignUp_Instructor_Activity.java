@@ -5,13 +5,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,17 +31,21 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SignUp_Instructor_Activity extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField, specializationField;
     private Button signupButton;
     private TextView loginRedirectText;
+    private RadioGroup degreeRadioGroup;
     private FirebaseFirestore db;
     private ImageView personalPhoto;
+    String degree = "";
     private final int GALLERY_REQ_CODE = 1000;
     private String imgUrl = "";
     Uri selectedImageUri;
@@ -55,8 +64,25 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
         signupPasswordConfirm = findViewById(R.id.signup_password_admin_confirm);
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
-
+        phoneNumField = findViewById(R.id.phoneNumber);
+        addressField = findViewById(R.id.address);
         personalPhoto = findViewById(R.id.personalPhoto);
+        specializationField = findViewById(R.id.specialization);
+        degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
+        degree = "";
+        degreeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // Find the selected radio button
+                RadioButton selectedRadioButton = findViewById(checkedId);
+                // Get the text of the selected radio button
+                degree = selectedRadioButton.getText().toString();
+                Toast.makeText(getApplicationContext(), "Selected option: " + degree, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
         personalPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,7 +91,6 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
             }
         });
-
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,28 +99,55 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
                 String pass_conf = signupPasswordConfirm.getText().toString().trim();
                 String firstName_str = firstName.getText().toString().trim();
                 String lastName_str = lastName.getText().toString().trim();
+                String phoneNum = phoneNumField.getText().toString().trim();
+                String address = addressField.getText().toString().trim();
+                String specialization = specializationField.getText().toString().trim();
 
-                if(!User.isValidName(firstName_str)){
-                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                }
-                else if(!User.isValidName(lastName_str)){
-                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                }
-                else if (email.isEmpty()){
+
+                if (email.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
-                }
-                else if (pass_conf.isEmpty()){
-                    signupPasswordConfirm.setError("You must confirm your Password");
-                }
-                else if (!pass_conf.equals(pass)){
-                    signupPassword.setError("Passwords must match");
+//                    signupEmail.setBackgroundColor(Color.RED);
                 }
                 else if (pass.isEmpty()){
                     signupPassword.setError("Password cannot be empty");
+//                    signupPassword.setBackgroundColor(Color.RED);
+                }
+                 else if (pass_conf.isEmpty()){
+                     signupPasswordConfirm.setError("You must confirm your Password");
+//                    signupPasswordConfirm.setBackgroundColor(Color.RED);
+                 }
+                 else if (!pass_conf.equals(pass)){
+                     signupPassword.setError("Passwords must match");
+//                    signupPassword.setBackgroundColor(Color.RED);
+                 }
+                else if(!User.isValidName(firstName_str)){
+                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+//                    firstName.setHighlightColor(Color);
+                }
+                else if(!User.isValidName(lastName_str)){
+                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+//                    lastName.setBackgroundColor(Color.RED);
+                }
+                else if (address.isEmpty()){
+                    addressField.setError("This field is required");
+//                    addressField.setBackgroundColor(Color.RED);
+                }
+                 else if (phoneNum.isEmpty()){
+                     phoneNumField.setError("This field is required");
+//                    phoneNumField.setBackgroundColor(Color.RED);
+                 }
+                else if (specialization.isEmpty()){
+                    specializationField.setError("This field is required");
+//                    specializationField.setBackgroundColor(Color.RED);
+                }
+                else if (degree.isEmpty()){
+                    Toast.makeText(getApplicationContext(), "You must select a degree", Toast.LENGTH_SHORT).show();
+//                    specializationField.setBackgroundColor(Color.RED);
                 }
                 else if (!validatePassword(pass)){
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
+//                    signupPassword.setBackgroundColor(Color.RED);
                 }
                 else{
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
