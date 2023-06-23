@@ -44,13 +44,14 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     app:cardCornerRadius="120dp">
+
                     <ImageView
                         android:id="@+id/personalPhoto"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:gravity="center"
-                        app:srcCompat="@drawable/signup_default"
-                        tools:srcCompat="@drawable/signup_default" />
+                        app:srcCompat="@drawable/trainee_default"
+                        tools:srcCompat="@drawable/trainee_default" />
                 </androidx.cardview.widget.CardView>
 
                 <EditText

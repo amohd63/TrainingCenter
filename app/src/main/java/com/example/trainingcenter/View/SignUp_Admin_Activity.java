@@ -44,7 +44,7 @@ public class SignUp_Admin_Activity extends AppCompatActivity {
     private TextView loginRedirectText;
     private ImageView personalPhoto;
     private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fadmin_default.png?alt=media&token=6db2f3a0-6bed-48a8-9aae-b9bff0deae01";
     Uri selectedImageUri;
 
     @Override

@@ -40,7 +40,7 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
     private FirebaseFirestore db;
     private ImageView personalPhoto;
     private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Ftrainee_default.png?alt=media&token=f4d8a2fd-787d-4af5-9f4d-7cfb5327b8f0";
     Uri selectedImageUri;
 
     @Override

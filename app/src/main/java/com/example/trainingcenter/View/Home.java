@@ -3,38 +3,46 @@ package com.example.trainingcenter.View;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-//import androidx.support.design.widget.FloatingActionButton;
-//import androidx.support.design.widget.NavigationView;
-//import androidx.support.design.widget.Snackbar;
-//import androidx.support.v4.view.GravityCompat;
-//import androidx.support.v4.widget.DrawerLayout;
-//import androidx.support.v7.app.ActionBarDrawerToggle;
-//import android.support.v7.app.AppCompatActivity;
-//import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.example.trainingcenter.R;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     LinearLayout profile;
+    private String email;
+    private FirebaseFirestore db;
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -56,6 +64,29 @@ public class Home extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
         profile = header.findViewById(R.id.profile);
         profile.setOnClickListener(this);
+        TextView profileEmail = profile.findViewById(R.id.profilemail);
+        ImageView profileImg = profile.findViewById(R.id.profileimage);
+        TextView profileName = profile.findViewById(R.id.profilename);
+        String[] documentData = new String[2];
+        DocumentReference docRef = db.collection("User").document(email);
+        profileEmail.setText(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        documentData[0] = document.getString("personalPhoto");
+                        documentData[1] = document.getString("firstName") + " " + document.getString("lastName");
+                        profileName.setText(documentData[1]);
+                        Picasso.get().load(documentData[0]).into(profileImg);
+                    } else {
+                        Picasso.get().load(imgUrl).into(profileImg);
+                    }
+                } else {
+                }
+            }
+        });
     }
 
     @Override

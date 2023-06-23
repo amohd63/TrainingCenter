@@ -23,23 +23,27 @@ public class MainActivity extends AppCompatActivity {
     Button logout;
     GoogleSignInClient gClient;
     GoogleSignInOptions gOptions;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         logout = findViewById(R.id.logout);
         userName = findViewById(R.id.userName);
+        userName.setText(email);
 
-        gOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-        gClient = GoogleSignIn.getClient(this, gOptions);
-
-        GoogleSignInAccount gAccount = GoogleSignIn.getLastSignedInAccount(this);
-        if (gAccount != null){
-            String gName = gAccount.getDisplayName();
-            userName.setText(gName);
-        }
+//        gOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+//        gClient = GoogleSignIn.getClient(this, gOptions);
+//
+//        GoogleSignInAccount gAccount = GoogleSignIn.getLastSignedInAccount(this);
+//        if (gAccount != null){
+//            String gName = gAccount.getDisplayName();
+//            userName.setText(gName);
+//        }
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

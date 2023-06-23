@@ -49,7 +49,7 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
     private ImageView personalPhoto;
     String degree = "";
     private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Finstructor_default.png?alt=media&token=344f2027-9792-4df3-ad34-926c67f81be9";
     private ArrayList<String> instructorCourses = new ArrayList<>();
     Uri selectedImageUri;
 

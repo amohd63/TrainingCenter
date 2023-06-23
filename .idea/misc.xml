@@ -4,23 +4,27 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_announcements.xml" value="0.18161094224924013" />
-        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_courses.xml" value="0.18161094224924013" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_courses.xml" value="0.5435684647302904" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_events.xml" value="0.18161094224924013" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_home.xml" value="0.3177083333333333" />
-        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_initial.xml" value="0.10740740740740741" />
-        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_lectures.xml" value="0.18161094224924013" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_initial.xml" value="0.25" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_lectures.xml" value="0.5" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_my_profile.xml" value="0.18161094224924013" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_settings.xml" value="0.18161094224924013" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_sign_up.xml" value="0.32760416666666664" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_sign_up_admin.xml" value="0.25925925925925924" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_sign_up_instructor.xml" value="0.33" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/activity_sign_up_trainee.xml" value="0.3125" />
-        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/app_bar_home.xml" value="0.1" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/app_bar_home.xml" value="0.22" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/content_home.xml" value="0.18161094224924013" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/dialog_forgot.xml" value="0.3729166666666667" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/nav_header_home.xml" value="0.18161094224924013" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/layout/setting.xml" value="0.18161094224924013" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/menu/activity_home_drawer.xml" value="0.46205128205128204" />
         <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/menu/home.xml" value="0.20185185185185187" />
+        <entry key="..\:/Users/alima/Desktop/BZU/2022-2023 Second semester/Android/TrainingCenter/app/src/main/res/menu/search.xml" value="0.46927083333333336" />
       </map>
     </option>
   </component>
