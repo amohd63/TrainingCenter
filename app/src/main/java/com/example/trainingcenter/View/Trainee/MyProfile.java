@@ -1,16 +1,15 @@
-package com.example.trainingcenter.View;
+package com.example.trainingcenter.View.Trainee;
 
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.trainingcenter.R;
 
-public class Announcements extends AppCompatActivity {
+public class MyProfile extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_announcements);
+        setContentView(R.layout.activity_my_profile_trainee);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -19,4 +18,6 @@ public class Announcements extends AppCompatActivity {
         finish();
         return true;
     }
+
+
 }

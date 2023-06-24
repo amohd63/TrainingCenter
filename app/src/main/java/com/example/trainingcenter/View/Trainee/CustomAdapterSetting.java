@@ -1,4 +1,4 @@
-package com.example.trainingcenter.View;
+package com.example.trainingcenter.View.Trainee;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -15,7 +15,7 @@ public class CustomAdapterSetting extends ArrayAdapter<String> {
     TextView medium_text, small_text;
 
     public CustomAdapterSetting(Activity context, String[] name, String[] num) {
-        super(context, R.layout.setting, name);
+        super(context, R.layout.setting_trainee, name);
         this.context = context;
         this.name = name;
         this.num = num;
@@ -24,7 +24,7 @@ public class CustomAdapterSetting extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View v = inflater.inflate(R.layout.setting, null, true);
+        View v = inflater.inflate(R.layout.setting_trainee, null, true);
         medium_text = (TextView) v.findViewById(R.id.medium_text);
         small_text = (TextView) v.findViewById(R.id.small_text);
         medium_text.setText(name[position]);

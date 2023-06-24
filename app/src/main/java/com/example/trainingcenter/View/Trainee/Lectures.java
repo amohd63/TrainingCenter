@@ -1,15 +1,16 @@
-package com.example.trainingcenter.View;
+package com.example.trainingcenter.View.Trainee;
 
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.trainingcenter.R;
 
-public class MyProfile extends AppCompatActivity {
+public class Lectures extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_profile);
+        setContentView(R.layout.activity_lectures_trainee);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -18,6 +19,5 @@ public class MyProfile extends AppCompatActivity {
         finish();
         return true;
     }
-
 
 }

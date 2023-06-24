@@ -1,4 +1,4 @@
-package com.example.trainingcenter.View;
+package com.example.trainingcenter.View.Trainee;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -126,20 +126,20 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_courses) {
-            Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.Courses.class);
+            Intent intent = new Intent(getApplicationContext(), Courses.class);
             startActivity(intent);
         } else if (id == R.id.nav_events) {
-            Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.Events.class);
+            Intent intent = new Intent(getApplicationContext(), Events.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_lectures) {
-            Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.Lectures.class);
+            Intent intent = new Intent(getApplicationContext(), Lectures.class);
             startActivity(intent);
         } else if (id == R.id.nav_announcements) {
-            Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.Announcements.class);
+            Intent intent = new Intent(getApplicationContext(), Announcements.class);
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
-            Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.Settings.class);
+            Intent intent = new Intent(getApplicationContext(), Settings.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
@@ -158,7 +158,7 @@ public class Home extends AppCompatActivity
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.profile) {
-            Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.MyProfile.class);
+            Intent intent = new Intent(getApplicationContext(), MyProfile.class);
             startActivity(intent);
         }
     }

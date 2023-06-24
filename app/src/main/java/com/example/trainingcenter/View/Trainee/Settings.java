@@ -1,9 +1,9 @@
-package com.example.trainingcenter.View;
+package com.example.trainingcenter.View.Trainee;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.ListView;
-import com.example.trainingcenter.View.CustomAdapterSetting;
+
 import com.example.trainingcenter.R;
 
 
@@ -16,9 +16,9 @@ public class Settings extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_settings_trainee);
         lst = findViewById(R.id.listView);
-        com.example.trainingcenter.View.CustomAdapterSetting adapter = new com.example.trainingcenter.View.CustomAdapterSetting(this, name, num);
+        CustomAdapterSetting adapter = new CustomAdapterSetting(this, name, num);
         lst.setAdapter(adapter);
     }
 }

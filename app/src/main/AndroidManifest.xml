@@ -9,33 +9,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrainingCenter">
-        <activity android:name=".View.Settings"
+        <activity android:name=".View.Trainee.Settings"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".View.Announcements"
+            android:name=".View.Trainee.Announcements"
             android:configChanges="orientation|screenSize"
             android:label="Announcements" />
         <activity
-            android:name=".View.Lectures"
+            android:name=".View.Trainee.Lectures"
             android:configChanges="orientation|screenSize"
             android:label="Lectures" />
         <activity
-            android:name=".View.Events"
+            android:name=".View.Trainee.Events"
             android:configChanges="orientation|screenSize"
             android:label="Events" />
         <activity
-            android:name=".View.Courses"
+            android:name=".View.Trainee.Courses"
             android:configChanges="orientation|screenSize"
             android:label="Courses" />
         <activity
-            android:name=".View.MyProfile"
+            android:name=".View.Trainee.MyProfile"
             android:configChanges="orientation|screenSize"
             android:label="My Profile" />
         <activity
-            android:name=".View.Home"
+            android:name=".View.Trainee.Home"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
