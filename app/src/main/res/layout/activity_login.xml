@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pagebkg"
-    android:gravity="center|top"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".View.LoginActivity">
 
@@ -21,19 +21,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/custom_edittext"
+            android:gravity="center"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center">
+            android:padding="24dp">
 
             <TextView
                 android:id="@+id/loginText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
                 android:text="Login"
                 android:textAlignment="center"
                 android:textColor="@color/lavender"
                 android:textSize="36sp"
-                android:layout_marginBottom="40dp"
                 android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView
