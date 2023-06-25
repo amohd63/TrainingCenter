@@ -10,12 +10,17 @@ public class Instructor extends User {
     private String mobileNumber;
     private String address;
     private String specialization;
-    private String degree;
+    private Degree degree;
+    private enum Degree{
+        BSc,
+        MSc,
+        PhD
+    };
 
     public Instructor() {
     }
 
-    public Instructor(String email, String firstName, String lastName, PictureObject pictureObj, String mobileNumber, String address, String specialization, String degree) {
+    public Instructor(String email, String firstName, String lastName, PictureObject pictureObj, String mobileNumber, String address, String specialization, Degree degree) {
         super(email, firstName, lastName, pictureObj);
         this.mobileNumber = mobileNumber;
         this.address = address;
@@ -47,26 +52,16 @@ public class Instructor extends User {
         this.specialization = specialization;
     }
 
-    public String getDegree() {
+    public Degree getDegree() {
         return degree;
     }
 
-    public void setDegree(String degree) {
+    public void setDegree(Degree degree) {
         this.degree = degree;
     }
 
     public static boolean isValidMobileNumber(String mobileNumber) {
         String regex = "^\\+970\\d{9}$";
         return Pattern.matches(regex, mobileNumber);
-    }
-
-    public static boolean isValidDegree(String degree) {
-        String[] validDegrees = {"BSc", "MSc", "PhD"};
-        for (String validDegree : validDegrees) {
-            if (degree.equalsIgnoreCase(validDegree)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

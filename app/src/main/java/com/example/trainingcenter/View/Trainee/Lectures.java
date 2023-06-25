@@ -1,17 +1,34 @@
 package com.example.trainingcenter.View.Trainee;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
 import com.example.trainingcenter.R;
 
 public class Lectures extends AppCompatActivity {
-
+    LinearLayout mainView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lectures_trainee);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mainView = (LinearLayout) findViewById(R.id.lectures_main_view);
+        //mainView.removeAllViews();
+        CardView test = createCourseCardView("Java programming", "08:00 - 10:00", "19 Jul 2023", "MASRI102", "Dr. Tamim");
+        TextView tv = new TextView(this);
+        tv.setText("test");
+        mainView.setPadding(16, 16, 16, 16);
+        mainView.addView(test);
+
     }
 
     @Override
@@ -20,4 +37,127 @@ public class Lectures extends AppCompatActivity {
         return true;
     }
 
+    private CardView createCourseCardView(String courseName, String time, String date, String venue, String instructor) {
+        // Create the CardView inside the courses_list LinearLayout
+        CardView cardView = new CardView(this);
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
+        cardViewParams.setMargins(4, 0, 0, 0);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(16);
+        cardView.setUseCompatPadding(true);
+        //cardView.setContentPadding(8, 8, 8, 8);
+        cardView.setContentPadding(32, 32, 32, 32);
+
+
+
+        // Create the LinearLayout inside the CardView
+        LinearLayout mainLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+
+        // Create the TextViews inside the LinearLayout
+        TextView titleTextView = createTextView(this, courseName, 24, Typeface.DEFAULT);
+        titleTextView.setTextColor(Color.parseColor("#c45248"));
+        titleTextView.setPadding(0, 0, 0, 32);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        linearLayout.setLayoutParams(layoutParams);
+
+// Set marginTop and marginBottom
+        int marginTop = (int) getResources().getDimension(R.dimen.margin_top);
+        int marginBottom = (int) getResources().getDimension(R.dimen.margin_bottom);
+        linearLayout.setPadding(0, marginTop, 0, marginBottom);
+
+// Set background color
+        linearLayout.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT);
+        timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
+        timeTextView.setCompoundDrawablePadding(32);
+        timeTextView.setPadding(0, 0, 0, 16);
+
+        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT);
+        dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_red_24dp, 0, 0, 0);
+        dateTextView.setCompoundDrawablePadding(32);
+        dateTextView.setPadding(0, 0, 0, 16);
+
+        TextView venueTextView = createTextView(this, venue, 16, Typeface.DEFAULT);
+        venueTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_red_24dp, 0, 0, 0);
+        venueTextView.setCompoundDrawablePadding(32);
+        venueTextView.setPadding(0, 0, 0, 16);
+
+        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
+        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_outline_red_24dp, 0, 0, 0);
+        instructorTextView.setCompoundDrawablePadding(32);
+        instructorTextView.setPadding(0, 0, 0, 16);
+
+
+        LinearLayout innerLinearLayout1 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams1 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
+        innerLinearLayout1.setPadding(0, 32, 0, 32);
+//        innerLinearLayout1.setWeightSum(50);
+
+        LinearLayout innerLinearLayout2 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams2 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
+        innerLinearLayout2.setPadding(0, 32, 0, 32);
+//        innerLinearLayout2.setWeightSum(50);
+
+//        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
+//        instructorTextView.setGravity(Gravity.END);
+
+        // Add the TextViews to the LinearLayout
+        mainLinearLayout.addView(titleTextView);
+        mainLinearLayout.addView(linearLayout);
+
+        innerLinearLayout1.addView(timeTextView);
+        innerLinearLayout1.addView(dateTextView);
+
+
+        innerLinearLayout2.addView(venueTextView);
+        innerLinearLayout2.addView(instructorTextView);
+
+        LinearLayout innerLinearLayout3 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        innerLinearLayout3.setOrientation(LinearLayout.HORIZONTAL);
+        innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
+        //innerLinearLayout3.setPadding(0, 32, 0, 32);
+
+        innerLinearLayout3.addView(innerLinearLayout1);
+        innerLinearLayout3.addView(innerLinearLayout2);
+
+        mainLinearLayout.addView(innerLinearLayout3);
+
+        // Add the LinearLayout to the CardView
+        cardView.addView(mainLinearLayout);
+        return cardView;
+    }
+
+    private TextView createTextView(Context context, String text, int textSize, Typeface typeface) {
+        TextView textView = new TextView(context);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        textView.setText(text);
+        //textView.setTextColor(Color.parseColor("#000000"));
+        textView.setTextSize(textSize);
+        typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
+        textView.setTypeface(typeface);
+        //textView.setFontFamily(getResources().getFont(R.font.calibri));
+        return textView;
+    }
 }

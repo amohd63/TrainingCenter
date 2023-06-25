@@ -1,7 +1,7 @@
 package com.example.trainingcenter.Model;
 
 public class Course {
-    private int courseID;
+    private String courseID;
     private String courseTitle;
     private String courseTopics[];
     private PictureObject coursePhoto;
@@ -10,7 +10,7 @@ public class Course {
     public Course() {
     }
 
-    public Course(int courseID, String courseTitle, String[] courseTopics, PictureObject coursePhoto, boolean isAvailableForRegistration) {
+    public Course(String courseID, String courseTitle, String[] courseTopics, PictureObject coursePhoto, boolean isAvailableForRegistration) {
         this.courseID = courseID;
         this.courseTitle = courseTitle;
         this.courseTopics = courseTopics;
@@ -18,11 +18,11 @@ public class Course {
         this.isAvailableForRegistration = isAvailableForRegistration;
     }
 
-    public int getCourseID() {
+    public String getCourseID() {
         return courseID;
     }
 
-    public void setCourseID(int courseID) {
+    public void setCourseID(String courseID) {
         this.courseID = courseID;
     }
 
