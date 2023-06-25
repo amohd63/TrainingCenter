@@ -28,7 +28,7 @@ import android.widget.Toast;
 
 import com.developer.gbuttons.GoogleSignInButton;
 import com.example.trainingcenter.R;
-import com.example.trainingcenter.View.Trainee.Home;
+import com.example.trainingcenter.View.Instructor.Home;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -97,7 +97,8 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             //loginEmail.setText("");
         }
-
+        loginEmail.setText("ali@gmail.com");
+        loginPassword.setText("123456");
         loginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
