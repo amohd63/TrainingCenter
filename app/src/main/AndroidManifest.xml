@@ -9,11 +9,43 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrainingCenter">
-        <activity android:name=".View.Trainee.Settings"
+        <activity
+            android:name=".View.Instructor.Settings"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label=""
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".View.Instructor.Announcements"
+            android:configChanges="orientation|screenSize"
+            android:label="Announcements" />
+        <activity
+            android:name=".View.Instructor.ListOfStudents"
+            android:configChanges="orientation|screenSize"
+            android:label="Lectures" />
+        <activity
+            android:name=".View.Instructor.Schedule"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="landscape"
+            android:label="Events" />
+        <activity
+            android:name=".View.Instructor.Courses"
+            android:configChanges="orientation|screenSize"
+            android:label="Courses" />
+        <activity
+            android:name=".View.Instructor.MyProfile"
+            android:configChanges="orientation|screenSize"
+            android:label="My Profile" />
+        <activity
+            android:name=".View.Instructor.Home"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".View.Trainee.Settings"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.Trainee.Announcements"
             android:configChanges="orientation|screenSize"
