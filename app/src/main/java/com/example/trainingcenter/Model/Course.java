@@ -1,16 +1,18 @@
 package com.example.trainingcenter.Model;
 
+import java.util.List;
+
 public class Course {
     private String courseID;
     private String courseTitle;
-    private String courseTopics[];
-    private PictureObject coursePhoto;
+    private List<String> courseTopics;
+    private String coursePhoto;
     private boolean isAvailableForRegistration;
 
     public Course() {
     }
 
-    public Course(String courseID, String courseTitle, String[] courseTopics, PictureObject coursePhoto, boolean isAvailableForRegistration) {
+    public Course(String courseID, String courseTitle, List<String> courseTopics, String coursePhoto, boolean isAvailableForRegistration) {
         this.courseID = courseID;
         this.courseTitle = courseTitle;
         this.courseTopics = courseTopics;
@@ -34,19 +36,19 @@ public class Course {
         this.courseTitle = courseTitle;
     }
 
-    public String[] getCourseTopics() {
+    public List<String> getCourseTopics() {
         return courseTopics;
     }
 
-    public void setCourseTopics(String[] courseTopics) {
+    public void setCourseTopics(List<String> courseTopics) {
         this.courseTopics = courseTopics;
     }
 
-    public PictureObject getCoursePhoto() {
+    public String getCoursePhoto() {
         return coursePhoto;
     }
 
-    public void setCoursePhoto(PictureObject coursePhoto) {
+    public void setCoursePhoto(String coursePhoto) {
         this.coursePhoto = coursePhoto;
     }
 

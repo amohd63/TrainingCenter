@@ -127,6 +127,7 @@ public class Home extends AppCompatActivity
 
         if (id == R.id.nav_courses) {
             Intent intent = new Intent(getApplicationContext(), Courses.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         } else if (id == R.id.nav_events) {
             Intent intent = new Intent(getApplicationContext(), Events.class);
