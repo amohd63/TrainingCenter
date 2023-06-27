@@ -1,9 +1,11 @@
 package com.example.trainingcenter.View.Trainee;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -13,22 +15,86 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.trainingcenter.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class Lectures extends AppCompatActivity {
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+public class MyCourses extends AppCompatActivity {
     LinearLayout mainView;
+    private String email;
+    private FirebaseFirestore db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lectures_trainee);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
+        db = FirebaseFirestore.getInstance();
         mainView = (LinearLayout) findViewById(R.id.lectures_main_view);
-        //mainView.removeAllViews();
-        CardView test = createCourseCardView("Java programming", "08:00 - 10:00", "19 Jul 2023", "MASRI102", "Dr. Tamim");
-        TextView tv = new TextView(this);
-        tv.setText("test");
         mainView.setPadding(16, 16, 16, 16);
-        mainView.addView(test);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
 
+        db.collection("Registration")
+                .whereEqualTo("traineeID", email)
+                .whereEqualTo("status", "Accepted")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+                        if (regTask.isSuccessful()) {
+                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
+                                db.collection("CourseOffering")
+                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                        .get()
+                                        .addOnCompleteListener(courseOfferingTask -> {
+                                            if (courseOfferingTask.isSuccessful()) {
+                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                                    db.collection("Course")
+                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                                            .get()
+                                                            .addOnCompleteListener(courseTask -> {
+                                                                if (courseTask.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                        db.collection("User")
+                                                                                .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                                                .get()
+                                                                                .addOnCompleteListener(userTask -> {
+                                                                                    if (userTask.isSuccessful()) {
+                                                                                        for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
+                                                                                            CardView test = createCourseCardView(
+                                                                                                    courseDoc.getString("courseTitle"),
+                                                                                                    courseOfferingDoc.getString("schedule"),
+                                                                                                    dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
+                                                                                                    courseOfferingDoc.getString("venue"),
+                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName")
+                                                                                            );
+                                                                                            mainView.addView(test);
+                                                                                        }
+
+                                                                                    } else {
+                                                                                    }
+                                                                                });
+
+                                                                    }
+
+                                                                } else {
+                                                                }
+                                                            });
+                                                }
+                                            } else {
+                                            }
+                                        });
+                            }
+                        } else {
+                        }
+                    }
+                });
     }
 
     @Override
@@ -44,7 +110,7 @@ public class Lectures extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(16);
+        cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
         //cardView.setContentPadding(8, 8, 8, 8);
         cardView.setContentPadding(32, 32, 32, 32);
@@ -60,7 +126,7 @@ public class Lectures extends AppCompatActivity {
 
         // Create the TextViews inside the LinearLayout
         TextView titleTextView = createTextView(this, courseName, 24, Typeface.DEFAULT);
-        titleTextView.setTextColor(Color.parseColor("#c45248"));
+        titleTextView.setTextColor(Color.parseColor("#7884FC"));
         titleTextView.setPadding(0, 0, 0, 32);
 
         LinearLayout linearLayout = new LinearLayout(this);

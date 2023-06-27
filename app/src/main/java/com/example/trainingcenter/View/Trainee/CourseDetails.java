@@ -47,7 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CustomDialog extends AppCompatDialogFragment {
+public class CourseDetails extends AppCompatDialogFragment {
     private CustomDialogListener listener;
     private Course course;
     private CourseOffering courseOffering;
@@ -72,8 +72,9 @@ public class CustomDialog extends AppCompatDialogFragment {
                 dialog.cancel();
             }
         });
-        TextView tv = view.findViewById(R.id.start_date);
-        tv.setText(course.getCourseID());
+        TextView courseTitle = view.findViewById(R.id.course_title);
+        courseTitle.setText(course.getCourseTitle());
+
         Button enroll = view.findViewById(R.id.enroll);
         enroll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,7 +238,7 @@ public class CustomDialog extends AppCompatDialogFragment {
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
         cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(16);
+        cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
         cardView.setContentPadding(16, 16, 16, 16);
 
@@ -271,7 +272,7 @@ public class CustomDialog extends AppCompatDialogFragment {
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
         cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(16);
+        cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
         cardView.setContentPadding(16, 16, 16, 16);
 
@@ -304,7 +305,7 @@ public class CustomDialog extends AppCompatDialogFragment {
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
         cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(16);
+        cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
         cardView.setContentPadding(16, 16, 16, 16);
 

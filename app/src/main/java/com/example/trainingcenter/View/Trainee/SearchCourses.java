@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -23,7 +22,6 @@ import androidx.cardview.widget.CardView;
 
 import com.example.trainingcenter.Model.Course;
 import com.example.trainingcenter.Model.CourseOffering;
-import com.example.trainingcenter.Model.Instructor;
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,15 +33,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
-public class Courses extends AppCompatActivity {
+public class SearchCourses extends AppCompatActivity {
     private FirebaseFirestore db;
     private LinearLayout coursesMainView;
     private LinearLayout row;
     private String email;
+    private Context context;
 
 
     @Override
@@ -64,7 +64,7 @@ public class Courses extends AppCompatActivity {
         coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
         coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
         coursesListLayout[0].setId(View.generateViewId());
-        Context context = this;
+        context = this;
 
         AtomicInteger i = new AtomicInteger();
         Timestamp timestamp = Timestamp.now();
@@ -127,7 +127,7 @@ public class Courses extends AppCompatActivity {
                                                                             coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
                                                                             coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
                                                                             coursesListLayout[0].setId(View.generateViewId());
-                                                                        }else if (i.get() == size.get() - 1){
+                                                                        } else if (i.get() == size.get() - 1) {
                                                                             coursesMainView.addView(coursesListLayout[0]);
                                                                         }
                                                                         i.getAndIncrement();
@@ -155,6 +155,8 @@ public class Courses extends AppCompatActivity {
                         // Handle order query error
                     }
                 });
+
+
     }
 
     @Override
@@ -170,7 +172,7 @@ public class Courses extends AppCompatActivity {
                 0, ViewGroup.LayoutParams.MATCH_PARENT, 50);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(16);
+        cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
         //cardView.setContentPadding(8, 8, 8, 8);
         cardView.setContentPadding(16, 32, 16, 32);
@@ -184,21 +186,24 @@ public class Courses extends AppCompatActivity {
 
         // Create the TextViews inside the LinearLayout
         TextView titleTextView = createTextView(this, courseName, 18, Typeface.DEFAULT);
-        titleTextView.setTextColor(Color.parseColor("#000000"));
+        titleTextView.setTextColor(Color.parseColor("#6069c9"));
         titleTextView.setPadding(0, 0, 0, 16);
 
         TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT);
         timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
         timeTextView.setCompoundDrawablePadding(16);
         timeTextView.setPadding(0, 0, 0, 16);
+        timeTextView.setTextColor(Color.parseColor("#9fa5de"));
 
         TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT);
         dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_red_24dp, 0, 0, 0);
         dateTextView.setCompoundDrawablePadding(16);
         dateTextView.setPadding(0, 0, 0, 16);
+        dateTextView.setTextColor(Color.parseColor("#9fa5de"));
 
         TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
         instructorTextView.setGravity(Gravity.END);
+        instructorTextView.setTextColor(Color.parseColor("#9fa5de"));
 
         // Add the TextViews to the LinearLayout
         innerLinearLayout.addView(titleTextView);
@@ -225,7 +230,7 @@ public class Courses extends AppCompatActivity {
     }
 
     public void openDialog(Course course, CourseOffering courseOffering, String instructor) {
-        CustomDialog exampleDialog = new CustomDialog();
+        CourseDetails exampleDialog = new CourseDetails();
         exampleDialog.setCourse(course);
         exampleDialog.setCourseOffering(courseOffering);
         exampleDialog.setInstructor(instructor);
@@ -246,6 +251,127 @@ public class Courses extends AppCompatActivity {
         MenuItem menuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setQueryHint("Type here to search");
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                coursesMainView.removeAllViews();
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Pattern pattern = Pattern.compile(".*" + newText + ".*", Pattern.DOTALL);
+                coursesMainView.removeAllViews();
+                final LinearLayout[] coursesListLayout = {new LinearLayout(context)};
+                final LinearLayout.LayoutParams[] coursesListLayoutParams = {new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)};
+                coursesListLayout[0].setOrientation(LinearLayout.HORIZONTAL);
+                coursesListLayout[0].setWeightSum(100);
+                final int[] marginInPixels = {(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics())};
+                coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
+                coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
+                coursesListLayout[0].setId(View.generateViewId());
+                AtomicInteger i = new AtomicInteger();
+                Timestamp timestamp = Timestamp.now();
+                db.collection("CourseOffering")
+                        .whereGreaterThanOrEqualTo("registrationDeadline", timestamp)
+                        .get()
+                        .addOnCompleteListener(courseOfferingTask -> {
+                            if (courseOfferingTask.isSuccessful()) {
+                                AtomicInteger size = new AtomicInteger(courseOfferingTask.getResult().size());
+                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                    db.collection("Course")
+                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                            .whereEqualTo("isAvailableForRegistration", true)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                            Matcher matcher = pattern.matcher(document.getString("courseTitle"));
+                                                            if (matcher.matches()) {
+                                                                db.collection("User")
+                                                                        .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                                        .get()
+                                                                        .addOnCompleteListener(instructorTask -> {
+                                                                            if (instructorTask.isSuccessful()) {
+                                                                                for (QueryDocumentSnapshot instructorDoc : instructorTask.getResult()) {
+                                                                                    Course courses = new Course(
+                                                                                            document.getString("courseID"),
+                                                                                            document.getString("courseTitle"),
+                                                                                            (List<String>) document.get("mainTopics"),
+                                                                                            document.getString("photo"),
+                                                                                            Boolean.TRUE.equals(document.getBoolean("isAvailableForRegistration"))
+                                                                                    );
+                                                                                    CourseOffering courseOfferings = new CourseOffering(
+                                                                                            courseOfferingDoc.getId(),
+                                                                                            courseOfferingDoc.getString("courseID"),
+                                                                                            courseOfferingDoc.getString("instructorID"),
+                                                                                            courseOfferingDoc.getTimestamp("registrationDeadline"),
+                                                                                            courseOfferingDoc.getTimestamp("startDate"),
+                                                                                            courseOfferingDoc.getString("schedule"),
+                                                                                            courseOfferingDoc.getString("venue")
+                                                                                    );
+                                                                                    String instructor = instructorDoc.getString("firstName") + " " + instructorDoc.getString("lastName");
+                                                                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+                                                                                    CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), instructor);
+                                                                                    cardView.setOnClickListener(new View.OnClickListener() {
+                                                                                        @Override
+                                                                                        public void onClick(View view) {
+                                                                                            openDialog(courses, courseOfferings, instructor);
+                                                                                        }
+                                                                                    });
+                                                                                    coursesListLayout[0].addView(cardView);
+                                                                                    if ((i.get() + 1) % 2 == 0) {
+                                                                                        coursesMainView.addView(coursesListLayout[0]);
+                                                                                        coursesListLayout[0] = new LinearLayout(context);
+                                                                                        coursesListLayoutParams[0] = new LinearLayout.LayoutParams(
+                                                                                                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                                                                        coursesListLayout[0].setOrientation(LinearLayout.HORIZONTAL);
+                                                                                        coursesListLayout[0].setWeightSum(100);
+                                                                                        marginInPixels[0] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+                                                                                        coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
+                                                                                        coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
+                                                                                        coursesListLayout[0].setId(View.generateViewId());
+                                                                                    } else if (i.get() == size.get() - 1) {
+                                                                                        coursesMainView.addView(coursesListLayout[0]);
+                                                                                    }
+                                                                                    i.getAndIncrement();
+                                                                                }
+
+                                                                            } else {
+                                                                                // Handle order query error
+                                                                            }
+                                                                        });
+                                                            }
+
+
+                                                        }
+                                                        //Log.d("expectedTasks2", String.valueOf(expectedTasks));
+                                                    } else {
+                                                        // Handle error
+                                                        //Log.d(TAG, "Error getting documents: ", task.getException());
+                                                    }
+
+                                                }
+
+                                            });
+                                }
+
+                            } else {
+                                // Handle order query error
+                            }
+                        });
+
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import com.developer.gbuttons.GoogleSignInButton;
 import com.example.trainingcenter.R;
-import com.example.trainingcenter.View.Instructor.Home;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -97,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             //loginEmail.setText("");
         }
+        String[] role = {""};
         loginEmail.setText("ali@gmail.com");
         loginPassword.setText("123456");
         loginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -112,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
                                     documentData[0] = document.getString("personalPhoto");
+                                    role[0] = document.getString("role");
                                     Picasso.get().load(documentData[0]).into(personalPhoto);
                                 } else {
                                 }
@@ -138,15 +139,21 @@ public class LoginActivity extends AppCompatActivity {
                 String pass = loginPassword.getText().toString();
 
                 if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    if (!pass.isEmpty()) {
+                    if (!pass.isEmpty() && !role[0].isEmpty()) {
                         auth.signInWithEmailAndPassword(email, pass)
                                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
                                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(LoginActivity.this, Home.class);
-                                        intent.putExtra("email", email);
-                                        startActivity(intent);
+                                        if (role[0].equals("Trainee")) {
+                                            Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Trainee.Home.class);
+                                            intent.putExtra("email", email);
+                                            startActivity(intent);
+                                        }else if (role[0].equals("Instructor")) {
+                                            Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Instructor.Home.class);
+                                            intent.putExtra("email", email);
+                                            startActivity(intent);
+                                        }
                                         finish();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {

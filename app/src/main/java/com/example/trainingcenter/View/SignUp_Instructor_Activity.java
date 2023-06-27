@@ -182,6 +182,7 @@ public class SignUp_Instructor_Activity extends AppCompatActivity {
                     user.put("firstName", firstName_str);
                     user.put("lastName", lastName_str);
                     user.put("personalPhoto", imgUrl);
+                    user.put("role", "Instructor");
                     db.collection("User").document(email).set(user);
                     user.clear();
                     user.put("mobileNumber", phoneNum);

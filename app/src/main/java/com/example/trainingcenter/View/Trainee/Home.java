@@ -126,21 +126,24 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_courses) {
-            Intent intent = new Intent(getApplicationContext(), Courses.class);
+            Intent intent = new Intent(getApplicationContext(), SearchCourses.class);
             intent.putExtra("email", email);
             startActivity(intent);
         } else if (id == R.id.nav_events) {
-            Intent intent = new Intent(getApplicationContext(), Events.class);
+            Intent intent = new Intent(getApplicationContext(), CoursesHistory.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_lectures) {
-            Intent intent = new Intent(getApplicationContext(), Lectures.class);
+            Intent intent = new Intent(getApplicationContext(), MyCourses.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         } else if (id == R.id.nav_announcements) {
-            Intent intent = new Intent(getApplicationContext(), Announcements.class);
+            Intent intent = new Intent(getApplicationContext(), Withdraw.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
-            Intent intent = new Intent(getApplicationContext(), Settings.class);
+            Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+            intent.putExtra("email", email);
             startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
