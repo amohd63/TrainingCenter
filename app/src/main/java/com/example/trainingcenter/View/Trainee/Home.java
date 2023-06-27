@@ -32,7 +32,7 @@ public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     LinearLayout profile;
-    private String email;
+    private String email = "ali@gmail.com";
     private FirebaseFirestore db;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
 
@@ -41,8 +41,8 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        Intent intent = getIntent();
-        email = intent.getStringExtra("email");
+//        Intent intent = getIntent();
+//        email = intent.getStringExtra("email");
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -127,6 +127,7 @@ public class Home extends AppCompatActivity
 
         if (id == R.id.nav_courses) {
             Intent intent = new Intent(getApplicationContext(), Courses.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         } else if (id == R.id.nav_events) {
             Intent intent = new Intent(getApplicationContext(), Events.class);
@@ -159,6 +160,7 @@ public class Home extends AppCompatActivity
     public void onClick(View view) {
         if (view.getId() == R.id.profile) {
             Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         }
     }
