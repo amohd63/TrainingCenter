@@ -23,6 +23,7 @@ import androidx.cardview.widget.CardView;
 
 import com.example.trainingcenter.Model.Course;
 import com.example.trainingcenter.Model.CourseOffering;
+import com.example.trainingcenter.Model.Instructor;
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,8 +43,6 @@ public class Courses extends AppCompatActivity {
     private FirebaseFirestore db;
     private LinearLayout coursesMainView;
     private LinearLayout row;
-    private Course courses;
-    private CourseOffering courseOfferings;
     private String email;
 
 
@@ -56,8 +55,6 @@ public class Courses extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         db = FirebaseFirestore.getInstance();
         coursesMainView = (LinearLayout) findViewById(R.id.courses_main_view);
-
-        // Create the courses_list LinearLayout
         final LinearLayout[] coursesListLayout = {new LinearLayout(this)};
         final LinearLayout.LayoutParams[] coursesListLayoutParams = {new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)};
@@ -67,117 +64,97 @@ public class Courses extends AppCompatActivity {
         coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
         coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
         coursesListLayout[0].setId(View.generateViewId());
-
-
-
-
-
-//        TextView tv = new TextView(this);
-//        CardView cardView = createCourseCardView("test", "08:00 - 10:00", "12 Jul 2023", "Dr. test");
-//        coursesListLayout[0].addView(cardView);
-//        coursesMainView.addView(coursesListLayout[0]);
-//        cardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                openDialog();
-//            }
-//        });
         Context context = this;
-        db.collection("Course")
+
+        AtomicInteger i = new AtomicInteger();
+        Timestamp timestamp = Timestamp.now();
+        db.collection("CourseOffering")
+                .whereGreaterThanOrEqualTo("registrationDeadline", timestamp)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            AtomicInteger i = new AtomicInteger();
+                .addOnCompleteListener(courseOfferingTask -> {
+                    if (courseOfferingTask.isSuccessful()) {
+                        AtomicInteger size = new AtomicInteger(courseOfferingTask.getResult().size());
+                        for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                            db.collection("Course")
+                                    .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                    .whereEqualTo("isAvailableForRegistration", true)
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                    db.collection("User")
+                                                            .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                            .get()
+                                                            .addOnCompleteListener(instructorTask -> {
+                                                                if (instructorTask.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot instructorDoc : instructorTask.getResult()) {
+                                                                        Course courses = new Course(
+                                                                                document.getString("courseID"),
+                                                                                document.getString("courseTitle"),
+                                                                                (List<String>) document.get("mainTopics"),
+                                                                                document.getString("photo"),
+                                                                                Boolean.TRUE.equals(document.getBoolean("isAvailableForRegistration"))
+                                                                        );
+                                                                        CourseOffering courseOfferings = new CourseOffering(
+                                                                                courseOfferingDoc.getId(),
+                                                                                courseOfferingDoc.getString("courseID"),
+                                                                                courseOfferingDoc.getString("instructorID"),
+                                                                                courseOfferingDoc.getTimestamp("registrationDeadline"),
+                                                                                courseOfferingDoc.getTimestamp("startDate"),
+                                                                                courseOfferingDoc.getString("schedule"),
+                                                                                courseOfferingDoc.getString("venue")
+                                                                        );
+                                                                        String instructor = instructorDoc.getString("firstName") + " " + instructorDoc.getString("lastName");
+                                                                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+                                                                        CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), instructor);
+                                                                        cardView.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View view) {
+                                                                                openDialog(courses, courseOfferings, instructor);
+                                                                            }
+                                                                        });
+                                                                        coursesListLayout[0].addView(cardView);
+                                                                        if ((i.get() + 1) % 2 == 0) {
+                                                                            coursesMainView.addView(coursesListLayout[0]);
+                                                                            coursesListLayout[0] = new LinearLayout(context);
+                                                                            coursesListLayoutParams[0] = new LinearLayout.LayoutParams(
+                                                                                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                                                            coursesListLayout[0].setOrientation(LinearLayout.HORIZONTAL);
+                                                                            coursesListLayout[0].setWeightSum(100);
+                                                                            marginInPixels[0] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+                                                                            coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
+                                                                            coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
+                                                                            coursesListLayout[0].setId(View.generateViewId());
+                                                                        }else if (i.get() == size.get() - 1){
+                                                                            coursesMainView.addView(coursesListLayout[0]);
+                                                                        }
+                                                                        i.getAndIncrement();
+                                                                    }
 
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (Boolean.TRUE.equals(document.getBoolean("isAvailableForRegistration"))) {
-                                    Timestamp timestamp = Timestamp.now();
-
-                                    db.collection("CourseOffering")
-                                            .whereEqualTo("courseID", document.getString("courseID"))
-                                            .get()
-                                            .addOnCompleteListener(courseOfferingTask -> {
-                                                if (courseOfferingTask.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                        if (courseOfferingDoc.getTimestamp("registrationDeadline").compareTo(timestamp) >= 0) {
-                                                            courses = new Course(
-                                                                    document.getString("courseID"),
-                                                                    document.getString("courseTitle"),
-                                                                    (List<String>) document.get("mainTopics"),
-                                                                    document.getString("photo"),
-                                                                    Boolean.TRUE.equals(document.getBoolean("isAvailableForRegistration"))
-                                                            );
-                                                            courseOfferings = new CourseOffering(
-                                                                    courseOfferingDoc.getId(),
-                                                                    courseOfferingDoc.getString("courseID"),
-                                                                    courseOfferingDoc.getString("instructorID"),
-                                                                    courseOfferingDoc.getTimestamp("registrationDeadline"),
-                                                                    courseOfferingDoc.getTimestamp("startDate"),
-                                                                    courseOfferingDoc.getString("schedule"),
-                                                                    courseOfferingDoc.getString("venue")
-                                                            );
-
-                                                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-                                                            CardView cardView = createCourseCardView(courses.getCourseTitle(), courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), "Dr. test");
-                                                            cardView.setOnClickListener(new View.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(View view) {
-                                                                    openDialog();
+                                                                } else {
+                                                                    // Handle order query error
                                                                 }
                                                             });
-                                                            coursesListLayout[0].addView(cardView);
-                                                            if ((i.get() + 1) % 2 == 0) {
-                                                                coursesMainView.addView(coursesListLayout[0]);
-                                                                coursesListLayout[0] = new LinearLayout(context);
-                                                                coursesListLayoutParams[0] = new LinearLayout.LayoutParams(
-                                                                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                                                coursesListLayout[0].setOrientation(LinearLayout.HORIZONTAL);
-                                                                coursesListLayout[0].setWeightSum(100);
-                                                                marginInPixels[0] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-                                                                coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
-                                                                coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
-                                                                coursesListLayout[0].setId(View.generateViewId());
-                                                            }
-                                                            i.getAndIncrement();
-                                                        }
-                                                    }
 
-                                                } else {
-                                                    // Handle order query error
+
                                                 }
-                                            });
-                                }
-                            }
-                            //Log.d("expectedTasks2", String.valueOf(expectedTasks));
-                        } else {
-                            // Handle error
-                            //Log.d(TAG, "Error getting documents: ", task.getException());
+                                                //Log.d("expectedTasks2", String.valueOf(expectedTasks));
+                                            } else {
+                                                // Handle error
+                                                //Log.d(TAG, "Error getting documents: ", task.getException());
+                                            }
+
+                                        }
+
+                                    });
                         }
 
+                    } else {
+                        // Handle order query error
                     }
-
                 });
-        //works good ------------
-//        for (int i = 0; i < 9; i++){
-//            CardView cardView = createCourseCardView("Test", "08:00 - 10:00", "12 Jul 2023", "Dr. test");
-//            coursesListLayout.addView(cardView);
-//            if ((i + 1) % 2 == 0){
-//                coursesMainView.addView(coursesListLayout);
-//                coursesListLayout = new LinearLayout(this);
-//                coursesListLayoutParams = new LinearLayout.LayoutParams(
-//                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                coursesListLayout.setOrientation(LinearLayout.HORIZONTAL);
-//                coursesListLayout.setWeightSum(100);
-//                marginInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-//                coursesListLayoutParams.setMargins(coursesListLayoutParams.leftMargin, coursesListLayoutParams.topMargin, coursesListLayoutParams.rightMargin, marginInPixels);
-//                coursesListLayout.setLayoutParams(coursesListLayoutParams);
-//                coursesListLayout.setId(View.generateViewId());
-//            }else if (i == 8){
-//                coursesMainView.addView(coursesListLayout);
-//            }
-//        }
     }
 
     @Override
@@ -247,10 +224,12 @@ public class Courses extends AppCompatActivity {
         return textView;
     }
 
-    public void openDialog() {
+    public void openDialog(Course course, CourseOffering courseOffering, String instructor) {
         CustomDialog exampleDialog = new CustomDialog();
-        exampleDialog.setCourse(courses);
-        exampleDialog.setCourseOffering(courseOfferings);
+        exampleDialog.setCourse(course);
+        exampleDialog.setCourseOffering(courseOffering);
+        exampleDialog.setInstructor(instructor);
+        exampleDialog.setEmail(email);
         exampleDialog.show(getSupportFragmentManager(), "example dialog");
     }
 

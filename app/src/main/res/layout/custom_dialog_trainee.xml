@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Prerequisitie"
+            android:text="Prerequisite"
             android:fontFamily="@font/calibri"
             android:textColor="@color/lavender"
             android:padding="8dp"
@@ -54,6 +54,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/prerequisite"
                 android:layout_width="wrap_content"
                 android:padding="8dp"
                 android:orientation="horizontal"
@@ -191,6 +192,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/main_topics"
                 android:layout_width="wrap_content"
                 android:padding="8dp"
                 android:orientation="horizontal"
@@ -307,6 +309,35 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    app:contentPadding="8dp" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView15"
+                            android:fontFamily="@font/calibri"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:text="Instructor name" />
+
+                        <TextView
+                            android:id="@+id/instructor_name"
+                            android:layout_width="match_parent"
+                            android:fontFamily="@font/calibri"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:text="Dr. Test" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:contentPadding="8dp">
 
                     <LinearLayout
@@ -316,7 +347,7 @@
 
                         <TextView
                             android:id="@+id/textView11"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:fontFamily="@font/calibri"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -350,7 +381,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/black"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:text="Schedule" />
 
                         <TextView
@@ -374,41 +405,12 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/textView15"
-                            android:fontFamily="@font/calibri"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"
-                            android:text="Instructor name" />
-
-                        <TextView
-                            android:id="@+id/instructor_name"
-                            android:layout_width="match_parent"
-                            android:fontFamily="@font/calibri"
-                            android:layout_height="wrap_content"
-                            android:textSize="16sp"
-                            android:text="Dr. Test" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:contentPadding="8dp" >
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
                             android:id="@+id/textView17"
                             android:fontFamily="@font/calibri"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="@color/black"
-                            android:textSize="16sp"
+                            android:textSize="18sp"
                             android:text="Venue" />
 
                         <TextView
