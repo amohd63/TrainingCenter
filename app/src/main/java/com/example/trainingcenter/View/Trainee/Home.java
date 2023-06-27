@@ -160,6 +160,7 @@ public class Home extends AppCompatActivity
     public void onClick(View view) {
         if (view.getId() == R.id.profile) {
             Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+            intent.putExtra("email", email);
             startActivity(intent);
         }
     }

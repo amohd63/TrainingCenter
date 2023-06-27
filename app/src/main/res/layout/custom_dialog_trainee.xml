@@ -301,6 +301,7 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/general_information"
                 android:layout_width="wrap_content"
                 android:padding="8dp"
                 android:orientation="horizontal"

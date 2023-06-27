@@ -83,19 +83,16 @@ public class CustomDialog extends AppCompatDialogFragment {
         });
         ImageView coursePhoto = view.findViewById(R.id.course_photo);
         Picasso.get().load(course.getCoursePhoto()).into(coursePhoto);
-        TextView startDate = view.findViewById(R.id.start_date);
-        TextView schedule = view.findViewById(R.id.schedule);
-        TextView instructorTV = view.findViewById(R.id.instructor_name);
-        TextView venue = view.findViewById(R.id.venue);
+
         LinearLayout prerequisite = view.findViewById(R.id.prerequisite);
         LinearLayout mainTopics = view.findViewById(R.id.main_topics);
+        LinearLayout generalInformation = view.findViewById(R.id.general_information);
+
         mainTopics.removeAllViews();
         prerequisite.removeAllViews();
+        generalInformation.removeAllViews();
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-        startDate.setText(dateFormat.format(courseOffering.getRegistrationDeadline().toDate()));
-        schedule.setText(courseOffering.getSchedule());
-        instructorTV.setText(instructor);
-        venue.setText(courseOffering.getVenue());
         for (String topic : course.getCourseTopics()) {
             CardView topicCV = createTopicCardView(topic);
             mainTopics.addView(topicCV);
@@ -124,7 +121,7 @@ public class CustomDialog extends AppCompatDialogFragment {
                                                             .addOnCompleteListener(courseOfferingTask -> {
                                                                 if (courseOfferingTask.isSuccessful()) {
                                                                     if (courseOfferingTask.getResult().isEmpty()) {
-                                                                        CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted");
+                                                                        CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", false);
                                                                         prerequisite.addView(prerequisiteCardView);
                                                                         flag[0] = false;
                                                                         i[0]++;
@@ -138,13 +135,13 @@ public class CustomDialog extends AppCompatDialogFragment {
                                                                                     .addOnCompleteListener(instructorTask -> {
                                                                                         if (instructorTask.isSuccessful()) {
                                                                                             if (instructorTask.getResult().isEmpty()) {
-                                                                                                CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted");
+                                                                                                CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", false);
                                                                                                 prerequisite.addView(prerequisiteCardView);
                                                                                                 flag[0] = false;
                                                                                                 i[0]++;
                                                                                             } else {
                                                                                                 for (QueryDocumentSnapshot instructorDoc : instructorTask.getResult()) {
-                                                                                                    CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Completed");
+                                                                                                    CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Completed", true);
                                                                                                     prerequisite.addView(prerequisiteCardView);
                                                                                                     i[0]++;
                                                                                                 }
@@ -169,6 +166,7 @@ public class CustomDialog extends AppCompatDialogFragment {
                         }
                     }
                 });
+        //must check deadline, number of students
         enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,6 +185,18 @@ public class CustomDialog extends AppCompatDialogFragment {
                 }
             }
         });
+
+        CardView startDate = createGeneralInformationCardView("Start date", dateFormat.format(courseOffering.getRegistrationDeadline().toDate()));
+        CardView schedule = createGeneralInformationCardView("Schedule", courseOffering.getSchedule());
+        CardView instructorCV = createGeneralInformationCardView("Instructor", instructor);
+        CardView venue = createGeneralInformationCardView("Venue", courseOffering.getVenue());
+
+        generalInformation.addView(instructorCV);
+        generalInformation.addView(startDate);
+        generalInformation.addView(schedule);
+        generalInformation.addView(venue);
+
+
         return dialog;
     }
 
@@ -222,7 +232,7 @@ public class CustomDialog extends AppCompatDialogFragment {
         this.courseOffering = courseOffering;
     }
 
-    private CardView createPrerequisiteCardView(String courseName, String status) {
+    private CardView createPrerequisiteCardView(String courseName, String status, boolean color) {
         CardView cardView = new CardView(dialog.getContext());
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
@@ -243,6 +253,40 @@ public class CustomDialog extends AppCompatDialogFragment {
         //titleTextView.setPadding(0, 0, 0, 16);
 
         TextView statusTextView = createTextView(dialog.getContext(), status, 12, Typeface.DEFAULT);
+        statusTextView.setTextColor(Color.parseColor(color ? "#84fc78" : "#fc7884"));
+        //statusTextView.setCompoundDrawablePadding(16);
+        //statusTextView.setPadding(0, 0, 0, 16);
+
+        // Add the TextViews to the LinearLayout
+        innerLinearLayout.addView(titleTextView);
+        innerLinearLayout.addView(statusTextView);
+
+        // Add the LinearLayout to the CardView
+        cardView.addView(innerLinearLayout);
+        return cardView;
+    }
+
+    private CardView createGeneralInformationCardView(String title, String info) {
+        CardView cardView = new CardView(dialog.getContext());
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(16);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(16, 16, 16, 16);
+
+        LinearLayout innerLinearLayout = new LinearLayout(dialog.getContext());
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        innerLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout.setLayoutParams(innerLinearLayoutParams);
+
+
+        TextView titleTextView = createTextView(dialog.getContext(), title, 16, Typeface.DEFAULT);
+        titleTextView.setTextColor(Color.parseColor("#000000"));
+        //titleTextView.setPadding(0, 0, 0, 16);
+
+        TextView statusTextView = createTextView(dialog.getContext(), info, 12, Typeface.DEFAULT);
         //statusTextView.setCompoundDrawablePadding(16);
         //statusTextView.setPadding(0, 0, 0, 16);
 
