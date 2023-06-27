@@ -124,6 +124,31 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        loginPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    final String[] documentData = new String[1];
+                    DocumentReference docRef = db.collection("User").document(loginEmail.getText().toString());
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    documentData[0] = document.getString("personalPhoto");
+                                    role[0] = document.getString("role");
+                                    Picasso.get().load(documentData[0]).into(personalPhoto);
+                                } else {
+                                }
+                            } else {
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
 //        loginPassword.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
