@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.admin.add_courses">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|top"
+        android:orientation="vertical"
+        android:splitMotionEvents="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:cardCornerRadius="120dp">
+
+            <ImageView
+                android:id="@+id/coursePhoto"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:gravity="center"
+                app:srcCompat="@drawable/admin_default"
+                tools:srcCompat="@drawable/course_default" />
+        </androidx.cardview.widget.CardView>
+
+        <EditText
+            android:id="@+id/course_title_insert"
+            android:layout_width="288dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:gravity="center"
+            android:hint="Course title"
+            android:textColorHint="#020202" />
+
+        <EditText
+            android:id="@+id/course_main_topics_insert"
+            android:layout_width="288dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:gravity="center"
+            android:hint="course main topics"
+            android:textColorHint="#020202" />
+
+        <EditText
+            android:id="@+id/prerequisites_insert"
+            android:layout_width="288dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:gravity="center"
+            android:hint="prerequisites"
+            android:textColorHint="#020202" />
+
+        <Button
+            android:id="@+id/add_coutse_admin_burron"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:text="Add Coutse" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
