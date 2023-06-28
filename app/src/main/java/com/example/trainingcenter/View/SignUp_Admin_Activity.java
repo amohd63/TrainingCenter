@@ -102,6 +102,7 @@ public class SignUp_Admin_Activity extends AppCompatActivity {
                     user.put("firstName", firstName_str);
                     user.put("lastName", lastName_str);
                     user.put("personalPhoto", imgUrl);
+                    user.put("role", "Admin");
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {

@@ -26,8 +26,8 @@
         <activity
             android:name=".View.Instructor.Schedule"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="landscape"
-            android:label="Events" />
+            android:label="Events"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".View.Instructor.Courses"
             android:configChanges="orientation|screenSize"
@@ -38,8 +38,9 @@
             android:label="My Profile" />
         <activity
             android:name=".View.Instructor.Home"
+            android:exported="true"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".View.Trainee.Settings"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -47,21 +48,21 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".View.Trainee.Announcements"
+            android:name=".View.Trainee.Withdraw"
             android:configChanges="orientation|screenSize"
-            android:label="Announcements" />
+            android:label="Withdraw" />
         <activity
-            android:name=".View.Trainee.Lectures"
+            android:name=".View.Trainee.MyCourses"
             android:configChanges="orientation|screenSize"
             android:label="Lectures" />
         <activity
-            android:name=".View.Trainee.Events"
+            android:name=".View.Trainee.CoursesHistory"
             android:configChanges="orientation|screenSize"
-            android:label="Events" />
+            android:label="Courses history" />
         <activity
-            android:name=".View.Trainee.Courses"
+            android:name=".View.Trainee.SearchCourses"
             android:configChanges="orientation|screenSize"
-            android:label="Courses" />
+            android:label="Search courses" />
         <activity
             android:name=".View.Trainee.MyProfile"
             android:configChanges="orientation|screenSize"
@@ -69,7 +70,7 @@
         <activity
             android:name=".View.Trainee.Home"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".View.SignUp_Instructor_Activity"
             android:exported="false" />

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lavender">#7884FC</color>
+    <color name="lavender_light">#e4e6fe</color>
     <color name="colorPrimary">#ff393a</color>
     <color name="colorPrimaryDark">#c45248</color>
     <color name="colorAccent">#ff393a</color>
