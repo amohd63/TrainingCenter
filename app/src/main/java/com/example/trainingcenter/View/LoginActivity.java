@@ -28,7 +28,7 @@ import android.widget.Toast;
 
 import com.developer.gbuttons.GoogleSignInButton;
 import com.example.trainingcenter.R;
-import com.example.trainingcenter.View.Instructor.Home;
+import com.example.trainingcenter.View.Trainee.Home;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
