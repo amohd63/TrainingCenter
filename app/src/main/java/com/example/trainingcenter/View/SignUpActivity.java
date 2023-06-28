@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -27,11 +26,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         loginRedirectText = findViewById(R.id.loginRedirectText_admin);
 
-        btnInstructor.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignUp_Instructor_Activity.class)));
+        btnInstructor.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignupActivityInstructor.class)));
 
-        btnAdmin.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignUp_Admin_Activity.class)));
+        btnAdmin.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignupActivityAdmin.class)));
 
-        btnTrainee.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignUp_Trainee_Activity.class)));
+        btnTrainee.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignupActivityTrainee.class)));
 
         loginRedirectText.setOnClickListener(view -> startActivity(new Intent(SignUpActivity.this, LoginActivity.class)));
 

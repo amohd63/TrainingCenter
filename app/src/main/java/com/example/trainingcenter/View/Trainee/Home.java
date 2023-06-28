@@ -1,19 +1,27 @@
 package com.example.trainingcenter.View.Trainee;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,16 +31,21 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.example.trainingcenter.R;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     LinearLayout profile;
-    private String email = "ali@gmail.com";
+    private String email;
     private FirebaseFirestore db;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
 
@@ -41,19 +54,11 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-//        Intent intent = getIntent();
-//        email = intent.getStringExtra("email");
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,6 +92,60 @@ public class Home extends AppCompatActivity
                 }
             }
         });
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference usersRef = db.collection("Notification");
+        usersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    // Handle any errors
+                    return;
+                }
+
+                // Process the query snapshot and handle the updates
+                for (DocumentChange documentChange : querySnapshot.getDocumentChanges()) {
+                    DocumentSnapshot documentSnapshot = documentChange.getDocument();
+                    String documentId = documentSnapshot.getId();
+                    Toast.makeText(Home.this, documentId, Toast.LENGTH_SHORT).show();
+                    createNotification(documentId, "test", "test");
+                }
+            }
+        });
+
+    }
+
+    //private int NOTIFICATION_ID = 123;
+    private static final String NOTIFICATION_TITLE = "Notification Title";
+    private static final String NOTIFICATION_BODY = "This is the body of my notification";
+    public void createNotification(String NOTIFICATION_ID, String title, String body) {
+        Intent intent = new Intent(this, Home.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        createNotificationChannel();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+                MY_CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent);
+        NotificationManagerCompat notificationManager =
+                NotificationManagerCompat.from(this);
+        notificationManager.notify(NOTIFICATION_ID.hashCode(), builder.build());
+    }
+
+    private static final String MY_CHANNEL_ID = "my_chanel_1";
+    private static final String MY_CHANNEL_NAME = "My channel";
+    private void createNotificationChannel() {
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(MY_CHANNEL_ID,
+                MY_CHANNEL_NAME, importance);
+        NotificationManager notificationManager =
+                getSystemService(NotificationManager.class);
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
@@ -108,14 +167,7 @@ public class Home extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -148,12 +200,7 @@ public class Home extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
             finish();
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_rate) {
-
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -72,13 +72,13 @@
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".View.SignUp_Instructor_Activity"
+            android:name=".View.SignupActivityInstructor"
             android:exported="false" />
         <activity
-            android:name=".View.SignUp_Trainee_Activity"
+            android:name=".View.SignupActivityTrainee"
             android:exported="false" />
         <activity
-            android:name=".View.SignUp_Admin_Activity"
+            android:name=".View.SignupActivityAdmin"
             android:exported="false" />
         <activity
             android:name=".View.InitialActivity"

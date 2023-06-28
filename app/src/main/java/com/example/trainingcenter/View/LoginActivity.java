@@ -78,15 +78,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        getSupportActionBar().hide();
         loginEmail = findViewById(R.id.login_email);
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
-        signupRedirectText = findViewById(R.id.signUpRedirectText);
+        //signupRedirectText = findViewById(R.id.signUpRedirectText);
         forgotPassword = findViewById(R.id.forgot_password);
         googleBtn = findViewById(R.id.googleBtn);
         rememberMe = findViewById(R.id.rememberMe);
         personalPhoto = findViewById(R.id.login_personalphoto);
+        TextView name = findViewById(R.id.name);
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -113,6 +114,8 @@ public class LoginActivity extends AppCompatActivity {
                                 if (document.exists()) {
                                     documentData[0] = document.getString("personalPhoto");
                                     role[0] = document.getString("role");
+                                    String fullName = document.getString("firstName") + " " + document.getString("lastName");
+                                    name.setText(fullName);
                                     Picasso.get().load(documentData[0]).into(personalPhoto);
                                 } else {
                                 }
@@ -127,24 +130,28 @@ public class LoginActivity extends AppCompatActivity {
         loginPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    final String[] documentData = new String[1];
-                    DocumentReference docRef = db.collection("User").document(loginEmail.getText().toString());
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    documentData[0] = document.getString("personalPhoto");
-                                    role[0] = document.getString("role");
-                                    Picasso.get().load(documentData[0]).into(personalPhoto);
+                if (hasFocus) {
+                    if (!loginEmail.getText().toString().isEmpty()) {
+                        final String[] documentData = new String[1];
+                        DocumentReference docRef = db.collection("User").document(loginEmail.getText().toString());
+                        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document.exists()) {
+                                        documentData[0] = document.getString("personalPhoto");
+                                        role[0] = document.getString("role");
+                                        String fullName = document.getString("firstName") + " " + document.getString("lastName");
+                                        name.setText(fullName);
+                                        Picasso.get().load(documentData[0]).into(personalPhoto);
+                                    } else {
+                                    }
                                 } else {
                                 }
-                            } else {
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -204,12 +211,12 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        signupRedirectText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
-            }
-        });
+//        signupRedirectText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+//            }
+//        });
 
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override

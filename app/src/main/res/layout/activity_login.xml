@@ -29,11 +29,22 @@
                 android:id="@+id/loginText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"
-                android:text="Login"
+                android:text="Welcome,"
+                android:textAlignment="center"
+                android:textColor="@color/bright_orange"
+                android:fontFamily="@font/calibri"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/calibri"
+                android:text=""
                 android:textAlignment="center"
                 android:textColor="@color/lavender"
-                android:textSize="36sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView
@@ -77,13 +88,14 @@
                 android:id="@+id/rememberMe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remember Me" />
+                android:buttonTint="@drawable/checkbox_selector"
+                android:text="Remember me" />
 
             <Button
                 android:id="@+id/login_button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:backgroundTint="@color/lavender"
                 android:text="Login"
                 android:textSize="18sp"
@@ -112,17 +124,17 @@
                 android:text="Sign in with Google"
                 app:isDarkTheme="true" />
 
-            <TextView
-                android:id="@+id/signUpRedirectText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:padding="8dp"
-                android:text="Not yet registered? Sign Up"
-                android:textAlignment="center"
-                android:textColor="@color/lavender"
-                android:textSize="18sp" />
+<!--            <TextView-->
+<!--                android:id="@+id/signUpRedirectText"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:padding="8dp"-->
+<!--                android:text="Not yet registered? Sign Up"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textColor="@color/lavender"-->
+<!--                android:textSize="18sp" />-->
 
         </LinearLayout>
 
