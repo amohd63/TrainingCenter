@@ -1,0 +1,8 @@
+<!-- Create a new XML file in your project, e.g., checkbox_selector.xml -->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="@color/bright_orange" />
+    <item android:state_pressed="true" android:color="@color/bright_orange" />
+    <item android:state_hovered="true" android:color="@color/bright_orange" />
+    <item android:color="@color/bright_orange" />
+</selector>

@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,40 +28,73 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SignUp_Trainee_Activity extends AppCompatActivity {
+public class SignupActivityInstructor extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField;
-    private Button signupButton;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField, specializationField, courseField;
+    private Button signupButton, addCourse;
     private TextView loginRedirectText;
+    private RadioGroup degreeRadioGroup;
     private FirebaseFirestore db;
     private ImageView personalPhoto;
+    String degree = "";
     private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Ftrainee_default.png?alt=media&token=f4d8a2fd-787d-4af5-9f4d-7cfb5327b8f0";
+    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Finstructor_default.png?alt=media&token=344f2027-9792-4df3-ad34-926c67f81be9";
+    private ArrayList<String> instructorCourses = new ArrayList<>();
     Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up_trainee);
+        setContentView(R.layout.activity_sign_up_instructor);
 
         auth = FirebaseAuth.getInstance();
-        signupEmail = findViewById(R.id.signup_email_trainee);
-        signupPassword = findViewById(R.id.signup_password_trainee);
+        signupEmail = findViewById(R.id.signup_email_instructor);
+        signupPassword = findViewById(R.id.signup_password_instructor);
         db = FirebaseFirestore.getInstance();
-        signupButton = findViewById(R.id.signup_button_trainee);
-        loginRedirectText = findViewById(R.id.loginRedirectText_trainee);
+        signupButton = findViewById(R.id.signup_button_instructor);
+        loginRedirectText = findViewById(R.id.loginRedirectText_instructor);
         signupPasswordConfirm = findViewById(R.id.signup_password_admin_confirm);
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
-        personalPhoto = findViewById(R.id.personalPhoto);
         phoneNumField = findViewById(R.id.phoneNumber);
         addressField = findViewById(R.id.address);
+        personalPhoto = findViewById(R.id.personalPhoto);
+        specializationField = findViewById(R.id.specialization);
+        degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
+        addCourse = findViewById(R.id.add_course);
+        courseField = findViewById(R.id.course);
+
+
+        degree = "";
+        degreeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                // Find the selected radio button
+                RadioButton selectedRadioButton = findViewById(checkedId);
+                // Get the text of the selected radio button
+                degree = selectedRadioButton.getText().toString();
+                Toast.makeText(getApplicationContext(), "Selected option: " + degree, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+        addCourse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                instructorCourses.add(courseField.getText().toString());
+                courseField.setText("");
+                courseField.setHint("Add course");
+            }
+        });
+
         personalPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,8 +103,6 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
             }
         });
-
-
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,44 +113,63 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
                 String lastName_str = lastName.getText().toString().trim();
                 String phoneNum = phoneNumField.getText().toString().trim();
                 String address = addressField.getText().toString().trim();
+                String specialization = specializationField.getText().toString().trim();
 
-                if(!User.isValidName(firstName_str)){
-                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                }
-                else if(!User.isValidName(lastName_str)){
-                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                }
-                else if (email.isEmpty()){
+
+                if (email.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
+//                    signupEmail.setBackgroundColor(Color.RED);
                 }
                 else if (pass.isEmpty()){
                     signupPassword.setError("Password cannot be empty");
+//                    signupPassword.setBackgroundColor(Color.RED);
                 }
-                else if (pass_conf.isEmpty()){
-                    signupPasswordConfirm.setError("You must confirm your Password");
+                 else if (pass_conf.isEmpty()){
+                     signupPasswordConfirm.setError("You must confirm your Password");
+//                    signupPasswordConfirm.setBackgroundColor(Color.RED);
+                 }
+                 else if (!pass_conf.equals(pass)){
+                     signupPassword.setError("Passwords must match");
+//                    signupPassword.setBackgroundColor(Color.RED);
+                 }
+                else if(!User.isValidName(firstName_str)){
+                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+//                    firstName.setHighlightColor(Color);
                 }
-                else if (!pass_conf.equals(pass)){
-                    signupPassword.setError("Passwords must match");
-                }
-                else if (phoneNum.isEmpty()){
-                    phoneNumField.setError("This field is required");
+                else if(!User.isValidName(lastName_str)){
+                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+//                    lastName.setBackgroundColor(Color.RED);
                 }
                 else if (address.isEmpty()){
                     addressField.setError("This field is required");
+//                    addressField.setBackgroundColor(Color.RED);
+                }
+                 else if (phoneNum.isEmpty()){
+                     phoneNumField.setError("This field is required");
+//                    phoneNumField.setBackgroundColor(Color.RED);
+                 }
+                else if (specialization.isEmpty()){
+                    specializationField.setError("This field is required");
+//                    specializationField.setBackgroundColor(Color.RED);
+                }
+                else if (degree.isEmpty()){
+                    Toast.makeText(getApplicationContext(), "You must select a degree", Toast.LENGTH_SHORT).show();
+//                    specializationField.setBackgroundColor(Color.RED);
                 }
                 else if (!validatePassword(pass)){
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
+//                    signupPassword.setBackgroundColor(Color.RED);
                 }
                 else{
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(SignUp_Trainee_Activity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(SignUp_Trainee_Activity.this, LoginActivity.class));
+                                Toast.makeText(SignupActivityInstructor.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(SignupActivityInstructor.this, LoginActivity.class));
                             } else {
-                                Toast.makeText(SignUp_Trainee_Activity.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivityInstructor.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -126,20 +178,24 @@ public class SignUp_Trainee_Activity extends AppCompatActivity {
                     user.put("firstName", firstName_str);
                     user.put("lastName", lastName_str);
                     user.put("personalPhoto", imgUrl);
-                    user.put("role", "Trainee");
+                    user.put("role", "Instructor");
                     db.collection("User").document(email).set(user);
                     user.clear();
                     user.put("mobileNumber", phoneNum);
                     user.put("address", address);
-                    db.collection("User").document(email).collection("Trainee").document(email).set(user);
+                    user.put("specialization", specialization);
+                    user.put("degree", degree);
+                    user.put("courses", instructorCourses);
+                    db.collection("User").document(email).collection("Instructor").document(email).set(user);
                 }
+
             }
         });
 
         loginRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(SignUp_Trainee_Activity.this, LoginActivity.class));
+                startActivity(new Intent(SignupActivityInstructor.this, LoginActivity.class));
             }
         });
 

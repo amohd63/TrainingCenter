@@ -16,7 +16,7 @@ public class InitialActivity extends AppCompatActivity {
         setContentView(R.layout.activity_initial);
         Button sign_in = findViewById(R.id.sign_in_initial);
         Button sign_up = findViewById(R.id.sign_up_initial);
-
+        getSupportActionBar().hide();
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

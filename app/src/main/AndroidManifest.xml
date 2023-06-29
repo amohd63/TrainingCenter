@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.trainingcenter">
 
     <application
@@ -9,6 +10,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrainingCenter">
+        <activity
+            android:name=".View.admin.MyProfile"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.Settings"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.Registration_applications"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.view_previous_offering_course"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.View_profiles_from_admin"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.view_student_course"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.make_available"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.edit_delete_course"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.home_admin"
+            android:exported="false" />
+        <activity
+            android:name=".View.admin.add_courses"
+            android:exported="false" />
         <activity
             android:name=".View.Instructor.Settings"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -40,7 +71,7 @@
             android:name=".View.Instructor.Home"
             android:exported="true"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.Trainee.Settings"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -70,15 +101,15 @@
         <activity
             android:name=".View.Trainee.Home"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".View.SignUp_Instructor_Activity"
+            android:name=".View.SignupActivityInstructor"
             android:exported="false" />
         <activity
-            android:name=".View.SignUp_Trainee_Activity"
+            android:name=".View.SignupActivityTrainee"
             android:exported="false" />
         <activity
-            android:name=".View.SignUp_Admin_Activity"
+            android:name=".View.SignupActivityAdmin"
             android:exported="false" />
         <activity
             android:name=".View.InitialActivity"

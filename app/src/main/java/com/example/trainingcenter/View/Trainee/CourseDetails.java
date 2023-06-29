@@ -12,9 +12,6 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.cardview.widget.CardView;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,24 +25,17 @@ import android.widget.Toast;
 import com.example.trainingcenter.Model.Course;
 import com.example.trainingcenter.Model.CourseOffering;
 import com.example.trainingcenter.R;
-import com.example.trainingcenter.View.SignUp_Admin_Activity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CourseDetails extends AppCompatDialogFragment {
     private CustomDialogListener listener;
