@@ -6,9 +6,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
+import java.util.UUID;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -74,19 +75,48 @@ public class available_dialog extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.activity_available_dialog, null);
         builder.setView(view);
-
         Bundle args = getArguments();
         String documentPath = args.getString("pointer");
+        String emailForAdmin = args.getString("emailId");
+        String titleAdmin = args.getString("title");
         DocumentReference docRef = FirebaseFirestore.getInstance().document(documentPath);
-
+        ArrayList<String>  myList = new ArrayList<>();
         EditText registration_deadline = view.findViewById(R.id.new_registration_in_make_available);
         EditText course_start_date = view.findViewById(R.id.new_start_date_in_make_available);
         EditText course_schedule = view.findViewById(R.id.new_course_schedule_in_make_available);
         EditText venue = view.findViewById(R.id.new_venue_in_make_available);
-        EditText instroctor = view.findViewById(R.id.new_Instructor_in_make_available);
+        Spinner instroctor = view.findViewById(R.id.instroctor_add_spinner);
         Button mKa = view.findViewById(R.id.make_available_in_make_available_daialog);
         ImageButton mma = view.findViewById(R.id.close_make_availbal_dialog_now);
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference collectionRef = db.collection("User");
+        collectionRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null) {
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        String email = document.getId();
+                        CollectionReference collectionRef2 = firestore.collection("User").document(email).collection("Instructor");
+                        collectionRef2.get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                QuerySnapshot querySnapshot2 = task1.getResult();
+                                if (querySnapshot2 != null) {
+                                    for (QueryDocumentSnapshot document2 : querySnapshot2) {
+                                        myList.add(email);
+                                    }
+                                    String[] options = myList.toArray(new String[myList.size()]);
+                                    ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, options);
+                                    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    instroctor.setAdapter(spinnerAdapter);
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
         mKa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,7 +124,7 @@ public class available_dialog extends AppCompatDialogFragment {
                 Timestamp timestamp2 = Timestamp.valueOf(course_start_date.getText().toString());
                 String venuePlace = venue.getText().toString();
                 String schedule = course_schedule.getText().toString();
-                String instroctorw = instroctor.getText().toString();
+                String instroctorw = instroctor.getSelectedItem().toString();
                 UUID uuid = UUID.randomUUID();
                 String offeringID = uuid.toString().replace("-", "").substring(0, 20);
                 String cId = docRef.getId();
@@ -106,7 +136,29 @@ public class available_dialog extends AppCompatDialogFragment {
                 offer.put("offeringID",offeringID);
                 offer.put("courseID",cId);
                 offer.put("instructorID",instroctorw);
+
+                //notification
+                String title = "New course";
+                String body = "The course "+titleAdmin+" is now available for registration";
+                UUID uuid2 = UUID.randomUUID();
+                String noteID = uuid.toString().replace("-", "").substring(0, 20);
+                Map<String, Object> note = new HashMap<>();
+                note.put("body",body);
+                note.put("title",title);
+                note.put("userID",emailForAdmin);
+
+                //
+                Map<String, Object> coureInstroctor = new HashMap<>();
+                UUID uuid3 = UUID.randomUUID();
+                String InstructorCourseId = uuid.toString().replace("-", "").substring(0, 20);
+                coureInstroctor.put("InstructorCourseId",InstructorCourseId);
+                coureInstroctor.put("courseID",cId);
+                coureInstroctor.put("instructorID",instroctorw);
+
                 db.collection("CourseOffering").document(offeringID).set(offer);
+                db.collection("NotificationBackup").document(noteID).set(note);
+                db.collection("InstructorCourse").document(InstructorCourseId).set(coureInstroctor);
+
                 dismiss();
                 getActivity().recreate();
             }

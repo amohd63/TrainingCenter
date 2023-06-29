@@ -164,63 +164,144 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class show_profile_from_admin_all extends AppCompatDialogFragment {
-    private final int GALLERY_REQ_CODE = 1000;
-    private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fadmin_default.png?alt=media&token=6db2f3a0-6bed-48a8-9aae-b9bff0deae01";
     private ImageView personalPhoto;
+    private TextView emailBox2;
+    private TextView emailView2;
+    private TextView firstName2;
+    private TextView lastName2;
+    private TextView address2;
+    private TextView mobileNum2;
+    private TextView name2;
+    private TextView degree2;
+    private TextView spe2;
+    private TextView hide1;
+    private TextView hide2;
+    private FirebaseFirestore db;
+    private ImageButton cloas;
+    private String role;
+    private String documentPath;
+    private DocumentReference docRef33;
+    private String email;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.activity_show_profile_from_admin_all, null);
         builder.setView(view);
-        final String[] documentData = new String[2];
-        Bundle args = getArguments();
-        String email = args.getString("pointer");
+        db = FirebaseFirestore.getInstance();
+        cloas = view.findViewById(R.id.imageButton_for_closing);
         personalPhoto = view.findViewById(R.id.personalPhoto2);
-        TextView emailBox = view.findViewById(R.id.emailBox2);
-        TextView emailView = view.findViewById(R.id.email2);
-        EditText firstName = view.findViewById(R.id.firstname2);
-        EditText lastName = view.findViewById(R.id.lastname2);
-        EditText address = view.findViewById(R.id.address2);
-        EditText mobileNum = view.findViewById(R.id.mobile_number2);
-        TextView name = view.findViewById(R.id.name2);
+        emailBox2 = view.findViewById(R.id.emailBox2);
+        emailView2 = view.findViewById(R.id.email2);
+        firstName2 = view.findViewById(R.id.firstname2);
+        lastName2 = view.findViewById(R.id.lastname2);
+        address2 = view.findViewById(R.id.address2);
+        mobileNum2 = view.findViewById(R.id.mobile_number2);
+        name2 = view.findViewById(R.id.name2);
+        degree2 = view.findViewById(R.id.degree2);
+        spe2 = view.findViewById(R.id.specialization);
+        hide1 = view.findViewById(R.id.hide_number_one);
+        hide2 = view.findViewById(R.id.hide_number_two);
+        hide1.setVisibility(View.INVISIBLE);
+        hide2.setVisibility(View.INVISIBLE);
+        degree2.setVisibility(View.INVISIBLE);
+        spe2.setVisibility(View.INVISIBLE);
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("User").document(email);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        documentData[0] = document.getString("personalPhoto");
-                        Picasso.get().load(documentData[0]).into(personalPhoto);
-                        documentData[1] = document.getString("firstName") + " " + document.getString("lastName");
-                        name.setText(documentData[1]);
-                        firstName.setText(document.getString("firstName"));
-                        lastName.setText(document.getString("lastName"));
-                        emailBox.setText(email);
-                        emailView.setText(email);
-                        DocumentReference docRef2 = db.collection("User").document(email).collection("Trainee").document(email);
-                        docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document.exists()) {
-                                        address.setText(document.getString("address"));
-                                        mobileNum.setText(document.getString("mobileNumber"));
-                                    } else {
-                                    }
-                                } else {
-                                }
-                            }
-                        });
+        Bundle args = getArguments();
+        role = args.getString("pointer");
+        documentPath = args.getString("pointer1");
+        docRef33 = FirebaseFirestore.getInstance().document(documentPath);
+        email = docRef33.getId();
+
+        if(role.equals("Instructor")){
+            hide1.setVisibility(View.VISIBLE);
+            hide2.setVisibility(View.VISIBLE);
+            degree2.setVisibility(View.VISIBLE);
+            spe2.setVisibility(View.VISIBLE);
+        }
+
+        if(role.equals("Trainee")) {
+            DocumentReference docRef = db.collection("User").document(email);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Picasso.get().load(document.getString("personalPhoto")).into(personalPhoto);
+                            String documentData = document.getString("firstName") + " " + document.getString("lastName");
+                            name2.setText(documentData);
+                            emailView2.setText(email);
+                            firstName2.setText(document.getString("firstName"));
+                            lastName2.setText(document.getString("lastName"));
+                            emailBox2.setText(email);
+                        } else {
+                        }
                     } else {
                     }
-                } else {
                 }
+            });
+            DocumentReference docRef2 = db.collection("User").document(email).collection("Trainee").document(email);
+            docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            address2.setText(document.getString("address"));
+                            mobileNum2.setText(document.getString("mobileNumber"));
+                        } else {
+                        }
+                    } else {
+                    }
+                }
+            });
+        }
+        else if(role.equals("Instructor")){
+            DocumentReference docRef = db.collection("User").document(email);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Picasso.get().load(document.getString("personalPhoto")).into(personalPhoto);
+                            String documentData = document.getString("firstName") + " " + document.getString("lastName");
+                            name2.setText(documentData);
+                            emailView2.setText(email);
+                            firstName2.setText(document.getString("firstName"));
+                            lastName2.setText(document.getString("lastName"));
+                            emailBox2.setText(email);
+                        } else {
+                        }
+                    } else {
+                    }
+                }
+            });
+            DocumentReference docRef2 = db.collection("User").document(email).collection("Instructor").document(email);
+            docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            address2.setText(document.getString("address"));
+                            mobileNum2.setText(document.getString("mobileNumber"));
+                            degree2.setText(document.getString("degree"));
+                            spe2.setText(document.getString("specialization"));
+                        } else {
+                        }
+                    } else {
+                    }
+                }
+            });
+        }
+
+        cloas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
             }
         });
 

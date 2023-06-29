@@ -7,9 +7,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,6 +82,8 @@ public class edit_delete_course extends AppCompatActivity {
                 QuerySnapshot querySnapshot = task.getResult();
                 if (querySnapshot != null) {
                     for (QueryDocumentSnapshot document : querySnapshot) {
+                        LinearLayout thiredLinearLayout = new LinearLayout(this);
+                        thiredLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
                         TextView textView = new TextView(edit_delete_course.this);
                         Button deleteBtn = new Button(edit_delete_course.this);
                         Button update = new Button(edit_delete_course.this);
@@ -85,11 +91,13 @@ public class edit_delete_course extends AppCompatActivity {
                         update.setText("update");
                         String Id = document.getId();
                         String course_name = (String) document.get("courseTitle");
+                        TextView textView2 = createTextView(edit_delete_course.this , course_name , 18 ,Typeface.DEFAULT);
                         textView.setText("\nName= " + course_name);
                         DocumentReference docRef = collectionRef.document(Id);
-                        secondLinearLayout.addView(textView);
-                        secondLinearLayout.addView(deleteBtn);
-                        secondLinearLayout.addView(update);
+                        thiredLinearLayout.addView(textView2);
+                        thiredLinearLayout.addView(deleteBtn);
+                        thiredLinearLayout.addView(update);
+                        secondLinearLayout.addView(thiredLinearLayout);
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         deleteBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -192,5 +200,18 @@ public class edit_delete_course extends AppCompatActivity {
                 }
             }
         });
+    }
+    private TextView createTextView(Context context, String text, int textSize, Typeface typeface) {
+        TextView textView = new TextView(context);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        textView.setText(text);
+        textView.setTextSize(textSize);
+        typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
+        textView.setTypeface(typeface);
+        textView.setTextColor(Color.parseColor("#000000"));
+        textView.setPadding(0, 0, 10, 16);
+
+        return textView;
     }
 }

@@ -129,6 +129,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
                 startActivity(intent);
             } else if (id == R.id.nav_Addregistration) {
                 Intent intent = new Intent(getApplicationContext(), make_available.class);
+                intent.putExtra("email",email);
                 startActivity(intent);
             }else if (id == R.id.nav_VSC) {
                 Intent intent = new Intent(getApplicationContext(), view_student_course.class);
