@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -74,20 +75,13 @@ import java.util.UUID;
 
 public class Registration_applications extends AppCompatActivity {
     private FirebaseFirestore db;
-    LinearLayout secondLinearLayout;
+    private LinearLayout coursesMainView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_applications);
-
-        LinearLayout firstLinearLayout=new LinearLayout(this);
-        secondLinearLayout=new LinearLayout(this);
-        ScrollView scrollView=new ScrollView(this);
-        firstLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        secondLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        scrollView.addView(secondLinearLayout);
-        firstLinearLayout.addView(scrollView);
-        setContentView(firstLinearLayout);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        coursesMainView = findViewById(R.id.courses_main_view_registration);
 
         db = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = db.collection("Registration");
@@ -125,15 +119,18 @@ public class Registration_applications extends AppCompatActivity {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                                         if(status.equals("Pending")) {
+                                                                            String userId = document.getId();
                                                                             String F = (String) document.get("firstName");
                                                                             String L = (String) document.get("lastName");
-                                                                            CardView c =createCourseCardView(F,L,title);
-                                                                            secondLinearLayout.addView(c);
+                                                                            CardView c =createCourseCardView(title,Tid,F,L,status);
+                                                                            coursesMainView.addView(c);
                                                                             c.setOnClickListener(new View.OnClickListener() {
                                                                                 @Override
                                                                                 public void onClick(View view) {
                                                                                     Bundle args = new Bundle();
                                                                                     args.putString("pointer", Id);
+                                                                                    args.putString("pointer2", userId);
+                                                                                    args.putString("pointer3", title);
                                                                                     Registration_applications_dialog exampleDialog = new Registration_applications_dialog();
                                                                                     exampleDialog.setArguments(args);
                                                                                     exampleDialog.show(getSupportFragmentManager(), "example dialog");
@@ -164,43 +161,117 @@ public class Registration_applications extends AppCompatActivity {
         });
     }
 
-    private CardView createCourseCardView(String F, String L, String C) {
+    private CardView createCourseCardView(String courseName, String id, String F, String L, String Status) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
-        cardViewParams.setMargins(4, 10, 0, 10);
+        cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(16);
+        cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
         //cardView.setContentPadding(8, 8, 8, 8);
-        cardView.setContentPadding(16, 32, 16, 32);
+        cardView.setContentPadding(32, 32, 32, 32);
+
+
         // Create the LinearLayout inside the CardView
-        LinearLayout innerLinearLayout = new LinearLayout(this);
+        LinearLayout mainLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        innerLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        innerLinearLayout.setLayoutParams(innerLinearLayoutParams);
-        // Create the TextViews inside the LinearLayout
+        mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
 
-        TextView titleTextView = createTextView(this, "The student "+F+" "+L+" wants to join class "+C, 18, Typeface.DEFAULT);
-        titleTextView.setTextColor(Color.parseColor("#000000"));
-        titleTextView.setPadding(0, 0, 0, 16);
+        // Create the TextViews inside the LinearLayout
+        TextView titleTextView = createTextView(this, courseName, 24, Typeface.DEFAULT, false);
+        titleTextView.setTextColor(Color.parseColor("#7884FC"));
+        titleTextView.setPadding(0, 0, 0, 32);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        linearLayout.setLayoutParams(layoutParams);
+
+// Set marginTop and marginBottom
+        int marginTop = (int) getResources().getDimension(R.dimen.margin_top);
+        int marginBottom = (int) getResources().getDimension(R.dimen.margin_bottom);
+        linearLayout.setPadding(0, marginTop, 0, marginBottom);
+
+// Set background color
+        linearLayout.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        TextView timeTextView = createTextView(this, id, 16, Typeface.DEFAULT, false);
+        timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_email_24_num_two, 0, 0, 0);
+        timeTextView.setCompoundDrawablePadding(32);
+        timeTextView.setPadding(0, 0, 0, 16);
+
+        TextView dateTextView = createTextView(this, F+" "+L, 16, Typeface.DEFAULT, false);
+        dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_person_24, 0, 0, 0);
+        dateTextView.setCompoundDrawablePadding(32);
+        dateTextView.setPadding(0, 0, 0, 16);
+
+        TextView venueTextView = createTextView(this, Status, 16, Typeface.DEFAULT, false);
+        venueTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_pending_24, 0, 0, 0);
+        venueTextView.setCompoundDrawablePadding(32);
+        venueTextView.setPadding(0, 0, 0, 16);
+
+        LinearLayout innerLinearLayout1 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams1 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
+        //innerLinearLayout1.setPadding(0, 32, 0, 32);
+//        innerLinearLayout1.setWeightSum(50);
+
+        LinearLayout innerLinearLayout2 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams2 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
+        //innerLinearLayout2.setPadding(0, 32, 0, 32);
 
         // Add the TextViews to the LinearLayout
-        innerLinearLayout.addView(titleTextView);
-        // Add the LinearLayout to the CardView
-        cardView.addView(innerLinearLayout);
+        mainLinearLayout.addView(titleTextView);
+        mainLinearLayout.addView(linearLayout);
+
+        innerLinearLayout1.addView(timeTextView);
+        innerLinearLayout1.addView(dateTextView);
+
+
+        innerLinearLayout2.addView(venueTextView);
+
+
+        LinearLayout innerLinearLayout3 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        innerLinearLayout3.setOrientation(LinearLayout.HORIZONTAL);
+        innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
+        innerLinearLayout3.addView(innerLinearLayout1);
+        innerLinearLayout3.addView(innerLinearLayout2);
+
+        mainLinearLayout.addView(innerLinearLayout3);
+        cardView.addView(mainLinearLayout);
         return cardView;
     }
-    private TextView createTextView(Context context, String text, int textSize, Typeface typeface) {
+
+    private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         textView.setText(text);
-        textView.setTextSize(textSize);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
-        textView.setTypeface(typeface);
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
+        //textView.setTextColor(Color.parseColor("#000000"));
+        if (setText) {
+            textView.setTextSize(textSize);
+        }
         return textView;
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

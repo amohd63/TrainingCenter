@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -168,9 +169,13 @@ public class update_dialog extends AppCompatDialogFragment {
     private final int GALLERY_REQ_CODE = 1000;
     Uri selectedImageUri;
     private ImageButton im;
+    FirebaseFirestore db;
 
     private ImageView coursePhoto;
+    String nameTosent;
+    UUID uuid;
 
+    boolean flag= false;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fcourse_default.png?alt=media&token=68dd1b73-90b6-4cb9-ac91-460e3dfe6768&fbclid=IwAR0iXsAX8uaRcIH71NxiN0bDtrkUFm0MS_aZaLxUKhtZj4PUxrW_jZ0DEEE";
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -184,16 +189,17 @@ public class update_dialog extends AppCompatDialogFragment {
         Spinner spinner = view.findViewById(R.id.spinner);
         im = view.findViewById(R.id.close_update_dialog_now);
         coursePhoto = view.findViewById(R.id.updateCoursePhoto);
-
+        db =  FirebaseFirestore.getInstance();
         coursePhoto.setVisibility(View.INVISIBLE);
         value.setVisibility(View.INVISIBLE);
         // Create an ArrayAdapter for the spinner
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, options);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
-
+        uuid = UUID.randomUUID();
         Bundle args = getArguments();
         String documentPath = args.getString("pointer");
+        nameTosent = args.getString("pointer2");
         DocumentReference docRef = FirebaseFirestore.getInstance().document(documentPath);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -205,7 +211,7 @@ public class update_dialog extends AppCompatDialogFragment {
                 } else if(filed == "mainTopics") {
                     value.setVisibility(View.VISIBLE);
                     coursePhoto.setVisibility(View.INVISIBLE);
-                }else if(filed == "photo"){
+                } else if(filed == "photo"){
                     coursePhoto.setVisibility(View.VISIBLE);
                     value.setVisibility(View.INVISIBLE);
                 }
@@ -224,19 +230,23 @@ public class update_dialog extends AppCompatDialogFragment {
                             String newValue = value.getText().toString();
                             docRef.update(filed, newValue)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
-                                    .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));;
-
+                                    .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
+                            sendNotifacation(newValue);
                         } else if(filed == "mainTopics") {
                             String newValue[] = value.getText().toString().split("\n");
                             ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(newValue));
                             docRef.update(filed, arrayList)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
-                                    .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));;
+                                    .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
+                            sendNotifacation(nameTosent);
                         }else if(filed == "photo"){
                             docRef.update(filed, imgUrl)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
+                            sendNotifacation(nameTosent);
                         }
+                        dismiss();
+                        getActivity().recreate();
                     }
                 });
                 im.setOnClickListener(new View.OnClickListener() {
@@ -257,6 +267,77 @@ public class update_dialog extends AppCompatDialogFragment {
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
+    }
+    public void sendNotifacation(String data){
+        CollectionReference courseRef = db.collection("Course");
+        Query courseQuery = courseRef.whereEqualTo("courseTitle", data);
+        courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String courseId = document.getId();
+                        // 2. Retrieve offeringIDs by courseID
+                        CollectionReference offeringRef = db.collection("CourseOffering");
+                        Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId);
+                        offeringQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String offeringId = document.getId();
+                                        CollectionReference registrationRef = db.collection("Registration");
+                                        Query registrationQuery = registrationRef.whereEqualTo("offeringID", offeringId);
+                                        registrationQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        String registrationID = (String) document.get("traineeID");
+                                                        CollectionReference userRef = db.collection("User");
+                                                        Query userQuery = userRef.whereEqualTo("email", registrationID);
+                                                        userQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                        String userId = document.getId();
+                                                                        //notification
+                                                                        String title = "Update course";
+                                                                        String body;
+                                                                        if(nameTosent.equals(data)) {
+                                                                             body = "The course " + nameTosent + " has been updated";
+                                                                        }else{
+                                                                             body = "The course " + nameTosent + " has been updated so the name now is "+data;
+                                                                        }
+                                                                        String noteID = uuid.toString().replace("-", "").substring(0, 20);
+                                                                        Map<String, Object> note = new HashMap<>();
+                                                                        note.put("body", body);
+                                                                        note.put("title", title);
+                                                                        note.put("userID", userId);
+                                                                        db.collection("NotificationBackup").document(noteID).set(note);
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                } else {
+                                                    Log.w("Firestore", "10Error getting documents.", task.getException());
+                                                }
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    Log.w("Firestore", "20Error getting documents.", task.getException());
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    Log.w("Firestore", "30Error getting documents.", task.getException());
+                }
+            }
+        });
     }
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

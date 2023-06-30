@@ -3,12 +3,16 @@ package com.example.trainingcenter.View.admin;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -27,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -35,30 +41,26 @@ import java.util.regex.Pattern;
 public class View_profiles_from_admin extends AppCompatActivity {
     private FirebaseFirestore db;
     LinearLayout secondLinearLayout;
-    LinearLayout firstLinearLayout;
     Spinner type;
+    LinearLayout mainView;
     FirebaseFirestore firestore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profiles_from_admin);
-        firstLinearLayout = new LinearLayout(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mainView = findViewById(R.id.new_lets_show_the_data);
         secondLinearLayout = new LinearLayout(this);
-        ScrollView scrollView = new ScrollView(this);
-
+        secondLinearLayout.setOrientation(LinearLayout.VERTICAL);
         type = new Spinner(this);
         String[] options = {"Trainee", "Instructor"};
         // Create an ArrayAdapter for the spinner
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, options);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         type.setAdapter(spinnerAdapter);
+        mainView.addView(type);
+        mainView.addView(secondLinearLayout);
 
-        firstLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        secondLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        scrollView.addView(secondLinearLayout);
-        firstLinearLayout.addView(type);
-        firstLinearLayout.addView(scrollView);
-        setContentView(firstLinearLayout);
     }
     @Override
     protected void onResume() {
@@ -81,6 +83,7 @@ public class View_profiles_from_admin extends AppCompatActivity {
                                     String email = document.getId();
                                     String firstName = document.getString("firstName");
                                     String lastName = document.getString("lastName");
+                                    String photo = document.getString("personalPhoto");
                                     DocumentReference docRef = collectionRef.document(email);
                                     CollectionReference collectionRef2 = firestore.collection("User").document(email).collection("Trainee");
                                     collectionRef2.get().addOnCompleteListener(task1 -> {
@@ -88,7 +91,7 @@ public class View_profiles_from_admin extends AppCompatActivity {
                                             QuerySnapshot querySnapshot2 = task1.getResult();
                                             if (querySnapshot2 != null) {
                                                 for (QueryDocumentSnapshot document2 : querySnapshot2) {
-                                                    CardView c = createCourseCardView("Show the profile of trainee " + firstName + " " + lastName + " with email " + email);
+                                                    CardView c = createCourseCardView2(email,firstName,lastName,photo);
                                                     secondLinearLayout.addView(c);
                                                     c.setOnClickListener(new View.OnClickListener() {
                                                         @Override
@@ -119,6 +122,7 @@ public class View_profiles_from_admin extends AppCompatActivity {
                                     String email = document.getId();
                                     String firstName = document.getString("firstName");
                                     String lastName = document.getString("lastName");
+                                    String photo = document.getString("personalPhoto");
                                     DocumentReference docRef = collectionRef.document(email);
                                     CollectionReference collectionRef2 = firestore.collection("User").document(email).collection("Instructor");
                                     collectionRef2.get().addOnCompleteListener(task1 -> {
@@ -126,7 +130,7 @@ public class View_profiles_from_admin extends AppCompatActivity {
                                             QuerySnapshot querySnapshot2 = task1.getResult();
                                             if (querySnapshot2 != null) {
                                                 for (QueryDocumentSnapshot document2 : querySnapshot2) {
-                                                    CardView c = createCourseCardView("Show the profile of instructor " + firstName + " " + lastName + " with email " + email);
+                                                    CardView c = createCourseCardView2(email,firstName,lastName,photo);
                                                     secondLinearLayout.addView(c);
                                                     c.setOnClickListener(new View.OnClickListener() {
                                                         @Override
@@ -156,43 +160,93 @@ public class View_profiles_from_admin extends AppCompatActivity {
         });
 
     }
-    private CardView createCourseCardView(String F) {
+    private CardView createCourseCardView2(String email, String F, String L, String photo) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
-        cardViewParams.setMargins(4, 10, 0, 10);
-        cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(16);
-        cardView.setUseCompatPadding(true);
-        //cardView.setContentPadding(8, 8, 8, 8);
-        cardView.setContentPadding(16, 32, 16, 32);
-        // Create the LinearLayout inside the CardView
-        LinearLayout innerLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        innerLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        innerLinearLayout.setLayoutParams(innerLinearLayoutParams);
-        // Create the TextViews inside the LinearLayout
+        cardViewParams.setMargins(4, 0, 0, 0);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(32);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(32, 32, 32, 32);
+        cardView.setElevation(32);
 
-        TextView titleTextView = createTextView(this, F, 18, Typeface.DEFAULT);
-        titleTextView.setTextColor(Color.parseColor("#000000"));
-        titleTextView.setPadding(0, 0, 0, 16);
+        LinearLayout mainLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        mainLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        mainLinearLayout.setGravity(Gravity.CENTER);
+        innerLinearLayoutParams.setMargins(10, 10, 10, 10);
 
-        // Add the TextViews to the LinearLayout
-        innerLinearLayout.addView(titleTextView);
-        // Add the LinearLayout to the CardView
-        cardView.addView(innerLinearLayout);
+        int heightInDp = 60;
+        float scale = this.getResources().getDisplayMetrics().density;
+        int heightInPixels = (int) (heightInDp * scale + 0.5f);
+        ImageView imageView = new ImageView(this);
+        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(0, heightInPixels, 25);
+        heightInPixels = (int) (8 * scale + 0.5f);
+        imgParams.setMargins(0, 0, heightInPixels, 0);
+        imageView.setLayoutParams(imgParams);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageResource(R.drawable.mobile_img);
+        Picasso.get().load(photo).into(imageView);
+
+        LinearLayout innerLayout = new LinearLayout(this);
+
+// Set layout parameters
+        innerLayout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 75));
+        innerLayout.setPadding(8, 0, 0, 0);
+        innerLayout.setWeightSum(75);
+        innerLayout.setOrientation(LinearLayout.VERTICAL);
+
+// Create an instance of TextView
+        TextView titleTV = new TextView(this);
+
+// Set layout parameters
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        titleTV.setLayoutParams(params);
+        titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        titleTV.setText(email);
+        titleTV.setTextColor(ContextCompat.getColor(this, R.color.lavender));
+        titleTV.setTextSize(16);
+
+// Create an instance of TextView
+        TextView instructorTV = new TextView(this);
+// Set layout parameters
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        instructorTV.setLayoutParams(params);
+        instructorTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        instructorTV.setText(F+" "+L);
+        instructorTV.setTextColor(0xFF000000); // Equivalent to #000000 in hexadecimal
+
+        innerLayout.addView(titleTV);
+        innerLayout.addView(instructorTV);
+
+        mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(innerLayout);
+        cardView.addView(mainLinearLayout);
         return cardView;
     }
-    private TextView createTextView(Context context, String text, int textSize, Typeface typeface) {
+    private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         textView.setText(text);
-        textView.setTextSize(textSize);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
-        textView.setTypeface(typeface);
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
+        //textView.setTextColor(Color.parseColor("#000000"));
+        if (setText) {
+            textView.setTextSize(textSize);
+        }
         return textView;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

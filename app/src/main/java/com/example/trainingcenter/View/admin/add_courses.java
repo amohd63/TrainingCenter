@@ -64,6 +64,7 @@ public class add_courses extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_courses);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         cName = findViewById(R.id.course_title_insert);
         cMainTopics = findViewById(R.id.course_main_topics_insert);
         cPre = findViewById(R.id.prerequisites_insert);
@@ -96,7 +97,7 @@ public class add_courses extends AppCompatActivity {
                 Map<String, Object> course = new HashMap<>();
                 course.put("courseTitle", c_name);
                 course.put("mainTopics", arrayList);
-                course.put("isAvailableForRegistration", false);
+                course.put("isAvailableForRegistration", true);
                 course.put("courseID", courseID);
                 course.put("photo",imgUrl);
                 for (int i = 0; i < c_pre.length; i++) {
@@ -122,6 +123,9 @@ public class add_courses extends AppCompatActivity {
                     });
                 }
                 db.collection("Course").document(courseID).set(course);
+                cName.setText("");
+                cMainTopics.setText("");
+                cPre.setText("");
             }
         });
     }
@@ -147,5 +151,10 @@ public class add_courses extends AppCompatActivity {
                         });
             }
         }
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

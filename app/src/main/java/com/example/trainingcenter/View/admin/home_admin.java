@@ -34,6 +34,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
         private FirebaseFirestore db;
         private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
 
+        private static final int REQUEST_CODE = 1;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +87,33 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
         });
     }
 
-        @Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ImageView profileImg = profile.findViewById(R.id.profileimage);
+        TextView profileName = profile.findViewById(R.id.profilename);
+        String[] documentData = new String[2];
+        DocumentReference docRef = db.collection("User").document(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        documentData[0] = document.getString("personalPhoto");
+                        documentData[1] = document.getString("firstName") + " " + document.getString("lastName");
+                        profileName.setText(documentData[1]);
+                        Picasso.get().load(documentData[0]).into(profileImg);
+                    } else {
+                        Picasso.get().load(imgUrl).into(profileImg);
+                    }
+                } else {
+                }
+            }
+        });
+    }
+
+    @Override
         public void onBackPressed() {
             DrawerLayout drawer = findViewById(R.id.drawer_layout2);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -143,10 +170,8 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
             } else if (id == R.id.nav_CourseHistory) {
                 Intent intent = new Intent(getApplicationContext(), view_previous_offering_course.class);
                 startActivity(intent);
-            } else if (id == R.id.nav_settings) {
-                Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.admin.Settings.class);
-                startActivity(intent);
-            } else if (id == R.id.nav_logout) {
+            }
+            else if (id == R.id.nav_logout) {
                 finish();
             }
 
@@ -159,7 +184,8 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
         public void onClick(View view) {
             if (view.getId() == R.id.profile) {
                 Intent intent = new Intent(getApplicationContext(), com.example.trainingcenter.View.admin.MyProfile.class);
-                startActivity(intent);
+                intent.putExtra("email",email);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         }
 }

@@ -145,7 +145,7 @@ public class available_dialog extends AppCompatDialogFragment {
                 Map<String, Object> note = new HashMap<>();
                 note.put("body",body);
                 note.put("title",title);
-                note.put("userID",emailForAdmin);
+                note.put("userID","all");
 
                 //
                 Map<String, Object> coureInstroctor = new HashMap<>();
