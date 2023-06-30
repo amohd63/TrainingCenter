@@ -108,8 +108,8 @@ public class LoginActivity extends AppCompatActivity implements
             //loginEmail.setText("");
         }
 
-        loginEmail.setText("ali@gmail.com");
-        loginPassword.setText("123456");
+        loginEmail.setText("instructor@gmail.com");
+        loginPassword.setText("282610As");
         loginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

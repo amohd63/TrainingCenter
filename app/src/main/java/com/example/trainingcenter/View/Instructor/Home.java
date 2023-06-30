@@ -1,5 +1,6 @@
 package com.example.trainingcenter.View.Instructor;
 
+import android.accounts.AccountManagerFuture;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -32,7 +33,7 @@ public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     LinearLayout profile;
-    private String email = "ali@gmail.com";
+    private String email;
     private FirebaseFirestore db;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
 
@@ -41,8 +42,8 @@ public class Home extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-//        Intent intent = getIntent();
-//        email = intent.getStringExtra("email");
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
         setContentView(R.layout.activity_home_instructor);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -119,7 +120,6 @@ public class Home extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -131,24 +131,18 @@ public class Home extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_schedule_ins) {
             Intent intent = new Intent(getApplicationContext(), Schedule.class);
+            intent.putExtra("email", email);
             startActivity(intent);
-
         } else if (id == R.id.nav_LOS_ins) {
             Intent intent = new Intent(getApplicationContext(), ListOfStudents.class);
+            intent.putExtra("email", email);
             startActivity(intent);
-        } else if (id == R.id.nav_announcements) {
-            Intent intent = new Intent(getApplicationContext(), Announcements.class);
+        } else if (id == R.id.nav_myProfile) {
+            Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+            intent.putExtra("email", email);
             startActivity(intent);
-        } else if (id == R.id.nav_settings) {
-            Intent intent = new Intent(getApplicationContext(), Settings.class);
-            startActivity(intent);
-
-        } else if (id == R.id.nav_logout) {
+        }else if (id == R.id.nav_logout) {
             finish();
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_rate) {
-
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -163,5 +157,32 @@ public class Home extends AppCompatActivity
             intent.putExtra("email", email);
             startActivity(intent);
         }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ImageView profileImg = profile.findViewById(R.id.profileimage);
+        TextView profileName = profile.findViewById(R.id.profilename);
+        String[] documentData = new String[2];
+
+        DocumentReference docRef = db.collection("User").document(email);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        documentData[0] = document.getString("personalPhoto");
+                        documentData[1] = document.getString("firstName") + " " + document.getString("lastName");
+                        profileName.setText(documentData[1]);
+                        Picasso.get().load(documentData[0]).into(profileImg);
+                    } else {
+                        Picasso.get().load(imgUrl).into(profileImg);
+                    }
+                } else {
+                }
+            }
+        });
+
     }
 }

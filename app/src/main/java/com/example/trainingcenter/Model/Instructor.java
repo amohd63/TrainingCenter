@@ -11,7 +11,7 @@ public class Instructor extends User {
     private String address;
     private String specialization;
     private Degree degree;
-    private enum Degree{
+    public enum Degree{
         BSc,
         MSc,
         PhD
@@ -52,16 +52,31 @@ public class Instructor extends User {
         this.specialization = specialization;
     }
 
-    public Degree getDegree() {
-        return degree;
+    public String getDegree() {
+        // Return the degree as a string
+        return degree != null ? degree.name() : null;
     }
 
-    public void setDegree(Degree degree) {
-        this.degree = degree;
+    public void setDegree(String degree) {
+
+        // Check if the string matches any of the enum values
+        for (Degree d : Degree.values()) {
+            if (d.name().equals(degree)) {
+                this.degree = d;
+                return;
+            }
+        }
+
+        // Handle the case when the string does not match any enum value
+        throw new IllegalArgumentException("Invalid degree: " + degree);
     }
 
     public static boolean isValidMobileNumber(String mobileNumber) {
         String regex = "^\\+970\\d{9}$";
         return Pattern.matches(regex, mobileNumber);
+    }
+
+    public String getFullName(){
+        return this.getFirstName() + " " + this.getLastName();
     }
 }

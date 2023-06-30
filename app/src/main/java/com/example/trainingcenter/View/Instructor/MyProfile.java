@@ -6,12 +6,16 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.trainingcenter.Model.Instructor;
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,8 +26,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class MyProfile extends AppCompatActivity {
@@ -32,6 +34,10 @@ public class MyProfile extends AppCompatActivity {
     private final int GALLERY_REQ_CODE = 1000;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fadmin_default.png?alt=media&token=6db2f3a0-6bed-48a8-9aae-b9bff0deae01";
     private ImageView personalPhoto;
+    private Instructor instructor;
+    private String degree;
+
+    private boolean radioButtonFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +48,19 @@ public class MyProfile extends AppCompatActivity {
         email = intent.getStringExtra("email");
         db = FirebaseFirestore.getInstance();
         personalPhoto = findViewById(R.id.personalPhoto);
-        final String[] documentData = new String[2];
+
         TextView emailBox = findViewById(R.id.emailBox);
         TextView emailView = findViewById(R.id.email);
         EditText firstName = findViewById(R.id.firstname);
         EditText lastName = findViewById(R.id.lastname);
         EditText address = findViewById(R.id.address);
         EditText mobileNum = findViewById(R.id.mobile_number);
+        EditText spec = findViewById(R.id.specialization);
         TextView name = findViewById(R.id.name);
+        RadioGroup degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
+
+        instructor = new Instructor();
+        degree = "";
 
         DocumentReference docRef = db.collection("User").document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -58,14 +69,16 @@ public class MyProfile extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        documentData[0] = document.getString("personalPhoto");
-                        Picasso.get().load(documentData[0]).into(personalPhoto);
-                        documentData[1] = document.getString("firstName") + " " + document.getString("lastName");
-                        name.setText(documentData[1]);
-                        firstName.setText(document.getString("firstName"));
-                        lastName.setText(document.getString("lastName"));
+                        instructor.setEmail(email);
+                        instructor.setFirstName(document.getString("firstName"));
+                        instructor.setLastName(document.getString("lastName"));
+                        instructor.setPictureObj(document.getString("personalPhoto"));
+                        Picasso.get().load(instructor.getPictureObj()).into(personalPhoto);
+                        firstName.setText(instructor.getFirstName());
+                        lastName.setText(instructor.getLastName());
                         emailBox.setText(email);
                         emailView.setText(email);
+                        name.setText(instructor.getFullName());
                     } else {
                     }
                 } else {
@@ -73,15 +86,32 @@ public class MyProfile extends AppCompatActivity {
             }
         });
 
-        DocumentReference docRef2 = db.collection("User").document(email).collection("Trainee").document(email);
+        DocumentReference docRef2 = db.collection("User").document(email).collection("Instructor").document(email);
         docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        address.setText(document.getString("address"));
-                        mobileNum.setText(document.getString("mobileNumber"));
+                        instructor.setAddress(document.getString("address"));
+                        instructor.setSpecialization(document.getString("specialization"));
+                        instructor.setMobileNumber(document.getString("mobileNumber"));
+                        instructor.setDegree(document.getString("degree"));
+                        address.setText(instructor.getAddress());
+                        spec.setText(instructor.getSpecialization());
+                        mobileNum.setText(instructor.getMobileNumber());
+                        RadioButton temp;
+                        if(instructor.getDegree().equals("BSc")){
+                            temp = findViewById(R.id.bscRadioButton);
+                            temp.setChecked(true);
+                        }else if(instructor.getDegree().equals("MSc")){
+                            temp = findViewById(R.id.mscRadioButton);
+                            temp.setChecked(true);
+                        }else if(instructor.getDegree().equals("PhD")){
+                            temp = findViewById(R.id.phdRadioButton);
+                            temp.setChecked(true);
+                        }
+                        radioButtonFlag = true;
                     } else {
                     }
                 } else {
@@ -92,7 +122,7 @@ public class MyProfile extends AppCompatActivity {
         emailBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(com.example.trainingcenter.View.Instructor.MyProfile.this, "Email uneditable", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MyProfile.this, "Email uneditable", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -101,13 +131,17 @@ public class MyProfile extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     String newFirstName = firstName.getText().toString();
-                    db.collection("User").document(email)
-                            .update(
-                                    "firstName", newFirstName
-                            );
-                    Toast.makeText(com.example.trainingcenter.View.Instructor.MyProfile.this, "First name updated successfully", Toast.LENGTH_SHORT).show();
-                    String fullName = newFirstName + " " + lastName.getText();
-                    name.setText(fullName);
+                    if (Instructor.isValidName(newFirstName)) {
+                        db.collection("User").document(email)
+                                .update(
+                                        "firstName", newFirstName
+                                );
+                        Toast.makeText(MyProfile.this, "First name updated successfully", Toast.LENGTH_SHORT).show();
+                        instructor.setFirstName(newFirstName);
+                        name.setText(instructor.getFullName());
+                    }else{
+                        Toast.makeText(MyProfile.this, "Enter a valid first name!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -116,14 +150,18 @@ public class MyProfile extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    String newFirstName = lastName.getText().toString();
-                    db.collection("User").document(email)
-                            .update(
-                                    "lastName", newFirstName
-                            );
-                    Toast.makeText(com.example.trainingcenter.View.Instructor.MyProfile.this, "Last name updated successfully", Toast.LENGTH_SHORT).show();
-                    String fullName = firstName.getText() + " " + newFirstName;
-                    name.setText(fullName);
+                    String newLastName = lastName.getText().toString();
+                    if (Instructor.isValidName(newLastName)) {
+                        db.collection("User").document(email)
+                                .update(
+                                        "lastName", newLastName
+                                );
+                        Toast.makeText(MyProfile.this, "Last name updated successfully", Toast.LENGTH_SHORT).show();
+                        instructor.setLastName(newLastName);
+                        name.setText(instructor.getFullName());
+                    }else{
+                        Toast.makeText(MyProfile.this, "Enter a valid last name!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -133,11 +171,11 @@ public class MyProfile extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     String newAddress = address.getText().toString();
-                    db.collection("User").document(email).collection("Trainee").document(email)
+                    db.collection("User").document(email).collection("Instructor").document(email)
                             .update(
                                     "address", newAddress
                             );
-                    Toast.makeText(com.example.trainingcenter.View.Instructor.MyProfile.this, "Address updated successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyProfile.this, "Address updated successfully", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -147,11 +185,41 @@ public class MyProfile extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     String newMobile = mobileNum.getText().toString();
-                    db.collection("User").document(email).collection("Trainee").document(email)
+                    db.collection("User").document(email).collection("Instructor").document(email)
                             .update(
                                     "mobileNumber", newMobile
                             );
-                    Toast.makeText(com.example.trainingcenter.View.Instructor.MyProfile.this, "Mobile No. updated successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyProfile.this, "Mobile No. updated successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        spec.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    String newSpec = spec.getText().toString();
+                    db.collection("User").document(email).collection("Instructor").document(email)
+                            .update(
+                                    "specialization", newSpec
+                            );
+                    Toast.makeText(MyProfile.this, "Specialization updated successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        degreeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(radioButtonFlag) {
+                    // Find the selected radio button
+                    RadioButton selectedRadioButton = findViewById(checkedId);
+                    // Get the text of the selected radio button
+                    degree = selectedRadioButton.getText().toString();
+                    db.collection("User").document(email).collection("Instructor").document(email)
+                            .update(
+                                    "degree", degree
+                            );
+                    Toast.makeText(MyProfile.this, "Degree updated successfully", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -184,7 +252,7 @@ public class MyProfile extends AppCompatActivity {
                                                 .update(
                                                         "personalPhoto", imgUrl
                                                 );
-                                        Toast.makeText(com.example.trainingcenter.View.Instructor.MyProfile.this, "Personal photo updated successfully", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(MyProfile.this, "Personal photo updated successfully", Toast.LENGTH_SHORT).show();
                                     })
                                     .addOnFailureListener(exception -> {
                                     });
