@@ -83,9 +83,11 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
         Button accept = view.findViewById(R.id.accept_in_dialog_registration_applications);
         Button reject = view.findViewById(R.id.reject_in_dialog_registration_applications);
         ImageButton close = view.findViewById(R.id.close_registration_applications_dialog_now);
-
+        UUID uuid = UUID.randomUUID();
         Bundle args = getArguments();
         String id = args.getString("pointer");
+        String userId = args.getString("pointer2");
+        String courseTitle = args.getString("pointer3");
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = db.collection("Registration");
         CollectionReference Ref = db.collection("Registration");
@@ -108,6 +110,16 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
                 docRef.update("status", "Accepted")
                         .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                         .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
+                //notification
+                UUID uuid2 = UUID.randomUUID();
+                String noteID = uuid.toString().replace("-", "").substring(0, 20);
+                String title = "Acceptance";
+                String body = "You have been accepted to the course "+courseTitle+".";
+                Map<String, Object> note = new HashMap<>();
+                note.put("body",body);
+                note.put("title",title);
+                note.put("userID",userId);
+                db.collection("NotificationBackup").document(noteID).set(note);
                 dismiss();
                 getActivity().recreate();
             }
@@ -117,6 +129,16 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 docRef.delete();
+                //notification
+                UUID uuid2 = UUID.randomUUID();
+                String noteID = uuid.toString().replace("-", "").substring(0, 20);
+                String title = "Rejection";
+                String body = "You have been rejected from joining the course "+courseTitle+".";
+                Map<String, Object> note = new HashMap<>();
+                note.put("body",body);
+                note.put("title",title);
+                note.put("userID",userId);
+                db.collection("NotificationBackup").document(noteID).set(note);
                 dismiss();
                 getActivity().recreate();
             }

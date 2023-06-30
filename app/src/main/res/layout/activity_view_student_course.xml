@@ -6,31 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".View.admin.available_dialog">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/course_name_search"
+        <LinearLayout
+            android:id="@+id/show_the_student_for_a_course_laty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="Course Name"
-            android:inputType="textPersonName"
-            android:textColorHint="#000000" />
-
-        <Button
-            android:id="@+id/search_student_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:text="Search" />
-
-    </LinearLayout>
+            android:orientation="vertical"/>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

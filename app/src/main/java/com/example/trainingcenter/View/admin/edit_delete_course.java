@@ -54,14 +54,17 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class edit_delete_course extends AppCompatActivity {
     private FirebaseFirestore db;
     LinearLayout secondLinearLayout;
+    UUID uuid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_delete_course);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         LinearLayout firstLinearLayout=new LinearLayout(this);
         secondLinearLayout=new LinearLayout(this);
         ScrollView scrollView=new ScrollView(this);
@@ -70,9 +73,12 @@ public class edit_delete_course extends AppCompatActivity {
         scrollView.addView(secondLinearLayout);
         firstLinearLayout.addView(scrollView);
         setContentView(firstLinearLayout);
+        uuid = UUID.randomUUID();
+
     }
     protected void onResume() {
         super.onResume();
+        db = FirebaseFirestore.getInstance();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         // Get a reference to the collection
         CollectionReference collectionRef = firestore.collection("Course");
@@ -98,7 +104,6 @@ public class edit_delete_course extends AppCompatActivity {
                         thiredLinearLayout.addView(deleteBtn);
                         thiredLinearLayout.addView(update);
                         secondLinearLayout.addView(thiredLinearLayout);
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
                         deleteBtn.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -111,6 +116,7 @@ public class edit_delete_course extends AppCompatActivity {
                             public void onClick(View view) {
                                 Bundle args = new Bundle();
                                 args.putString("pointer", docRef.getPath());
+                                args.putString("pointer2",course_name);
                                 update_dialog exampleDialog = new update_dialog();
                                 exampleDialog.setArguments(args);
                                 exampleDialog.show(getSupportFragmentManager(), "example dialog");
@@ -131,6 +137,7 @@ public class edit_delete_course extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         String courseId = document.getId();
+                        String courseTitle = (String) document.get("courseTitle");
                         // Delete course from Course collection
                         db.collection("Course").document(courseId).delete();
                         // 2. Retrieve offeringIDs by courseID
@@ -142,7 +149,6 @@ public class edit_delete_course extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         String offeringId = document.getId();
-
                                         // Delete offering from CourseOffering collection
                                         db.collection("CourseOffering").document(offeringId).delete();
                                         CollectionReference registrationRef = db.collection("Registration");
@@ -152,32 +158,25 @@ public class edit_delete_course extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                 if (task.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        String registrationID = (String) document.get("traineeID");
                                                         // Delete registration from Registration collection
-                                                        db.collection("Registration").document(document.getId()).delete();
-                                                        CollectionReference prerequisiteRef = db.collection("Prerequisite");
-                                                        Query prerequisiteQuery = prerequisiteRef.whereEqualTo("courseID", courseId);
-                                                        prerequisiteQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        db.collection("Registration").document(registrationID).delete();
+                                                        CollectionReference userRef = db.collection("User");
+                                                        Query userQuery = userRef.whereEqualTo("email", registrationID);
+                                                        userQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                        String prerequisiteID =(String) document.get("prerequisiteID");;
-                                                                        // Delete offering from CourseOffering collection
-                                                                        db.collection("Prerequisite").document(prerequisiteID).delete();
-                                                                        CollectionReference instructorCourseRef = db.collection("InstructorCourse");
-                                                                        Query instructorCourseQuery = instructorCourseRef.whereEqualTo("courseID", courseId);
-                                                                        instructorCourseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                if (task.isSuccessful()) {
-                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                        String InstructorCourseId = document.getId();
-                                                                                        // Delete offering from CourseOffering collection
-                                                                                        db.collection("InstructorCourse").document(InstructorCourseId).delete();
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        });
+                                                                        //notification
+                                                                        String title = "Deleted Course";
+                                                                        String body = "The course " + courseTitle + " has been deleted";
+                                                                        String noteID = uuid.toString().replace("-", "").substring(0, 20);
+                                                                        Map<String, Object> note = new HashMap<>();
+                                                                        note.put("body", body);
+                                                                        note.put("title", title);
+                                                                        note.put("userID", registrationID);
+                                                                        db.collection("NotificationBackup").document(noteID).set(note);
                                                                     }
                                                                 }
                                                             }
@@ -191,6 +190,36 @@ public class edit_delete_course extends AppCompatActivity {
                                     }
                                 } else {
                                     Log.w("Firestore", "Error getting documents.", task.getException());
+                                }
+                            }
+                        });
+
+                        CollectionReference prerequisiteRef = db.collection("Prerequisite");
+                        Query prerequisiteQuery = prerequisiteRef.whereEqualTo("courseID", courseId);
+                        prerequisiteQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String prerequisiteID =(String) document.getId();;
+                                        // Delete offering from CourseOffering collection
+                                        db.collection("Prerequisite").document(prerequisiteID).delete();
+                                    }
+                                }
+                            }
+                        });
+
+                        CollectionReference instructorCourseRef = db.collection("InstructorCourse");
+                        Query instructorCourseQuery = instructorCourseRef.whereEqualTo("courseID", courseId);
+                        instructorCourseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String InstructorCourseId = document.getId();
+                                        // Delete offering from CourseOffering collection
+                                        db.collection("InstructorCourse").document(InstructorCourseId).delete();
+                                    }
                                 }
                             }
                         });
@@ -213,5 +242,11 @@ public class edit_delete_course extends AppCompatActivity {
         textView.setPadding(0, 0, 10, 16);
 
         return textView;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
