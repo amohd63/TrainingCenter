@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -133,6 +134,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         cardView.setUseCompatPadding(true);
         //cardView.setContentPadding(8, 8, 8, 8);
         cardView.setContentPadding(32, 32, 32, 32);
+        cardView.setElevation(32);
 
 
 
@@ -144,7 +146,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
 
         // Create the TextViews inside the LinearLayout
-        TextView titleTextView = createTextView(this, courseName, 24, Typeface.DEFAULT);
+        TextView titleTextView = createTextView(this, courseName, 16, Typeface.DEFAULT);
         titleTextView.setTextColor(Color.parseColor("#7884FC"));
         titleTextView.setPadding(0, 0, 0, 32);
 
@@ -165,22 +167,22 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
 // Set background color
         linearLayout.setBackgroundColor(Color.parseColor("#80D1D1D1"));
 
-        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT);
+        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT, false);
         timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
         timeTextView.setCompoundDrawablePadding(32);
         timeTextView.setPadding(0, 0, 0, 16);
 
-        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT);
+        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT, false);
         dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_red_24dp, 0, 0, 0);
         dateTextView.setCompoundDrawablePadding(32);
         dateTextView.setPadding(0, 0, 0, 16);
 
-        TextView venueTextView = createTextView(this, venue, 16, Typeface.DEFAULT);
+        TextView venueTextView = createTextView(this, venue, 16, Typeface.DEFAULT, false);
         venueTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_red_24dp, 0, 0, 0);
         venueTextView.setCompoundDrawablePadding(32);
         venueTextView.setPadding(0, 0, 0, 16);
 
-        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
+        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
         instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_outline_red_24dp, 0, 0, 0);
         instructorTextView.setCompoundDrawablePadding(32);
         instructorTextView.setPadding(0, 0, 0, 16);
@@ -233,6 +235,19 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         return cardView;
     }
 
+    private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
+        TextView textView = new TextView(context);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        textView.setText(text);
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
+        //textView.setTextColor(Color.parseColor("#000000"));
+        if (setText) {
+            textView.setTextSize(textSize);
+        }
+        return textView;
+    }
+
     private TextView createTextView(Context context, String text, int textSize, Typeface typeface) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
@@ -240,7 +255,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         textView.setText(text);
         //textView.setTextColor(Color.parseColor("#000000"));
         textView.setTextSize(textSize);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
         textView.setTypeface(typeface);
         //textView.setFontFamily(getResources().getFont(R.font.calibri));
         return textView;

@@ -10,16 +10,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,6 +29,8 @@ import android.widget.Toast;
 
 import com.developer.gbuttons.GoogleSignInButton;
 import com.example.trainingcenter.R;
+import com.example.trainingcenter.View.Trainee.Home;
+import com.example.trainingcenter.View.Trainee.MyLoadingButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -45,11 +48,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements
+        View.OnClickListener, MyLoadingButton.MyLoadingButtonClick {
 
     private EditText loginEmail, loginPassword;
     private TextView signupRedirectText;
-    private Button loginButton;
+    //private Button loginButton;
     private FirebaseFirestore db;
     private CheckBox rememberMe;
     private FirebaseAuth auth;
@@ -58,6 +62,10 @@ public class LoginActivity extends AppCompatActivity {
     GoogleSignInButton googleBtn;
     GoogleSignInOptions gOptions;
     GoogleSignInClient gClient;
+    MyLoadingButton loginButton;
+    TextView name;
+    final int[] i = {0};
+    String[] role = {""};
 
     private static final String SHARED_PREFS = "sharedPrefs";
     private static final String KEY = "myKey";
@@ -82,12 +90,14 @@ public class LoginActivity extends AppCompatActivity {
         loginEmail = findViewById(R.id.login_email);
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
+        loginButton.setMyButtonClickListener(this);
         //signupRedirectText = findViewById(R.id.signUpRedirectText);
         forgotPassword = findViewById(R.id.forgot_password);
         googleBtn = findViewById(R.id.googleBtn);
         rememberMe = findViewById(R.id.rememberMe);
         personalPhoto = findViewById(R.id.login_personalphoto);
-        TextView name = findViewById(R.id.name);
+        name = findViewById(R.id.name);
+        setLoadingButtonStyle();
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -97,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             //loginEmail.setText("");
         }
-        String[] role = {""};
+
         loginEmail.setText("ali@gmail.com");
         loginPassword.setText("123456");
         loginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -155,68 +165,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        loginPassword.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String email = loginEmail.getText().toString();
-                String pass = loginPassword.getText().toString();
-
-                if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    if (!pass.isEmpty() && !role[0].isEmpty()) {
-                        auth.signInWithEmailAndPassword(email, pass)
-                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                    @Override
-                                    public void onSuccess(AuthResult authResult) {
-                                        Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                                        if (role[0].equals("Trainee")) {
-                                            Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Trainee.Home.class);
-                                            intent.putExtra("email", email);
-                                            startActivity(intent);
-                                        }else if (role[0].equals("Instructor")) {
-                                            Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Instructor.Home.class);
-                                            intent.putExtra("email", email);
-                                            startActivity(intent);
-                                        }
-                                        finish();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        loginPassword.setError("Empty fields are not allowed");
-                    }
-                } else if (email.isEmpty()) {
-                    loginEmail.setError("Empty fields are not allowed");
-                } else {
-                    loginEmail.setError("Please enter correct email");
-                }
-                if (rememberMe.isChecked()) {
-                    saveData(getApplicationContext(), loginEmail.getText().toString());
-                } else if (!rememberMe.isChecked()) {
-                    saveData(getApplicationContext(), "false");
-                }
-            }
-        });
-
-
-//        signupRedirectText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
-//            }
-//        });
 
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,9 +229,9 @@ public class LoginActivity extends AppCompatActivity {
                             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                             try {
                                 task.getResult(ApiException.class);
-                                finish();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, Home.class);
                                 startActivity(intent);
+                                finish();
                             } catch (ApiException e) {
                                 Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                             }
@@ -297,5 +245,102 @@ public class LoginActivity extends AppCompatActivity {
                 activityResultLauncher.launch(signInIntent);
             }
         });
+        loginButton.setOnClickListener(this);
+    }
+
+    private void setLoadingButtonStyle() {
+
+        loginButton.setAnimationDuration(1000)
+                .setButtonColor(R.color.lavender)
+                .setButtonLabel("Login")
+                .setButtonLabelSize(20)
+                .setProgressLoaderColor(Color.WHITE)
+                .setButtonLabelColor(R.color.white);
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        loginButton.showLoadingButton();
+        String email = loginEmail.getText().toString();
+        String pass = loginPassword.getText().toString();
+        if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (!pass.isEmpty()) {
+                auth.signInWithEmailAndPassword(email, pass)
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                final String[] documentData = new String[1];
+                                DocumentReference docRef = db.collection("User").document(loginEmail.getText().toString());
+                                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            if (document.exists()) {
+                                                documentData[0] = document.getString("personalPhoto");
+                                                role[0] = document.getString("role");
+                                                String fullName = document.getString("firstName") + " " + document.getString("lastName");
+                                                name.setText(fullName);
+                                                Picasso.get().load(documentData[0]).into(personalPhoto);
+                                                loginButton.showDoneButton();
+                                            } else {
+                                            }
+                                        } else {
+                                            loginButton.showErrorButton();
+                                        }
+                                    }
+                                });
+                                name.setText(role[0]);
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(LoginActivity.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
+                                        if (role[0].equals("Trainee")) {
+                                            Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Trainee.Home.class);
+                                            intent.putExtra("email", email);
+                                            startActivity(intent);
+                                        } else if (role[0].equals("Instructor")) {
+                                            Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Instructor.Home.class);
+                                            intent.putExtra("email", email);
+                                            startActivity(intent);
+                                        }else if (role[0].equals("Admin")) {
+                                            Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.admin.home_admin.class);
+                                            intent.putExtra("email", email);
+                                            startActivity(intent);
+                                        }
+                                        finish();
+                                    }
+                                }, 1000); // Delay time in milliseconds (e.g., 1000ms = 1 second)
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                                loginButton.showErrorButton();
+                            }
+                        });
+            } else {
+                loginPassword.setError("Empty fields are not allowed");
+                loginButton.showErrorButton();
+            }
+        } else if (email.isEmpty()) {
+            loginEmail.setError("Empty fields are not allowed");
+            loginButton.showErrorButton();
+        } else {
+            loginEmail.setError("Please enter correct email");
+            loginButton.showErrorButton();
+        }
+        if (rememberMe.isChecked()) {
+            saveData(getApplicationContext(), loginEmail.getText().toString());
+        } else if (!rememberMe.isChecked()) {
+            saveData(getApplicationContext(), "false");
+        }
+    }
+
+    @Override
+    public void onMyLoadingButtonClick() {
+        //Toast.makeText(this, "MyLoadingButton Click", Toast.LENGTH_SHORT).show();
     }
 }

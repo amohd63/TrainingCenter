@@ -4,7 +4,7 @@
     android:id="@+id/profile"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@drawable/nav_bg"
+    android:background="@drawable/nav_background1"
     android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"

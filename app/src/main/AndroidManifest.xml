@@ -18,28 +18,36 @@
             android:exported="false" />
         <activity
             android:name=".View.admin.Registration_applications"
-            android:exported="false" />
+            android:label="Registration application"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".View.admin.view_previous_offering_course"
-            android:exported="false" />
+            android:label="View all the sections of a course"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".View.admin.View_profiles_from_admin"
-            android:exported="false" />
+            android:label="View the profiles"
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".View.admin.view_student_course"
-            android:exported="false" />
+            android:label="View the student of any course"
+            android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".View.admin.make_available"
-            android:exported="false" />
+            android:label="Make a course available for registration"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".View.admin.edit_delete_course"
-            android:exported="false" />
+            android:label="Edit or remove an existing course"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".View.admin.home_admin"
-            android:exported="false" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.admin.add_courses"
-            android:exported="false" />
+            android:label="Add a new course"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".View.Instructor.Settings"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -85,7 +93,7 @@
         <activity
             android:name=".View.Trainee.MyCourses"
             android:configChanges="orientation|screenSize"
-            android:label="Lectures" />
+            android:label="My courses" />
         <activity
             android:name=".View.Trainee.CoursesHistory"
             android:configChanges="orientation|screenSize"
@@ -97,7 +105,7 @@
         <activity
             android:name=".View.Trainee.MyProfile"
             android:configChanges="orientation|screenSize"
-            android:label="My Profile" />
+            android:label="My settings" />
         <activity
             android:name=".View.Trainee.Home"
             android:label="@string/title_activity_home"

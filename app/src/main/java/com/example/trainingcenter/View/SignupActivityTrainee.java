@@ -116,6 +116,7 @@ public class SignupActivityTrainee extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Toast.makeText(SignupActivityTrainee.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(SignupActivityTrainee.this, LoginActivity.class));
+                                finish();
                             } else {
                                 Toast.makeText(SignupActivityTrainee.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
@@ -140,6 +141,7 @@ public class SignupActivityTrainee extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(SignupActivityTrainee.this, LoginActivity.class));
+                finish();
             }
         });
 

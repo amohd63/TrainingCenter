@@ -29,7 +29,6 @@
             android:background="@android:color/transparent"
             android:src="@drawable/ic_close" />
 
-
         <EditText
             android:id="@+id/new_registration_in_make_available"
             android:layout_width="match_parent"
@@ -70,15 +69,11 @@
             android:textColorHint="@color/black"
             android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/new_Instructor_in_make_available"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <Spinner
+            android:id="@+id/instroctor_add_spinner"
             android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:hint="Instructor"
-            android:textColorHint="@color/black"
-            android:textSize="20sp" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/make_available_in_make_available_daialog"

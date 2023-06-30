@@ -34,15 +34,43 @@
             android:layout_height="50dp"
             android:layout_margin="10dp"/>
 
-        <EditText
-            android:id="@+id/new_value"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:hint="New Value"
-            android:textColorHint="@color/black"
-            android:textSize="20sp" />
+            android:layout_margin="10dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/updateCoursePhoto"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                app:srcCompat="@drawable/course_default" />
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView" />
+
+            <EditText
+                android:id="@+id/new_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:hint="New Value"
+                android:textColorHint="@color/black"
+                android:textSize="20sp" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/update_in_dialog_update"

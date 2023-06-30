@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.trainingcenter.Model.Course;
 import com.example.trainingcenter.Model.CourseOffering;
@@ -45,7 +47,6 @@ public class SearchCourses extends AppCompatActivity {
     private String email;
     private Context context;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +56,14 @@ public class SearchCourses extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         db = FirebaseFirestore.getInstance();
         coursesMainView = (LinearLayout) findViewById(R.id.courses_main_view);
-        final LinearLayout[] coursesListLayout = {new LinearLayout(this)};
-        final LinearLayout.LayoutParams[] coursesListLayoutParams = {new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)};
-        coursesListLayout[0].setOrientation(LinearLayout.HORIZONTAL);
-        coursesListLayout[0].setWeightSum(100);
-        final int[] marginInPixels = {(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics())};
-        coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
-        coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
-        coursesListLayout[0].setId(View.generateViewId());
+        coursesMainView.setPadding(16, 16, 16, 16);
         context = this;
 
         AtomicInteger i = new AtomicInteger();
+        Timestamp timestamp = Timestamp.now();
+        search();
+    }
+    private void search(){
         Timestamp timestamp = Timestamp.now();
         db.collection("CourseOffering")
                 .whereGreaterThanOrEqualTo("registrationDeadline", timestamp)
@@ -108,55 +105,32 @@ public class SearchCourses extends AppCompatActivity {
                                                                         );
                                                                         String instructor = instructorDoc.getString("firstName") + " " + instructorDoc.getString("lastName");
                                                                         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-                                                                        CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), instructor);
+                                                                        CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), courseOfferings.getVenue(), instructor);
                                                                         cardView.setOnClickListener(new View.OnClickListener() {
                                                                             @Override
                                                                             public void onClick(View view) {
                                                                                 openDialog(courses, courseOfferings, instructor);
                                                                             }
                                                                         });
-                                                                        coursesListLayout[0].addView(cardView);
-                                                                        if ((i.get() + 1) % 2 == 0) {
-                                                                            coursesMainView.addView(coursesListLayout[0]);
-                                                                            coursesListLayout[0] = new LinearLayout(context);
-                                                                            coursesListLayoutParams[0] = new LinearLayout.LayoutParams(
-                                                                                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                                                            coursesListLayout[0].setOrientation(LinearLayout.HORIZONTAL);
-                                                                            coursesListLayout[0].setWeightSum(100);
-                                                                            marginInPixels[0] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-                                                                            coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
-                                                                            coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
-                                                                            coursesListLayout[0].setId(View.generateViewId());
-                                                                        } else if (i.get() == size.get() - 1) {
-                                                                            coursesMainView.addView(coursesListLayout[0]);
-                                                                        }
-                                                                        i.getAndIncrement();
+                                                                        coursesMainView.addView(cardView);
                                                                     }
-
                                                                 } else {
                                                                     // Handle order query error
                                                                 }
                                                             });
-
-
                                                 }
                                                 //Log.d("expectedTasks2", String.valueOf(expectedTasks));
                                             } else {
                                                 // Handle error
                                                 //Log.d(TAG, "Error getting documents: ", task.getException());
                                             }
-
                                         }
-
                                     });
                         }
-
                     } else {
                         // Handle order query error
                     }
                 });
-
-
     }
 
     @Override
@@ -165,55 +139,129 @@ public class SearchCourses extends AppCompatActivity {
 
     }
 
-    private CardView createCourseCardView(String courseName, String time, String date, String instructor) {
+    private CardView createCourseCardView(String courseName, String time, String date, String venue, String instructor) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.MATCH_PARENT, 50);
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
         //cardView.setContentPadding(8, 8, 8, 8);
-        cardView.setContentPadding(16, 32, 16, 32);
+        cardView.setContentPadding(32, 32, 32, 32);
+        cardView.setElevation(32);
+
+
 
         // Create the LinearLayout inside the CardView
-        LinearLayout innerLinearLayout = new LinearLayout(this);
+        LinearLayout mainLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        innerLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        innerLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
 
         // Create the TextViews inside the LinearLayout
-        TextView titleTextView = createTextView(this, courseName, 18, Typeface.DEFAULT);
-        titleTextView.setTextColor(Color.parseColor("#6069c9"));
-        titleTextView.setPadding(0, 0, 0, 16);
+        TextView titleTextView = createTextView(this, courseName, 16, Typeface.DEFAULT);
+        titleTextView.setTextColor(Color.parseColor("#7884FC"));
+        titleTextView.setPadding(0, 0, 0, 32);
 
-        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT);
+        LinearLayout linearLayout = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        linearLayout.setLayoutParams(layoutParams);
+
+// Set marginTop and marginBottom
+        int marginTop = (int) getResources().getDimension(R.dimen.margin_top);
+        int marginBottom = (int) getResources().getDimension(R.dimen.margin_bottom);
+        linearLayout.setPadding(0, marginTop, 0, marginBottom);
+
+// Set background color
+        linearLayout.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT, false);
         timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
-        timeTextView.setCompoundDrawablePadding(16);
+        timeTextView.setCompoundDrawablePadding(32);
         timeTextView.setPadding(0, 0, 0, 16);
-        timeTextView.setTextColor(Color.parseColor("#9fa5de"));
 
-        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT);
+        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT, false);
         dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_red_24dp, 0, 0, 0);
-        dateTextView.setCompoundDrawablePadding(16);
+        dateTextView.setCompoundDrawablePadding(32);
         dateTextView.setPadding(0, 0, 0, 16);
-        dateTextView.setTextColor(Color.parseColor("#9fa5de"));
 
-        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
-        instructorTextView.setGravity(Gravity.END);
-        instructorTextView.setTextColor(Color.parseColor("#9fa5de"));
+        TextView venueTextView = createTextView(this, venue, 16, Typeface.DEFAULT, false);
+        venueTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_red_24dp, 0, 0, 0);
+        venueTextView.setCompoundDrawablePadding(32);
+        venueTextView.setPadding(0, 0, 0, 16);
+
+        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
+        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_outline_red_24dp, 0, 0, 0);
+        instructorTextView.setCompoundDrawablePadding(32);
+        instructorTextView.setPadding(0, 0, 0, 16);
+
+
+        LinearLayout innerLinearLayout1 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams1 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
+        innerLinearLayout1.setPadding(0, 32, 0, 32);
+//        innerLinearLayout1.setWeightSum(50);
+
+        LinearLayout innerLinearLayout2 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams2 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
+        innerLinearLayout2.setPadding(0, 32, 0, 32);
+//        innerLinearLayout2.setWeightSum(50);
+
+//        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
+//        instructorTextView.setGravity(Gravity.END);
 
         // Add the TextViews to the LinearLayout
-        innerLinearLayout.addView(titleTextView);
-        innerLinearLayout.addView(timeTextView);
-        innerLinearLayout.addView(dateTextView);
-        innerLinearLayout.addView(instructorTextView);
+        mainLinearLayout.addView(titleTextView);
+        mainLinearLayout.addView(linearLayout);
+
+        innerLinearLayout1.addView(timeTextView);
+        innerLinearLayout1.addView(dateTextView);
+
+
+        innerLinearLayout2.addView(venueTextView);
+        innerLinearLayout2.addView(instructorTextView);
+
+        LinearLayout innerLinearLayout3 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        innerLinearLayout3.setOrientation(LinearLayout.HORIZONTAL);
+        innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
+        //innerLinearLayout3.setPadding(0, 32, 0, 32);
+
+        innerLinearLayout3.addView(innerLinearLayout1);
+        innerLinearLayout3.addView(innerLinearLayout2);
+
+        mainLinearLayout.addView(innerLinearLayout3);
 
         // Add the LinearLayout to the CardView
-        cardView.addView(innerLinearLayout);
+        cardView.addView(mainLinearLayout);
         return cardView;
+    }
+
+    private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
+        TextView textView = new TextView(context);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        textView.setText(text);
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
+        //textView.setTextColor(Color.parseColor("#000000"));
+        if (setText) {
+            textView.setTextSize(textSize);
+        }
+        return textView;
     }
 
     private TextView createTextView(Context context, String text, int textSize, Typeface typeface) {
@@ -223,7 +271,7 @@ public class SearchCourses extends AppCompatActivity {
         textView.setText(text);
         //textView.setTextColor(Color.parseColor("#000000"));
         textView.setTextSize(textSize);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
         textView.setTypeface(typeface);
         //textView.setFontFamily(getResources().getFont(R.font.calibri));
         return textView;
@@ -276,7 +324,6 @@ public class SearchCourses extends AppCompatActivity {
                 coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
                 coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
                 coursesListLayout[0].setId(View.generateViewId());
-                AtomicInteger i = new AtomicInteger();
                 Timestamp timestamp = Timestamp.now();
                 db.collection("CourseOffering")
                         .whereGreaterThanOrEqualTo("registrationDeadline", timestamp)
@@ -320,29 +367,14 @@ public class SearchCourses extends AppCompatActivity {
                                                                                     );
                                                                                     String instructor = instructorDoc.getString("firstName") + " " + instructorDoc.getString("lastName");
                                                                                     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-                                                                                    CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), instructor);
+                                                                                    CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), courseOfferings.getVenue(), instructor);
                                                                                     cardView.setOnClickListener(new View.OnClickListener() {
                                                                                         @Override
                                                                                         public void onClick(View view) {
                                                                                             openDialog(courses, courseOfferings, instructor);
                                                                                         }
                                                                                     });
-                                                                                    coursesListLayout[0].addView(cardView);
-                                                                                    if ((i.get() + 1) % 2 == 0) {
-                                                                                        coursesMainView.addView(coursesListLayout[0]);
-                                                                                        coursesListLayout[0] = new LinearLayout(context);
-                                                                                        coursesListLayoutParams[0] = new LinearLayout.LayoutParams(
-                                                                                                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                                                                        coursesListLayout[0].setOrientation(LinearLayout.HORIZONTAL);
-                                                                                        coursesListLayout[0].setWeightSum(100);
-                                                                                        marginInPixels[0] = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-                                                                                        coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
-                                                                                        coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
-                                                                                        coursesListLayout[0].setId(View.generateViewId());
-                                                                                    } else if (i.get() == size.get() - 1) {
-                                                                                        coursesMainView.addView(coursesListLayout[0]);
-                                                                                    }
-                                                                                    i.getAndIncrement();
+                                                                                    coursesMainView.addView(cardView);
                                                                                 }
 
                                                                             } else {
@@ -368,7 +400,6 @@ public class SearchCourses extends AppCompatActivity {
                                 // Handle order query error
                             }
                         });
-
                 return false;
             }
         });

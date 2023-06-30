@@ -30,4 +30,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="custom_cursor" parent="android:Widget.EditText">
+        <item name="colorControlNormal">@color/lavender</item>
+        <item name="colorControlActivated">@color/lavender</item>
+    </style>
+
 </resources>

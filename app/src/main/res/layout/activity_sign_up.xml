@@ -5,68 +5,156 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/pagebkg"
-    android:gravity="center"
     android:orientation="vertical"
     tools:context=".View.SignUpActivity">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="20dp">
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/custom_edittext"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:backgroundTint="@color/bright_orange"
+            app:cardCornerRadius="81dp"
+            app:cardElevation="40dp">
 
-            <Button
-                android:id="@+id/btnAdmin"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="30dp"
-                android:backgroundTint="@color/lavender"
-                android:text="Admin Sign Up"
-                android:textSize="18sp"
-                app:cornerRadius="20dp" />
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <Button
-                android:id="@+id/btnTrainee"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="30dp"
-                android:backgroundTint="@color/lavender"
-                android:text="Trainee Sign Up"
-                android:textSize="18sp"
-                app:cornerRadius="20dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/calibri"
+                    android:text="Feel free"
+                    android:textAlignment="center"
+                    android:textColor="#FCFCFC"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnInstructor"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="30dp"
-                android:backgroundTint="@color/lavender"
-                android:text="Instructor Sign Up"
-                android:textSize="18sp"
-                app:cornerRadius="20dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:text="to"
+                    android:textAlignment="center"
+                    android:textColor="@color/lavender"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/loginRedirectText_admin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:padding="8dp"
-                android:text="Already an user? Login"
-                android:textColor="@color/lavender"
-                android:textSize="18sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:text="choose your role!"
+                    android:textAlignment="center"
+                    android:textColor="#FCFCFC"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
 
-        </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#FCFCFC" />
 
-    </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:text="Do you want to be an admin?"
+                    android:textAlignment="center"
+                    android:textColor="#FCFCFC"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/btnAdmin"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="24dp"
+                    android:backgroundTint="@color/lavender"
+                    android:fontFamily="@font/calibri"
+                    android:text="Admin"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="20dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#FCFCFC" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:text="Are you a new trainee?"
+                    android:textAlignment="center"
+                    android:textColor="#FCFCFC"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/btnTrainee"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="24dp"
+                    android:backgroundTint="@color/lavender"
+                    android:fontFamily="@font/calibri"
+                    android:text="Trainee"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="20dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#FCFCFC" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/calibri"
+                    android:text="Become an instructor!"
+                    android:textAlignment="center"
+                    android:textColor="#FCFCFC"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/btnInstructor"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="24dp"
+                    android:backgroundTint="@color/lavender"
+                    android:fontFamily="@font/calibri"
+                    android:text="Instructor"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="20dp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
 </LinearLayout>

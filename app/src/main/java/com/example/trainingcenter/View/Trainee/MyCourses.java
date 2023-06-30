@@ -7,12 +7,16 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -28,6 +33,7 @@ public class MyCourses extends AppCompatActivity {
     LinearLayout mainView;
     private String email;
     private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,68 +45,230 @@ public class MyCourses extends AppCompatActivity {
         mainView = (LinearLayout) findViewById(R.id.lectures_main_view);
         mainView.setPadding(16, 16, 16, 16);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-
-        db.collection("Registration")
-                .whereEqualTo("traineeID", email)
-                .whereEqualTo("status", "Accepted")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
-                        if (regTask.isSuccessful()) {
-                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
-                                db.collection("CourseOffering")
-                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
-                                        .get()
-                                        .addOnCompleteListener(courseOfferingTask -> {
-                                            if (courseOfferingTask.isSuccessful()) {
-                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                    db.collection("Course")
-                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
-                                                            .get()
-                                                            .addOnCompleteListener(courseTask -> {
-                                                                if (courseTask.isSuccessful()) {
-                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
-                                                                        db.collection("User")
-                                                                                .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
-                                                                                .get()
-                                                                                .addOnCompleteListener(userTask -> {
-                                                                                    if (userTask.isSuccessful()) {
-                                                                                        for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                                            CardView test = createCourseCardView(
-                                                                                                    courseDoc.getString("courseTitle"),
-                                                                                                    courseOfferingDoc.getString("schedule"),
-                                                                                                    dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
-                                                                                                    courseOfferingDoc.getString("venue"),
-                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName")
-                                                                                            );
-                                                                                            mainView.addView(test);
-                                                                                        }
-
-                                                                                    } else {
-                                                                                    }
-                                                                                });
-
-                                                                    }
-
-                                                                } else {
-                                                                }
-                                                            });
-                                                }
-                                            } else {
-                                            }
-                                        });
-                            }
-                        } else {
-                        }
-                    }
-                });
+        for (int i = 0; i < 10; i++) {
+            CardView cv = createCourseCardView2("Test", "10:00-11:25", "19 Jul 2023", "LKS123",  "M,W");
+            mainView.addView(cv);
+        }
+//        db.collection("Registration")
+//                .whereEqualTo("traineeID", email)
+//                .whereEqualTo("status", "Accepted")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+//                        if (regTask.isSuccessful()) {
+//                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
+//                                db.collection("CourseOffering")
+//                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+//                                        .get()
+//                                        .addOnCompleteListener(courseOfferingTask -> {
+//                                            if (courseOfferingTask.isSuccessful()) {
+//                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+//                                                    db.collection("Course")
+//                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+//                                                            .get()
+//                                                            .addOnCompleteListener(courseTask -> {
+//                                                                if (courseTask.isSuccessful()) {
+//                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+//                                                                        db.collection("User")
+//                                                                                .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+//                                                                                .get()
+//                                                                                .addOnCompleteListener(userTask -> {
+//                                                                                    if (userTask.isSuccessful()) {
+//                                                                                        for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
+//                                                                                            CardView test = createCourseCardView(
+//                                                                                                    courseDoc.getString("courseTitle"),
+//                                                                                                    courseOfferingDoc.getString("schedule"),
+//                                                                                                    dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
+//                                                                                                    courseOfferingDoc.getString("venue"),
+//                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName")
+//                                                                                            );
+//                                                                                            mainView.addView(test);
+//                                                                                        }
+//
+//                                                                                    } else {
+//                                                                                    }
+//                                                                                });
+//
+//                                                                    }
+//
+//                                                                } else {
+//                                                                }
+//                                                            });
+//                                                }
+//                                            } else {
+//                                            }
+//                                        });
+//                            }
+//                        } else {
+//                        }
+//                    }
+//                });
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    private CardView createCourseCardView2(String courseName, String time, String date, String venue, String instructor) {
+        // Create the CardView inside the courses_list LinearLayout
+        CardView cardView = new CardView(this);
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cardViewParams.setMargins(4, 0, 0, 0);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(32);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(32, 32, 32, 32);
+        cardView.setElevation(32);
+
+
+        LinearLayout mainLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        mainLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        mainLinearLayout.setGravity(Gravity.CENTER);
+        innerLinearLayoutParams.setMargins(10, 10, 10, 10);
+
+        int heightInDp = 60;
+        float scale = this.getResources().getDisplayMetrics().density;
+        int heightInPixels = (int) (heightInDp * scale + 0.5f);
+        ImageView imageView = new ImageView(this);
+        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(0, heightInPixels, 25);
+        heightInPixels = (int) (8 * scale + 0.5f);
+        imgParams.setMargins(0, 0, heightInPixels, 0);
+        imageView.setLayoutParams(imgParams);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageResource(R.drawable.mobile_img);
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fcourse_default.png?alt=media&token=68dd1b73-90b6-4cb9-ac91-460e3dfe6768").into(imageView);
+
+
+        LinearLayout innerLayout = new LinearLayout(this);
+
+// Set layout parameters
+        innerLayout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 75));
+        innerLayout.setPadding(8, 0, 0, 0);
+        innerLayout.setWeightSum(75);
+        innerLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+// Create an instance of TextView
+        TextView titleTV = new TextView(this);
+
+// Set layout parameters
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        titleTV.setLayoutParams(params);
+        titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        titleTV.setText("Information System Evaluation");
+        titleTV.setTextColor(ContextCompat.getColor(this, R.color.lavender));
+        titleTV.setTextSize(16);
+
+
+// Create an instance of TextView
+        TextView instructorTV = new TextView(this);
+// Set layout parameters
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        instructorTV.setLayoutParams(params);
+        instructorTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        instructorTV.setText("Puspita Kartika Sari, M. Si");
+        instructorTV.setTextColor(0xFF000000); // Equivalent to #000000 in hexadecimal
+
+
+        // Create an instance of TextView
+        TextView testV = new TextView(this);
+// Set layout parameters
+        testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        testV.setText("0fdff326f5cf4728bd52");
+        testV.setTextSize(11);
+
+
+        LinearLayout view = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+
+        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT, false);
+        timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
+        timeTextView.setCompoundDrawablePadding(32);
+        timeTextView.setPadding(0, 0, 0, 16);
+
+        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT, false);
+        dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_red_24dp, 0, 0, 0);
+        dateTextView.setCompoundDrawablePadding(32);
+        dateTextView.setPadding(0, 0, 0, 16);
+
+        TextView venueTextView = createTextView(this, venue, 16, Typeface.DEFAULT, false);
+        venueTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_red_24dp, 0, 0, 0);
+        venueTextView.setCompoundDrawablePadding(32);
+        venueTextView.setPadding(0, 0, 0, 16);
+
+        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
+        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_today_purple_24, 0, 0, 0);
+        instructorTextView.setCompoundDrawablePadding(32);
+        instructorTextView.setPadding(0, 0, 0, 16);
+
+        LinearLayout innerLinearLayout1 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams1 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
+        //innerLinearLayout1.setPadding(0, 0, 0, 0);
+//        innerLinearLayout1.setWeightSum(50);
+
+        LinearLayout innerLinearLayout2 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams2 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
+        //innerLinearLayout2.setPadding(0, 0, 0, 0);
+
+        LinearLayout innerLinearLayout3 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        innerLinearLayout3.setOrientation(LinearLayout.HORIZONTAL);
+        innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
+        //innerLinearLayout3.setPadding(0, 32, 0, 32);
+
+        innerLinearLayout1.addView(timeTextView);
+        innerLinearLayout1.addView(instructorTextView);
+
+
+        innerLinearLayout2.addView(venueTextView);
+        innerLinearLayout2.addView(dateTextView);
+
+        innerLinearLayout3.addView(innerLinearLayout1);
+        innerLinearLayout3.addView(innerLinearLayout2);
+
+
+        innerLayout.addView(titleTV);
+        innerLayout.addView(instructorTV);
+        innerLayout.addView(testV);
+        innerLayout.addView(view);
+        innerLayout.addView(innerLinearLayout3);
+
+
+        mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(innerLayout);
+        cardView.addView(mainLinearLayout);
+        return cardView;
     }
 
     private CardView createCourseCardView(String courseName, String time, String date, String venue, String instructor) {
@@ -116,7 +284,6 @@ public class MyCourses extends AppCompatActivity {
         cardView.setContentPadding(32, 32, 32, 32);
 
 
-
         // Create the LinearLayout inside the CardView
         LinearLayout mainLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
@@ -125,7 +292,7 @@ public class MyCourses extends AppCompatActivity {
         mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
 
         // Create the TextViews inside the LinearLayout
-        TextView titleTextView = createTextView(this, courseName, 24, Typeface.DEFAULT);
+        TextView titleTextView = createTextView(this, courseName, 24, Typeface.DEFAULT, false);
         titleTextView.setTextColor(Color.parseColor("#7884FC"));
         titleTextView.setPadding(0, 0, 0, 32);
 
@@ -146,23 +313,23 @@ public class MyCourses extends AppCompatActivity {
 // Set background color
         linearLayout.setBackgroundColor(Color.parseColor("#80D1D1D1"));
 
-        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT);
+        TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT, false);
         timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
         timeTextView.setCompoundDrawablePadding(32);
         timeTextView.setPadding(0, 0, 0, 16);
 
-        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT);
+        TextView dateTextView = createTextView(this, date, 16, Typeface.DEFAULT, false);
         dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_red_24dp, 0, 0, 0);
         dateTextView.setCompoundDrawablePadding(32);
         dateTextView.setPadding(0, 0, 0, 16);
 
-        TextView venueTextView = createTextView(this, venue, 16, Typeface.DEFAULT);
+        TextView venueTextView = createTextView(this, venue, 16, Typeface.DEFAULT, false);
         venueTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_red_24dp, 0, 0, 0);
         venueTextView.setCompoundDrawablePadding(32);
         venueTextView.setPadding(0, 0, 0, 16);
 
-        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
-        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_outline_red_24dp, 0, 0, 0);
+        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
+        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_today_purple_24, 0, 0, 0);
         instructorTextView.setCompoundDrawablePadding(32);
         instructorTextView.setPadding(0, 0, 0, 16);
 
@@ -172,7 +339,7 @@ public class MyCourses extends AppCompatActivity {
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
         innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
         innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
-        innerLinearLayout1.setPadding(0, 32, 0, 32);
+        //innerLinearLayout1.setPadding(0, 32, 0, 32);
 //        innerLinearLayout1.setWeightSum(50);
 
         LinearLayout innerLinearLayout2 = new LinearLayout(this);
@@ -180,50 +347,42 @@ public class MyCourses extends AppCompatActivity {
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
         innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
         innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
-        innerLinearLayout2.setPadding(0, 32, 0, 32);
-//        innerLinearLayout2.setWeightSum(50);
-
-//        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
-//        instructorTextView.setGravity(Gravity.END);
+        //innerLinearLayout2.setPadding(0, 32, 0, 32);
 
         // Add the TextViews to the LinearLayout
         mainLinearLayout.addView(titleTextView);
         mainLinearLayout.addView(linearLayout);
 
         innerLinearLayout1.addView(timeTextView);
-        innerLinearLayout1.addView(dateTextView);
+        innerLinearLayout1.addView(instructorTextView);
 
 
         innerLinearLayout2.addView(venueTextView);
-        innerLinearLayout2.addView(instructorTextView);
+        innerLinearLayout2.addView(dateTextView);
 
         LinearLayout innerLinearLayout3 = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
         innerLinearLayout3.setOrientation(LinearLayout.HORIZONTAL);
         innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
-        //innerLinearLayout3.setPadding(0, 32, 0, 32);
-
         innerLinearLayout3.addView(innerLinearLayout1);
         innerLinearLayout3.addView(innerLinearLayout2);
 
         mainLinearLayout.addView(innerLinearLayout3);
-
-        // Add the LinearLayout to the CardView
         cardView.addView(mainLinearLayout);
         return cardView;
     }
 
-    private TextView createTextView(Context context, String text, int textSize, Typeface typeface) {
+    private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         textView.setText(text);
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
         //textView.setTextColor(Color.parseColor("#000000"));
-        textView.setTextSize(textSize);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
-        textView.setTypeface(typeface);
-        //textView.setFontFamily(getResources().getFont(R.font.calibri));
+        if (setText) {
+            textView.setTextSize(textSize);
+        }
         return textView;
     }
 }

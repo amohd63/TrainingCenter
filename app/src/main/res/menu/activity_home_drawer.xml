@@ -6,15 +6,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_courses"
-            android:icon="@drawable/ic_school_black_24dp"
+            android:icon="@drawable/ic_baseline_search_24"
             android:title="Search courses" />
         <item
             android:id="@+id/nav_events"
-            android:icon="@drawable/ic_event_black_24dp"
+            android:icon="@drawable/ic_baseline_history_24"
             android:title="Courses history" />
         <item
             android:id="@+id/nav_announcements"
-            android:icon="@drawable/ic_schedule_black_24dp"
+            android:icon="@drawable/ic_baseline_remove_circle_outline_24"
             android:title="Withdraw" />
         <item
             android:id="@+id/nav_lectures"
@@ -29,5 +29,4 @@
             android:icon="@drawable/ic_exit_to_app_black_24dp"
             android:title="Logout" />
     </group>
-
 </menu>

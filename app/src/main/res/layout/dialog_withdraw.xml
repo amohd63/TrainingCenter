@@ -36,8 +36,7 @@
             android:padding="4dp"
             android:text="Are you sure about withdrawing?"
             android:textColor="@color/lavender"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -52,18 +51,19 @@
                 android:backgroundTint="@color/lavender"
                 android:fontFamily="@font/calibri"
                 android:text="No"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginRight="8dp"/>
+
+<!--            #3c427e-->
             <Button
                 android:id="@+id/yes_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#3c427e"
+                android:backgroundTint="@color/bright_orange"
                 android:fontFamily="@font/calibri"
                 android:text="Yes"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 
