@@ -6,14 +6,18 @@ public class Trainee extends User{
     private String email;
     private String firstName;
     private String lastName;
-    private PictureObject pictureObj;
+    private String pictureObj;
     private String mobileNumber;
     private String address;
 
     public Trainee() {
     }
 
-    public Trainee(String email, String firstName, String lastName, PictureObject pictureObj, String mobileNumber, String address) {
+    public Trainee(String email, String firstName, String lastName, String pictureObj) {
+        super(email, firstName, lastName, pictureObj);
+    }
+
+    public Trainee(String email, String firstName, String lastName, String pictureObj, String mobileNumber, String address) {
         super(email, firstName, lastName, pictureObj);
         this.mobileNumber = mobileNumber;
         this.address = address;
@@ -38,5 +42,9 @@ public class Trainee extends User{
     public static boolean isValidMobileNumber(String mobileNumber) {
         String regex = "^\\+970\\d{9}$";
         return Pattern.matches(regex, mobileNumber);
+    }
+
+    public String getFullName(){
+        return this.getFirstName() + " " + this.getLastName();
     }
 }

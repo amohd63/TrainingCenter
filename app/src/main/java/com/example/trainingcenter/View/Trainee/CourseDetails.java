@@ -2,6 +2,7 @@ package com.example.trainingcenter.View.Trainee;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -10,7 +11,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,14 +28,17 @@ import android.widget.Toast;
 import com.example.trainingcenter.Model.Course;
 import com.example.trainingcenter.Model.CourseOffering;
 import com.example.trainingcenter.R;
+import com.example.trainingcenter.View.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -78,10 +84,12 @@ public class CourseDetails extends AppCompatDialogFragment {
         LinearLayout prerequisite = view.findViewById(R.id.prerequisite);
         LinearLayout mainTopics = view.findViewById(R.id.main_topics);
         LinearLayout generalInformation = view.findViewById(R.id.general_information);
+        LinearLayout conflicts = view.findViewById(R.id.conflicts_view);
 
         mainTopics.removeAllViews();
         prerequisite.removeAllViews();
         generalInformation.removeAllViews();
+        conflicts.removeAllViews();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
         for (String topic : course.getCourseTopics()) {
@@ -112,7 +120,7 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                             .addOnCompleteListener(courseOfferingTask -> {
                                                                 if (courseOfferingTask.isSuccessful()) {
                                                                     if (courseOfferingTask.getResult().isEmpty()) {
-                                                                        CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", false);
+                                                                        CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", 0);
                                                                         prerequisite.addView(prerequisiteCardView);
                                                                         flag[0] = false;
                                                                         i[0]++;
@@ -126,13 +134,13 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                                     .addOnCompleteListener(instructorTask -> {
                                                                                         if (instructorTask.isSuccessful()) {
                                                                                             if (instructorTask.getResult().isEmpty()) {
-                                                                                                CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", false);
+                                                                                                CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", 0);
                                                                                                 prerequisite.addView(prerequisiteCardView);
                                                                                                 flag[0] = false;
                                                                                                 i[0]++;
                                                                                             } else {
                                                                                                 for (QueryDocumentSnapshot instructorDoc : instructorTask.getResult()) {
-                                                                                                    CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Completed", true);
+                                                                                                    CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Completed", 1);
                                                                                                     prerequisite.addView(prerequisiteCardView);
                                                                                                     i[0]++;
                                                                                                 }
@@ -157,23 +165,94 @@ public class CourseDetails extends AppCompatDialogFragment {
                         }
                     }
                 });
+        final boolean[] foundConflict = {false};
+        final int[] j = {0};
+        final int[] noOfConflicts = {0};
+        final int[] size2 = {1};
+        db.collection("Registration")
+                .whereEqualTo("traineeID", email)
+                .whereIn("status", Arrays.asList("Accepted", "Pending"))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+                        if (regTask.isSuccessful()) {
+                            if (regTask.getResult().isEmpty()) {
+                                CardView empty = createEmptyCardView("No conflicts1");
+                                conflicts.addView(empty);
+                            } else {
+                                size2[0] = regTask.getResult().size();
+                                for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
+                                    db.collection("CourseOffering")
+                                            .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                            .whereEqualTo("schedule", courseOffering.getSchedule())
+                                            .get()
+                                            .addOnCompleteListener(courseOfferingTask -> {
+                                                noOfConflicts[0] = courseOfferingTask.getResult().size();
+                                                if (courseOfferingTask.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                                            db.collection("Course")
+                                                                    .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                                                    .get()
+                                                                    .addOnCompleteListener(courseTask -> {
+                                                                        if (courseTask.isSuccessful()) {
+                                                                            for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                                String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
+                                                                                CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);
+                                                                                conflicts.addView(conflictView);
+                                                                                foundConflict[0] = true;
+                                                                                j[0]++;
+                                                                                noOfConflicts[0]--;
+                                                                            }
+                                                                        } else {
+                                                                        }
+                                                                    });
+                                                        }
+                                                } else {
+                                                }
+                                            });
+                                }
+                            }
+                        } else {
+                        }
+                    }
+                });
         //must check deadline, number of students
+        Timestamp timestamp = Timestamp.now();
         enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (i[0] == size[0]) {
-                    if (flag[0]){
-                        String key = courseOffering.getCourseID().substring(0, 8) + courseOffering.getOfferingID().substring(0, 8);
-                        Map<String, Object> reg = new HashMap<>();
-                        reg.put("traineeID", email);
-                        reg.put("offeringID", courseOffering.getOfferingID());
-                        reg.put("status", "Pending");
-                        reg.put("registrationID", key);
-                        db.collection("Registration").document(key).set(reg);
-                        Toast.makeText(dialog.getContext(), "Enrolled successfully", Toast.LENGTH_SHORT).show();
-                        dismiss();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (i[0] == size[0]) {
+                            if (flag[0]) {
+                                if (courseOffering.getRegistrationDeadline().compareTo(timestamp) >= 0) {
+                                    if (foundConflict[0]){
+                                        Toast.makeText(dialog.getContext(), "Time conflict!", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        String key = courseOffering.getCourseID().substring(0, 8) + courseOffering.getOfferingID().substring(0, 8);
+                                        Map<String, Object> reg = new HashMap<>();
+                                        reg.put("traineeID", email);
+                                        reg.put("offeringID", courseOffering.getOfferingID());
+                                        reg.put("status", "Pending");
+                                        reg.put("registrationID", key);
+                                        db.collection("Registration").document(key).set(reg);
+                                        String st = "size: " + size2[0] + ", j: " + j[0] + ", conflicts: " + noOfConflicts[0];
+                                        courseTitle.setText(st);
+                                        Toast.makeText(dialog.getContext(), "Enrolled successfully", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(dialog.getContext(), "Registration is closed!", Toast.LENGTH_SHORT).show();
+                                }
+                                //dismiss();
+                            }else{
+                                Toast.makeText(dialog.getContext(), "Prerequisites uncompleted!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
-                }
+                }, 1000); // Delay time in milliseconds (e.g., 1000ms = 1 second)
             }
         });
 
@@ -223,7 +302,34 @@ public class CourseDetails extends AppCompatDialogFragment {
         this.courseOffering = courseOffering;
     }
 
-    private CardView createPrerequisiteCardView(String courseName, String status, boolean color) {
+    private CardView createEmptyCardView(String text) {
+        CardView cardView = new CardView(dialog.getContext());
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(32);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(16, 16, 16, 16);
+
+        LinearLayout innerLinearLayout = new LinearLayout(dialog.getContext());
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        innerLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout.setLayoutParams(innerLinearLayoutParams);
+
+
+        TextView titleTextView = createTextView(dialog.getContext(), text, 16, Typeface.DEFAULT);
+        titleTextView.setTextColor(Color.parseColor("#000000"));
+
+        // Add the TextViews to the LinearLayout
+        innerLinearLayout.addView(titleTextView);
+
+        // Add the LinearLayout to the CardView
+        cardView.addView(innerLinearLayout);
+        return cardView;
+    }
+
+    private CardView createPrerequisiteCardView(String courseName, String status, int color) {
         CardView cardView = new CardView(dialog.getContext());
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
@@ -244,7 +350,11 @@ public class CourseDetails extends AppCompatDialogFragment {
         //titleTextView.setPadding(0, 0, 0, 16);
 
         TextView statusTextView = createTextView(dialog.getContext(), status, 12, Typeface.DEFAULT);
-        statusTextView.setTextColor(Color.parseColor(color ? "#84fc78" : "#fc7884"));
+        if (color == 0) {
+            statusTextView.setTextColor(Color.parseColor("#fc7884"));
+        } else if (color == 1) {
+            statusTextView.setTextColor(Color.parseColor("#84fc78"));
+        }
         //statusTextView.setCompoundDrawablePadding(16);
         //statusTextView.setPadding(0, 0, 0, 16);
 
@@ -325,7 +435,7 @@ public class CourseDetails extends AppCompatDialogFragment {
         textView.setText(text);
         //textView.setTextColor(Color.parseColor("#000000"));
         textView.setTextSize(textSize);
-        //typeface = Typeface.createFromAsset(getAssets(), "fonts/calibri.ttf");
+        textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
         textView.setTypeface(typeface);
         //textView.setFontFamily(getResources().getFont(R.font.calibri));
         return textView;

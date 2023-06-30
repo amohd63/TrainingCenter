@@ -146,7 +146,6 @@
                         android:inputType="phone"
                         android:padding="8dp"
                         android:textColor="@color/black" />
-
                 </LinearLayout>
             </ScrollView>
 

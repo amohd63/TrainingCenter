@@ -19,12 +19,12 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-
+        getSupportActionBar().hide();
         btnInstructor = findViewById(R.id.btnInstructor);
         btnAdmin = findViewById(R.id.btnAdmin);
         btnTrainee = findViewById(R.id.btnTrainee);
 
-        loginRedirectText = findViewById(R.id.loginRedirectText_admin);
+        //loginRedirectText = findViewById(R.id.loginRedirectText_admin);
 
         btnInstructor.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignupActivityInstructor.class)));
 
@@ -32,7 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         btnTrainee.setOnClickListener(v -> startActivity(new Intent(SignUpActivity.this, SignupActivityTrainee.class)));
 
-        loginRedirectText.setOnClickListener(view -> startActivity(new Intent(SignUpActivity.this, LoginActivity.class)));
+        //loginRedirectText.setOnClickListener(view -> startActivity(new Intent(SignUpActivity.this, LoginActivity.class)));
 
     }
 }

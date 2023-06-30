@@ -101,7 +101,9 @@
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:layout_weight="8"
-        android:background="@color/bright_orange"
+        android:background="@drawable/custom_card_shape"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:gravity="bottom">
 
         <Button
@@ -112,6 +114,7 @@
             android:fontFamily="@font/calibri"
             android:text="get started"
             android:textSize="32sp"
+
             android:textStyle="bold" />
 
     </LinearLayout>

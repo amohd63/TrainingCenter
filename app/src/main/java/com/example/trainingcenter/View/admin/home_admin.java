@@ -150,7 +150,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
                 finish();
             }
 
-            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            DrawerLayout drawer = findViewById(R.id.drawer_layout2);
             drawer.closeDrawer(GravityCompat.START);
             return true;
         }

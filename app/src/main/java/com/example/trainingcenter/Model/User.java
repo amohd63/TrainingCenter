@@ -5,12 +5,12 @@ public class User {
     private String email;
     private String firstName;
     private String lastName;
-    private PictureObject pictureObj;
+    private String pictureObj;
 
     public User() {
     }
 
-    public User(String email, String firstName, String lastName, PictureObject pictureObj) {
+    public User(String email, String firstName, String lastName, String pictureObj) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,11 +41,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public PictureObject getPictureObj() {
+    public String getPictureObj() {
         return pictureObj;
     }
 
-    public void setPictureObj(PictureObject pictureObj) {
+    public void setPictureObj(String pictureObj) {
         this.pictureObj = pictureObj;
     }
 
@@ -57,8 +57,8 @@ public class User {
         return firstName.length() >= 3 && firstName.length() <= 20;
     }
 
-    public static boolean isValidName(String firstName) {
-        return firstName.length() >= 3 && firstName.length() <= 20;
+    public static boolean isValidName(String name) {
+        return name.length() >= 3 && name.length() <= 20;
     }
 
     public boolean isValidLastName() {

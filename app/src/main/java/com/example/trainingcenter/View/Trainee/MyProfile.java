@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.trainingcenter.Model.Trainee;
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +33,7 @@ public class MyProfile extends AppCompatActivity {
     private final int GALLERY_REQ_CODE = 1000;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fadmin_default.png?alt=media&token=6db2f3a0-6bed-48a8-9aae-b9bff0deae01";
     private ImageView personalPhoto;
+    private Trainee trainee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,6 @@ public class MyProfile extends AppCompatActivity {
         email = intent.getStringExtra("email");
         db = FirebaseFirestore.getInstance();
         personalPhoto = findViewById(R.id.personalPhoto);
-        final String[] documentData = new String[2];
         TextView emailBox = findViewById(R.id.emailBox);
         TextView emailView = findViewById(R.id.email);
         EditText firstName = findViewById(R.id.firstname);
@@ -50,6 +52,8 @@ public class MyProfile extends AppCompatActivity {
         EditText mobileNum = findViewById(R.id.mobile_number);
         TextView name = findViewById(R.id.name);
 
+        trainee = new Trainee();
+
         DocumentReference docRef = db.collection("User").document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -57,14 +61,16 @@ public class MyProfile extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        documentData[0] = document.getString("personalPhoto");
-                        Picasso.get().load(documentData[0]).into(personalPhoto);
-                        documentData[1] = document.getString("firstName") + " " + document.getString("lastName");
-                        name.setText(documentData[1]);
-                        firstName.setText(document.getString("firstName"));
-                        lastName.setText(document.getString("lastName"));
+                        trainee.setEmail(email);
+                        trainee.setFirstName(document.getString("firstName"));
+                        trainee.setLastName(document.getString("lastName"));
+                        trainee.setPictureObj(document.getString("personalPhoto"));
+                        Picasso.get().load(trainee.getPictureObj()).into(personalPhoto);
+                        firstName.setText(trainee.getFirstName());
+                        lastName.setText(trainee.getLastName());
                         emailBox.setText(email);
                         emailView.setText(email);
+                        name.setText(trainee.getFullName());
                     } else {
                     }
                 } else {
@@ -79,8 +85,10 @@ public class MyProfile extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        address.setText(document.getString("address"));
-                        mobileNum.setText(document.getString("mobileNumber"));
+                        trainee.setAddress(document.getString("address"));
+                        trainee.setMobileNumber(document.getString("mobileNumber"));
+                        address.setText(trainee.getAddress());
+                        mobileNum.setText(trainee.getMobileNumber());
                     } else {
                     }
                 } else {
@@ -100,13 +108,17 @@ public class MyProfile extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     String newFirstName = firstName.getText().toString();
-                    db.collection("User").document(email)
-                            .update(
-                                    "firstName", newFirstName
-                            );
-                    Toast.makeText(MyProfile.this, "First name updated successfully", Toast.LENGTH_SHORT).show();
-                    String fullName = newFirstName + " " + lastName.getText();
-                    name.setText(fullName);
+                    if (Trainee.isValidName(newFirstName)) {
+                        db.collection("User").document(email)
+                                .update(
+                                        "firstName", newFirstName
+                                );
+                        Toast.makeText(MyProfile.this, "First name updated successfully", Toast.LENGTH_SHORT).show();
+                        trainee.setFirstName(newFirstName);
+                        name.setText(trainee.getFullName());
+                    }else{
+                        Toast.makeText(MyProfile.this, "Enter a valid first name!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -115,14 +127,18 @@ public class MyProfile extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    String newFirstName = lastName.getText().toString();
-                    db.collection("User").document(email)
-                            .update(
-                                    "lastName", newFirstName
-                            );
-                    Toast.makeText(MyProfile.this, "Last name updated successfully", Toast.LENGTH_SHORT).show();
-                    String fullName = firstName.getText() + " " + newFirstName;
-                    name.setText(fullName);
+                    String newLastName = lastName.getText().toString();
+                    if (Trainee.isValidName(newLastName)) {
+                        db.collection("User").document(email)
+                                .update(
+                                        "lastName", newLastName
+                                );
+                        Toast.makeText(MyProfile.this, "Last name updated successfully", Toast.LENGTH_SHORT).show();
+                        trainee.setLastName(newLastName);
+                        name.setText(trainee.getFullName());
+                    }else{
+                        Toast.makeText(MyProfile.this, "Enter a valid last name!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

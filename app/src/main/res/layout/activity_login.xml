@@ -33,7 +33,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/bright_orange"
                 android:fontFamily="@font/calibri"
-                android:textSize="36sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/name"
@@ -91,15 +91,35 @@
                 android:buttonTint="@drawable/checkbox_selector"
                 android:text="Remember me" />
 
-            <Button
+            <com.example.trainingcenter.View.Trainee.MyLoadingButton
                 android:id="@+id/login_button"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:backgroundTint="@color/lavender"
-                android:text="Login"
-                android:textSize="18sp"
-                app:cornerRadius="20dp" />
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/calibri"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:mlb_labelSize="8sp"
+                app:mlb_label="Login"
+                app:mlb_backgroundColor="@color/lavender"
+                app:mlb_labelColor="@color/white"
+                app:mlb_setNormalAfterError="true"
+                />
+
+<!--            <Button-->
+<!--                android:id="@+id/login_button"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:backgroundTint="@color/lavender"-->
+<!--                android:text="Login"-->
+<!--                android:textSize="18sp"-->
+<!--                app:cornerRadius="20dp" />-->
 
             <TextView
                 android:id="@+id/forgot_password"
