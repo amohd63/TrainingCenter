@@ -296,23 +296,25 @@ public class LoginActivity extends AppCompatActivity implements
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(LoginActivity.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
                                         if (role[0].equals("Trainee")) {
                                             Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Trainee.Home.class);
                                             intent.putExtra("email", email);
+                                            Toast.makeText(LoginActivity.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
                                             startActivity(intent);
                                         } else if (role[0].equals("Instructor")) {
                                             Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.Instructor.Home.class);
                                             intent.putExtra("email", email);
+                                            Toast.makeText(LoginActivity.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
                                             startActivity(intent);
                                         }else if (role[0].equals("Admin")) {
                                             Intent intent = new Intent(LoginActivity.this, com.example.trainingcenter.View.admin.home_admin.class);
                                             intent.putExtra("email", email);
+                                            Toast.makeText(LoginActivity.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
                                             startActivity(intent);
                                         }
                                         finish();
                                     }
-                                }, 1000); // Delay time in milliseconds (e.g., 1000ms = 1 second)
+                                }, 5000); // Delay time in milliseconds (e.g., 1000ms = 1 second)
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override

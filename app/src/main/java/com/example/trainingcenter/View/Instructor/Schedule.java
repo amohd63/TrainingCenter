@@ -77,6 +77,8 @@ public class Schedule extends AppCompatActivity {
         Sat5 = findViewById(R.id.Saturday5);
         Sat6 = findViewById(R.id.Saturday6);
 
+
+
         Sun1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

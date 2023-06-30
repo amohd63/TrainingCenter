@@ -45,7 +45,9 @@ public class Courses extends AppCompatActivity {
         coursesListLayout.setLayoutParams(coursesListLayoutParams);
         coursesListLayout.setId(View.generateViewId());
         CardView cardView = createCourseCardView("NLP", "08:00 - 10:00", "12 Jul 2023", "Dr. test");
+        CardView cardView2 = createCourseCardView("NLP", "08:00 - 10:00", "12 Jul 2023", "Dr. test");
         coursesListLayout.addView(cardView);
+        coursesListLayout.addView(cardView2);
         coursesMainView.addView(coursesListLayout);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
