@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -317,9 +318,17 @@ public class edit_delete_course extends AppCompatActivity {
         deleteBtn.setTextColor(getResources().getColor(R.color.white));
         deleteBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
 
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setShape(GradientDrawable.RECTANGLE);
+        gradientDrawable.setColor(getResources().getColor(R.color.lavender));
+        gradientDrawable.setCornerRadius(48); // Set the corner radius here (in pixels)
+        deleteBtn.setBackground(gradientDrawable);
+
+
         update.setText("Update");
         update.setBackgroundColor(getResources().getColor(R.color.lavender));
         update.setTextColor(getResources().getColor(R.color.white));
+        update.setBackground(gradientDrawable);
 
 
         LinearLayout innerLinearLayout1 = new LinearLayout(this);
