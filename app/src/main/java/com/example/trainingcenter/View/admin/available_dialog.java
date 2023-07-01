@@ -136,6 +136,8 @@ public class available_dialog extends AppCompatDialogFragment {
                 offer.put("offeringID",offeringID);
                 offer.put("courseID",cId);
                 offer.put("instructorID",instroctorw);
+                offer.put("status","pending");
+
 
                 //notification
                 String title = "New course";

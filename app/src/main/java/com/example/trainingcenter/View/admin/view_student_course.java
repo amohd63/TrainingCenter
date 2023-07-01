@@ -100,7 +100,7 @@ public class view_student_course extends AppCompatActivity {
         cardView.setUseCompatPadding(true);
         //cardView.setContentPadding(8, 8, 8, 8);
         cardView.setContentPadding(32, 32, 32, 32);
-
+        float scale = this.getResources().getDisplayMetrics().density;
         // Create the LinearLayout inside the CardView
         LinearLayout mainLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
@@ -114,19 +114,30 @@ public class view_student_course extends AppCompatActivity {
         titleTextView.setPadding(0, 0, 0, 32);
 
         // Create the TextViews inside the LinearLayout
-        TextView titleTextView2 = createTextView(this, F, 24, Typeface.DEFAULT, false);
+        TextView titleTextView2 = createTextView(this, F+" "+L, 24, Typeface.DEFAULT, false);
         titleTextView2.setTextColor(Color.parseColor("#7884FC"));
         titleTextView2.setPadding(0, 0, 0, 32);
 
-        // Create the TextViews inside the LinearLayout
-        TextView titleTextView3 = createTextView(this, L, 24, Typeface.DEFAULT, false);
-        titleTextView3.setTextColor(Color.parseColor("#7884FC"));
-        titleTextView3.setPadding(0, 0, 0, 32);
+        LinearLayout view = new LinearLayout(this);
+
+        // Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
+
+        // Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
 
         // Add the TextViews to the LinearLayout
         mainLinearLayout.addView(titleTextView);
+        mainLinearLayout.addView(view);
         mainLinearLayout.addView(titleTextView2);
-        mainLinearLayout.addView(titleTextView3);
+       // mainLinearLayout.addView(titleTextView3);
 
         cardView.addView(mainLinearLayout);
         return cardView;

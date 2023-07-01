@@ -27,6 +27,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.util.Timer;
+
 public class home_admin extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
 
         LinearLayout profile;
@@ -36,8 +38,13 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
 
         private static final int REQUEST_CODE = 1;
 
+        private static final long UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
+
+        private Timer timer;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         db = FirebaseFirestore.getInstance();
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
@@ -90,6 +97,10 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
     @Override
     protected void onResume() {
         super.onResume();
+        // Start the timer to run the StatusUpdater periodically
+        timer = new Timer();
+        timer.schedule(new StatusUpdater(), 0, UPDATE_INTERVAL);
+
         ImageView profileImg = profile.findViewById(R.id.profileimage);
         TextView profileName = profile.findViewById(R.id.profilename);
         String[] documentData = new String[2];
@@ -188,4 +199,11 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
                 startActivityForResult(intent, REQUEST_CODE);
             }
         }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//
+//        // Cancel the timer when the activity is destroyed
+//        timer.cancel();
+//    }
 }
