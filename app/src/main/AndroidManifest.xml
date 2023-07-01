@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TrainingCenter">
         <activity
+            android:name=".View.Instructor.ViewLOS"
+            android:exported="false" />
+        <activity
             android:name=".View.admin.MyProfile"
             android:exported="false" />
         <activity
@@ -18,36 +21,35 @@
             android:exported="false" />
         <activity
             android:name=".View.admin.Registration_applications"
-            android:label="Registration application"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:label="Registration application" />
         <activity
             android:name=".View.admin.view_previous_offering_course"
-            android:label="View all the sections of a course"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:label="View all the sections of a course" />
         <activity
             android:name=".View.admin.View_profiles_from_admin"
-            android:label="View the profiles"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize"
+            android:label="View the profiles" />
         <activity
             android:name=".View.admin.view_student_course"
-            android:label="View the student of any course"
-            android:configChanges="orientation|screenSize"/>
+            android:configChanges="orientation|screenSize"
+            android:label="View the student of any course" />
         <activity
             android:name=".View.admin.make_available"
-            android:label="Make a course available for registration"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:label="Make a course available for registration" />
         <activity
             android:name=".View.admin.edit_delete_course"
-            android:label="Edit or remove an existing course"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:label="Edit or remove an existing course" />
         <activity
             android:name=".View.admin.home_admin"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.admin.add_courses"
-            android:label="Add a new course"
-            android:configChanges="orientation|screenSize" />
-
+            android:configChanges="orientation|screenSize"
+            android:label="Add a new course" />
         <activity
             android:name=".View.Instructor.Settings"
             android:configChanges="keyboardHidden|orientation|screenSize"

@@ -78,8 +78,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class ListOfStudents extends AppCompatActivity {
-    private String email;
+public class ViewLOS extends AppCompatActivity {
+    private String email, courseTitle;
     private Context context;
     private LinearLayout mainView;
     @Override
@@ -91,57 +91,9 @@ public class ListOfStudents extends AppCompatActivity {
         context = this;
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
-        //performQuery("java programming", email);
-        performQuery2(email);
+        courseTitle = intent.getStringExtra("courseTitle");
+        performQuery(courseTitle, email);
     }
-    private void performQuery2(String instructorEmail){
-        mainView.removeAllViews();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference courseRef = db.collection("InstructorCourse");
-        Query courseQuery = courseRef.whereEqualTo("instructorID", instructorEmail);
-        courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String courseId = document.getString("courseID");
-                        // 2. Retrieve offeringIDs by courseID
-                        CollectionReference offeringRef = db.collection("Course");
-                        Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId);
-                        offeringQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        String courseTitle = document.getString("courseTitle");
-                                        CardView c = createCourseCardView(courseTitle, "");
-                                        mainView.addView(c);
-                                        c.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                Intent intent = new Intent(getApplicationContext(), ViewLOS.class);
-                                                intent.putExtra("courseTitle", courseTitle);
-                                                intent.putExtra("email", instructorEmail);
-                                                startActivity(intent);
-                                            }
-                                        });
-                                    }
-
-                                }
-                                else {
-                                    Log.w("Firestore", "Error getting documents.", task.getException());
-                                }
-                            }
-                        });
-                    }
-                }
-                else {
-                    Log.w("Firestore", "Error getting documents.", task.getException());
-                }
-            }
-        });
-    }
-
     private void performQuery(String courseTitle, String instructorEmail){
         mainView.removeAllViews();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -187,9 +139,7 @@ public class ListOfStudents extends AppCompatActivity {
                                                                             String lastName = document.getString("lastName");
                                                                             String fullName = firstName + " " + lastName;
                                                                             CardView c = createCourseCardView(email, fullName);
-                                                                            CardView c2 = createCourseCardView(email, fullName);
                                                                             mainView.addView(c);
-                                                                            mainView.addView(c2);
                                                                         }
                                                                     }
                                                                 } else {
@@ -272,103 +222,6 @@ public class ListOfStudents extends AppCompatActivity {
         finish();
         return true;
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setQueryHint("Type here to search");
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mainView.removeAllViews();
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mainView.removeAllViews();
-                String courseTitle = newText;
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                // 1. Retrieve courseID by courseTitle
-                CollectionReference courseRef = db.collection("Course");
-                Query courseQuery = courseRef.whereEqualTo("courseTitle", courseTitle);
-                courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String courseId = document.getId();
-                                // 2. Retrieve offeringIDs by courseID
-                                CollectionReference offeringRef = db.collection("CourseOffering");
-                                Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId);
-                                offeringQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                String offeringId = document.getId();
-                                                // 3. Retrieve emails by offeringID
-                                                CollectionReference registrationRef = db.collection("Registration");
-                                                Query registrationQuery = registrationRef.whereEqualTo("offeringID", offeringId);
-                                                registrationQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                String email = document.getString("traineeID");
-                                                                String status = document.getString("status");
-                                                                // 4. Retrieve user details by email
-                                                                CollectionReference userRef = db.collection("User");
-                                                                Query userQuery = userRef.whereEqualTo("email", email);
-                                                                userQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                        if (task.isSuccessful()) {
-                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                if(status.equals("Accepted")) {
-                                                                                    String email = document.getString("email");
-                                                                                    String firstName = document.getString("firstName");
-                                                                                    String lastName = document.getString("lastName");
-                                                                                    CardView c = createCourseCardView(email,firstName+" "+lastName);
-                                                                                    mainView.addView(c);
-                                                                                }
-                                                                            }
-                                                                        } else {
-                                                                            Log.w("Firestore", "Error getting documents.", task.getException());
-                                                                        }
-                                                                    }
-                                                                });
-                                                            }
-                                                        } else {
-                                                            Log.w("Firestore", "Error getting documents.", task.getException());
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        } else {
-                                            Log.w("Firestore", "Error getting documents.", task.getException());
-                                        }
-                                    }
-                                });
-                            }
-                        } else {
-                            Log.w("Firestore", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
