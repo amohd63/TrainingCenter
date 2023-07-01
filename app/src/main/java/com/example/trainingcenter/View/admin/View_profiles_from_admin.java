@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,6 +45,8 @@ public class View_profiles_from_admin extends AppCompatActivity {
     Spinner type;
     LinearLayout mainView;
     FirebaseFirestore firestore;
+    private AutoCompleteTextView address;
+    private ArrayAdapter<String> adapterItems;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,14 +55,24 @@ public class View_profiles_from_admin extends AppCompatActivity {
         mainView = findViewById(R.id.new_lets_show_the_data);
         secondLinearLayout = new LinearLayout(this);
         secondLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        address = findViewById(R.id.roles);
         type = new Spinner(this);
         String[] options = {"Trainee", "Instructor"};
         // Create an ArrayAdapter for the spinner
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, options);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         type.setAdapter(spinnerAdapter);
-        mainView.addView(type);
+        //mainView.addView(type);
         mainView.addView(secondLinearLayout);
+        adapterItems = new ArrayAdapter<String>(this, R.layout.item_drop_down, options);
+        address.setAdapter(adapterItems);
+//        address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                String item = adapterView.getItemAtPosition(i).toString();
+//                selectedCity = item;
+//            }
+//        });
 
     }
     @Override
@@ -69,11 +82,12 @@ public class View_profiles_from_admin extends AppCompatActivity {
         // Get a reference to the collection
         CollectionReference collectionRef = firestore.collection("User");
         // Retrieve the documents in the collection
-        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapterView.getItemAtPosition(i).toString();
                 secondLinearLayout.removeAllViews();
-                String role = type.getSelectedItem().toString();
+                String role = adapterView.getItemAtPosition(i).toString();
                 if (role.equals("Trainee")) {
                     collectionRef.get().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -153,11 +167,97 @@ public class View_profiles_from_admin extends AppCompatActivity {
                     });
                 }
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
         });
+
+//        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                secondLinearLayout.removeAllViews();
+//                String role = type.getSelectedItem().toString();
+//                if (role.equals("Trainee")) {
+//                    collectionRef.get().addOnCompleteListener(task -> {
+//                        if (task.isSuccessful()) {
+//                            QuerySnapshot querySnapshot = task.getResult();
+//                            if (querySnapshot != null) {
+//                                for (QueryDocumentSnapshot document : querySnapshot) {
+//                                    String email = document.getId();
+//                                    String firstName = document.getString("firstName");
+//                                    String lastName = document.getString("lastName");
+//                                    String photo = document.getString("personalPhoto");
+//                                    DocumentReference docRef = collectionRef.document(email);
+//                                    CollectionReference collectionRef2 = firestore.collection("User").document(email).collection("Trainee");
+//                                    collectionRef2.get().addOnCompleteListener(task1 -> {
+//                                        if (task1.isSuccessful()) {
+//                                            QuerySnapshot querySnapshot2 = task1.getResult();
+//                                            if (querySnapshot2 != null) {
+//                                                for (QueryDocumentSnapshot document2 : querySnapshot2) {
+//                                                    CardView c = createCourseCardView2(email,firstName,lastName,photo);
+//                                                    secondLinearLayout.addView(c);
+//                                                    c.setOnClickListener(new View.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(View view) {
+//                                                            Bundle args = new Bundle();
+//                                                            args.putString("pointer1", docRef.getPath());
+//                                                            args.putString("pointer", role);
+//                                                            show_profile_from_admin_all exampleDialog = new show_profile_from_admin_all();
+//                                                            exampleDialog.setArguments(args);
+//                                                            exampleDialog.show(getSupportFragmentManager(), "example dialog");
+//                                                        }
+//                                                    });
+//
+//                                                }
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                        }
+//                    });
+//                } else if (role.equals("Instructor")) {
+//                    collectionRef.get().addOnCompleteListener(task -> {
+//                        if (task.isSuccessful()) {
+//                            QuerySnapshot querySnapshot = task.getResult();
+//                            if (querySnapshot != null) {
+//                                for (QueryDocumentSnapshot document : querySnapshot) {
+//                                    String email = document.getId();
+//                                    String firstName = document.getString("firstName");
+//                                    String lastName = document.getString("lastName");
+//                                    String photo = document.getString("personalPhoto");
+//                                    DocumentReference docRef = collectionRef.document(email);
+//                                    CollectionReference collectionRef2 = firestore.collection("User").document(email).collection("Instructor");
+//                                    collectionRef2.get().addOnCompleteListener(task1 -> {
+//                                        if (task1.isSuccessful()) {
+//                                            QuerySnapshot querySnapshot2 = task1.getResult();
+//                                            if (querySnapshot2 != null) {
+//                                                for (QueryDocumentSnapshot document2 : querySnapshot2) {
+//                                                    CardView c = createCourseCardView2(email,firstName,lastName,photo);
+//                                                    secondLinearLayout.addView(c);
+//                                                    c.setOnClickListener(new View.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(View view) {
+//                                                            Bundle args = new Bundle();
+//                                                            args.putString("pointer1", docRef.getPath());
+//                                                            args.putString("pointer", role);
+//                                                            show_profile_from_admin_all exampleDialog = new show_profile_from_admin_all();
+//                                                            exampleDialog.setArguments(args);
+//                                                            exampleDialog.show(getSupportFragmentManager(), "example dialog");
+//                                                        }
+//                                                    });
+//                                                }
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
 
     }
     private CardView createCourseCardView2(String email, String F, String L, String photo) {
@@ -226,7 +326,23 @@ public class View_profiles_from_admin extends AppCompatActivity {
         innerLayout.addView(titleTV);
         innerLayout.addView(instructorTV);
 
+        LinearLayout view = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                (int) (1 * scale + 0.5f),
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(marginTop, 0, marginBottom, 0);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
         mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(view);
         mainLinearLayout.addView(innerLayout);
         cardView.addView(mainLinearLayout);
         return cardView;

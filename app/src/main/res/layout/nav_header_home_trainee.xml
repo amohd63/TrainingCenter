@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/calibri"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Admin"
+        android:text="Trainee"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textColor="#FFFFFF"
@@ -64,7 +64,7 @@
         android:paddingTop="4dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:text="admin@gmail.com"
+        android:text="trainee@gmail.com"
         android:textColor="#FFFFFF"
         android:textSize="14sp" />
 

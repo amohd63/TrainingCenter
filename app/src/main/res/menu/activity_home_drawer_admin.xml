@@ -7,22 +7,22 @@
         <item
             android:id="@+id/nav_Addcourses"
             android:icon="@drawable/ic_school_black_24dp"
-            android:title=" Create a  new course"
+            android:title=" Create new course"
             />
         <item
             android:id="@+id/nav_edcourses"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Edit or delete courses"
+            android:title="Edit/delete courses"
             />
         <item
             android:id="@+id/nav_Addregistration"
             android:icon="@drawable/ic_event_black_24dp"
-            android:title="Make available for registration"
+            android:title="Courses availability"
             />
         <item
             android:id="@+id/nav_VSC"
             android:icon="@drawable/ic_event_black_24dp"
-            android:title="View the students for a course"
+            android:title="View the students"
             />
         <item
             android:id="@+id/nav_Rapplications"
@@ -37,7 +37,7 @@
         <item
             android:id="@+id/nav_CourseHistory"
             android:icon="@drawable/ic_schedule_black_24dp"
-            android:title="offering history of a course"
+            android:title="Offering history"
             />
         <item
             android:id="@+id/nav_logout"

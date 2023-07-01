@@ -14,4 +14,5 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
     <string name="select">Select your city</string>
+    <string name="select_role">Select the role of profiles</string>
 </resources>

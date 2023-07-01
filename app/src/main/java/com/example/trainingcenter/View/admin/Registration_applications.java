@@ -182,7 +182,7 @@ public class Registration_applications extends AppCompatActivity {
         mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
 
         // Create the TextViews inside the LinearLayout
-        TextView titleTextView = createTextView(this, courseName, 16, Typeface.DEFAULT, false);
+        TextView titleTextView = createTextView(this, courseName, 16, Typeface.DEFAULT, true);
         titleTextView.setTextColor(Color.parseColor("#7884FC"));
 
         float scale = this.getResources().getDisplayMetrics().density;
@@ -207,7 +207,7 @@ public class Registration_applications extends AppCompatActivity {
         timeTextView.setPadding(0, 0, 0, 16);
 
         TextView dateTextView = createTextView(this, F+" "+L, 14, Typeface.DEFAULT, false);
-        dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_person_24, 0, 0, 0);
+        dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.baseline_person_16, 0, 0, 0);
         dateTextView.setCompoundDrawablePadding(32);
         dateTextView.setPadding(0, 0, 0, 16);
 
