@@ -96,6 +96,7 @@ public class CourseDetails extends AppCompatDialogFragment {
             CardView topicCV = createTopicCardView(topic);
             mainTopics.addView(topicCV);
         }
+
         final boolean[] flag = {true};
         final int[] i = {0};
         final int[] size = {1};
@@ -165,7 +166,9 @@ public class CourseDetails extends AppCompatDialogFragment {
                         }
                     }
                 });
+
         final boolean[] foundConflict = {false};
+        final boolean[] courseConflict = {false};
         final int[] j = {0};
         final int[] noOfConflicts = {0};
         final int[] size2 = {1};
@@ -178,36 +181,43 @@ public class CourseDetails extends AppCompatDialogFragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
                         if (regTask.isSuccessful()) {
                             if (regTask.getResult().isEmpty()) {
-                                CardView empty = createEmptyCardView("No conflicts1");
+                                CardView empty = createEmptyCardView("No conflicts");
                                 conflicts.addView(empty);
                             } else {
                                 size2[0] = regTask.getResult().size();
                                 for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                     db.collection("CourseOffering")
                                             .whereEqualTo("offeringID", regDoc.getString("offeringID"))
-                                            .whereEqualTo("schedule", courseOffering.getSchedule())
+                                            //.whereEqualTo("schedule", courseOffering.getSchedule())
                                             .get()
                                             .addOnCompleteListener(courseOfferingTask -> {
                                                 noOfConflicts[0] = courseOfferingTask.getResult().size();
                                                 if (courseOfferingTask.isSuccessful()) {
-                                                        for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                            db.collection("Course")
-                                                                    .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
-                                                                    .get()
-                                                                    .addOnCompleteListener(courseTask -> {
-                                                                        if (courseTask.isSuccessful()) {
-                                                                            for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                    for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                                        db.collection("Course")
+                                                                .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                                                .get()
+                                                                .addOnCompleteListener(courseTask -> {
+                                                                    if (courseTask.isSuccessful()) {
+                                                                        for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                            if (courseOfferingDoc.getString("schedule").equals(courseOffering.getSchedule())) {
                                                                                 String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
                                                                                 CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);
                                                                                 conflicts.addView(conflictView);
                                                                                 foundConflict[0] = true;
-                                                                                j[0]++;
-                                                                                noOfConflicts[0]--;
+                                                                            } else if (courseDoc.getString("courseID").equals(course.getCourseID())) {
+                                                                                String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
+                                                                                CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);
+                                                                                conflicts.addView(conflictView);
+                                                                                courseConflict[0] = true;
                                                                             }
-                                                                        } else {
+                                                                            j[0]++;
+                                                                            //noOfConflicts[0]--;
                                                                         }
-                                                                    });
-                                                        }
+                                                                    } else {
+                                                                    }
+                                                                });
+                                                    }
                                                 } else {
                                                 }
                                             });
@@ -226,12 +236,16 @@ public class CourseDetails extends AppCompatDialogFragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (i[0] == size[0]) {
+                        if (i[0] == size[0] && j[0] == noOfConflicts[0]) {
                             if (flag[0]) {
                                 if (courseOffering.getRegistrationDeadline().compareTo(timestamp) >= 0) {
-                                    if (foundConflict[0]){
+                                    if (foundConflict[0] && courseConflict[0]) {
+                                        Toast.makeText(dialog.getContext(), "Course is previously taken & time conflict!", Toast.LENGTH_SHORT).show();
+                                    } else if (courseConflict[0]) {
+                                        Toast.makeText(dialog.getContext(), "Course is previously taken!", Toast.LENGTH_SHORT).show();
+                                    } else if (foundConflict[0]) {
                                         Toast.makeText(dialog.getContext(), "Time conflict!", Toast.LENGTH_SHORT).show();
-                                    }else{
+                                    } else {
                                         String key = courseOffering.getCourseID().substring(0, 8) + courseOffering.getOfferingID().substring(0, 8);
                                         Map<String, Object> reg = new HashMap<>();
                                         reg.put("traineeID", email);
@@ -244,10 +258,10 @@ public class CourseDetails extends AppCompatDialogFragment {
                                 } else {
                                     Toast.makeText(dialog.getContext(), "Registration is closed!", Toast.LENGTH_SHORT).show();
                                 }
-                            }else{
+                            } else {
                                 Toast.makeText(dialog.getContext(), "Prerequisites uncompleted!", Toast.LENGTH_SHORT).show();
                             }
-                        }else{
+                        } else {
                             Toast.makeText(dialog.getContext(), "Couldn't fetch prerequisites!", Toast.LENGTH_SHORT).show();
                         }
                         dismiss();

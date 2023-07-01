@@ -315,7 +315,7 @@ public class update_dialog extends AppCompatDialogFragment {
                                                                         note.put("body", body);
                                                                         note.put("title", title);
                                                                         note.put("userID", userId);
-                                                                        db.collection("NotificationBackup").document(noteID).set(note);
+                                                                        db.collection("Notification").document(noteID).set(note);
                                                                     }
                                                                 }
                                                             }

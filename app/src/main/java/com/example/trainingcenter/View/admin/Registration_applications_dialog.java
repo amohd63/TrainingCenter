@@ -119,7 +119,7 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
                 note.put("body",body);
                 note.put("title",title);
                 note.put("userID",userId);
-                db.collection("NotificationBackup").document(noteID).set(note);
+                db.collection("Notification").document(noteID).set(note);
                 dismiss();
                 getActivity().recreate();
             }
@@ -128,7 +128,9 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
         reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                docRef.delete();
+                docRef.update("status", "Rejected")
+                        .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
+                        .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                 //notification
                 UUID uuid2 = UUID.randomUUID();
                 String noteID = uuid.toString().replace("-", "").substring(0, 20);
@@ -138,7 +140,7 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
                 note.put("body",body);
                 note.put("title",title);
                 note.put("userID",userId);
-                db.collection("NotificationBackup").document(noteID).set(note);
+                db.collection("Notification").document(noteID).set(note);
                 dismiss();
                 getActivity().recreate();
             }

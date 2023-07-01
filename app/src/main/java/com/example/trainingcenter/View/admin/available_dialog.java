@@ -156,7 +156,7 @@ public class available_dialog extends AppCompatDialogFragment {
                 coureInstroctor.put("instructorID",instroctorw);
 
                 db.collection("CourseOffering").document(offeringID).set(offer);
-                db.collection("NotificationBackup").document(noteID).set(note);
+                db.collection("Notification").document(noteID).set(note);
                 db.collection("InstructorCourse").document(InstructorCourseId).set(coureInstroctor);
 
                 dismiss();

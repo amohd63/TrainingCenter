@@ -22,6 +22,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -72,6 +73,7 @@ public class Home extends AppCompatActivity
     LinearLayout dailySchedule;
     LinearLayout rejectedCourses;
     LinearLayout pendingCourses;
+    LinearLayout mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +103,7 @@ public class Home extends AppCompatActivity
         dailySchedule = findViewById(R.id.daily_schedule);
         rejectedCourses = findViewById(R.id.rejected_courses);
         pendingCourses = findViewById(R.id.pending_courses);
+        mainLayout = findViewById(R.id.main_layout);
         dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -133,36 +136,39 @@ public class Home extends AppCompatActivity
                     DocumentSnapshot documentSnapshot = documentChange.getDocument();
                     String documentId = documentSnapshot.getId();
                     String userID = documentSnapshot.getString("userID");
-                    String title = documentSnapshot.getString("title");
-                    String body = documentSnapshot.getString("body");
-                    Toast.makeText(Home.this, documentId, Toast.LENGTH_SHORT).show();
-                    createNotification(documentId, title, body);
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            db.collection("Notification").document(documentId)
-                                    .delete()
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Map<String, Object> notificationBackup = new HashMap<>();
-                                            notificationBackup.put("userID", userID);
-                                            notificationBackup.put("title", title);
-                                            notificationBackup.put("body", body);
-                                            db.collection("User").document().set(notificationBackup);
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@android.support.annotation.NonNull Exception e) {
-                                        }
-                                    });
-                        }
-                    }, 500); // Delay time in milliseconds (e.g., 1000ms = 1 second)
+                    if (userID.equals(email)) {
+                        String title = documentSnapshot.getString("title");
+                        String body = documentSnapshot.getString("body");
+                        createNotification(documentId, title, body);
+//                        Handler handler = new Handler();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                db.collection("Notification").document(documentId)
+//                                        .delete()
+//                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                            @Override
+//                                            public void onSuccess(Void aVoid) {
+//                                                Map<String, Object> notificationBackup = new HashMap<>();
+//                                                notificationBackup.put("userID", userID);
+//                                                notificationBackup.put("title", title);
+//                                                notificationBackup.put("body", body);
+//                                                db.collection("Notification").document().set(notificationBackup);
+//                                            }
+//                                        })
+//                                        .addOnFailureListener(new OnFailureListener() {
+//                                            @Override
+//                                            public void onFailure(@android.support.annotation.NonNull Exception e) {
+//                                            }
+//                                        });
+//                            }
+//                        }, 500); // Delay time in milliseconds (e.g., 1000ms = 1 second)
+                    }
                 }
             }
         });
+
+
 
     }
 
@@ -244,7 +250,11 @@ public class Home extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+        intent.putExtra("email", email);
+        startActivity(intent);
         return super.onOptionsItemSelected(item);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -260,7 +270,6 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_events) {
             Intent intent = new Intent(getApplicationContext(), CoursesHistory.class);
             startActivity(intent);
-
         } else if (id == R.id.nav_lectures) {
             Intent intent = new Intent(getApplicationContext(), MyCourses.class);
             intent.putExtra("email", email);
@@ -273,7 +282,6 @@ public class Home extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), MyProfile.class);
             intent.putExtra("email", email);
             startActivity(intent);
-
         } else if (id == R.id.nav_logout) {
             finish();
         }
@@ -291,7 +299,7 @@ public class Home extends AppCompatActivity
         }
     }
 
-    private CardView createCourseCardView2(String courseName, String time, String date, String venue, String instructor) {
+    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -342,7 +350,7 @@ public class Home extends AppCompatActivity
         params.setMargins(0, 0, 0, 4);
         titleTV.setLayoutParams(params);
         titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
-        titleTV.setText("Information System Evaluation");
+        titleTV.setText(courseName);
         titleTV.setTextColor(ContextCompat.getColor(this, R.color.lavender));
         titleTV.setTextSize(16);
 
@@ -354,7 +362,7 @@ public class Home extends AppCompatActivity
         params.setMargins(0, 0, 0, 4);
         instructorTV.setLayoutParams(params);
         instructorTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
-        instructorTV.setText("Puspita Kartika Sari, M. Si");
+        instructorTV.setText(instructor);
         instructorTV.setTextColor(0xFF000000); // Equivalent to #000000 in hexadecimal
 
 
@@ -363,7 +371,7 @@ public class Home extends AppCompatActivity
 // Set layout parameters
         testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
-        testV.setText("0fdff326f5cf4728bd52");
+        testV.setText(courseID);
         testV.setTextSize(11);
 
 
@@ -398,7 +406,7 @@ public class Home extends AppCompatActivity
         venueTextView.setCompoundDrawablePadding(32);
         venueTextView.setPadding(0, 0, 0, 16);
 
-        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
+        TextView instructorTextView = createTextView(this, days, 16, Typeface.DEFAULT, false);
         instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_today_purple_24, 0, 0, 0);
         instructorTextView.setCompoundDrawablePadding(32);
         instructorTextView.setPadding(0, 0, 0, 16);
@@ -449,6 +457,40 @@ public class Home extends AppCompatActivity
         return cardView;
     }
 
+
+    private CardView createEmptyCardView(String text) {
+        // Create the CardView inside the courses_list LinearLayout
+        CardView cardView = new CardView(this);
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                1030, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cardViewParams.setMargins(4, 0, 0, 0);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(32);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(16, 16, 16, 16);
+        cardView.setElevation(32);
+
+        LinearLayout mainLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        mainLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        mainLinearLayout.setGravity(Gravity.CENTER);
+
+        TextView titleTV = new TextView(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        titleTV.setLayoutParams(params);
+        titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        titleTV.setText(text);
+        titleTV.setTextColor(ContextCompat.getColor(this, R.color.lavender));
+        titleTV.setTextSize(16);
+
+        mainLinearLayout.addView(titleTV);
+        cardView.addView(mainLinearLayout);
+        return cardView;
+    }
+
     private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
@@ -462,12 +504,103 @@ public class Home extends AppCompatActivity
         return textView;
     }
 
+    private CardView createNotificationCard(String title, String body, String time) {
+        // Create the CardView inside the courses_list LinearLayout
+        CardView cardView = new CardView(this);
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cardViewParams.setMargins(4, 0, 0, 0);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(32);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(32, 32, 32, 32);
+        cardView.setElevation(32);
+
+
+        LinearLayout mainLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        innerLinearLayoutParams.setMargins(10, 10, 10, 10);
+
+        float scale = this.getResources().getDisplayMetrics().density;
+
+// Create an instance of TextView
+        TextView titleTV = new TextView(this);
+
+// Set layout parameters
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        titleTV.setLayoutParams(params);
+        titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        titleTV.setText(title);
+        titleTV.setTextColor(ContextCompat.getColor(this, R.color.white));
+        titleTV.setBackground(getResources().getDrawable(R.drawable.blue_rounded_solid));
+        titleTV.setTextSize(14);
+        titleTV.setPadding((int) (12 * scale + 0.5f), (int) (8 * scale + 0.5f), (int) (12 * scale + 0.5f), (int) (8 * scale + 0.5f));
+
+
+// Create an instance of TextView
+        TextView instructorTV = new TextView(this);
+// Set layout parameters
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        instructorTV.setLayoutParams(params);
+        instructorTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        instructorTV.setText(body);
+        instructorTV.setTextColor(0xFF000000); // Equivalent to #000000 in hexadecimal
+        instructorTV.setTextSize(12);
+
+
+        // Create an instance of TextView
+        TextView testV = new TextView(this);
+// Set layout parameters
+        testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        testV.setText(time);
+        testV.setTextSize(11);
+
+
+        LinearLayout view = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        mainLinearLayout.addView(titleTV);
+        mainLinearLayout.addView(view);
+        mainLinearLayout.addView(instructorTV);
+        mainLinearLayout.addView(testV);
+
+        cardView.addView(mainLinearLayout);
+        return cardView;
+    }
+
+
     protected void onResume() {
         super.onResume();
         ImageView profileImg = profile.findViewById(R.id.profileimage);
         TextView profileName = profile.findViewById(R.id.profilename);
         String[] documentData = new String[2];
+        pendingCourses.removeAllViews();
+        rejectedCourses.removeAllViews();
+        CardView emptyPending = createEmptyCardView("You don't have any pending course!");
+        pendingCourses.addView(emptyPending);
+        CardView emptyRejected = createEmptyCardView("You don't have any rejected courses!");
+        rejectedCourses.addView(emptyRejected);
 
+        CardView cv = createNotificationCard("EXAMS", "Update on CS8214 - Postponed to next week due to unforeseen circumstances.", "10:40 AM");
+        mainLayout.addView(cv);
         DocumentReference docRef = db.collection("User").document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -524,12 +657,15 @@ public class Home extends AppCompatActivity
                                                                                         if (userTask.isSuccessful()) {
                                                                                             for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
                                                                                                 CardView test = createCourseCardView2(
+                                                                                                        courseDoc.getString("courseID"),
+                                                                                                        userDoc.getString("firstName") + userDoc.getString("lastName"),
                                                                                                         courseDoc.getString("courseTitle"),
-                                                                                                        courseOfferingDoc.getString("schedule"),
+                                                                                                        courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                                         dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                                         courseOfferingDoc.getString("venue"),
-                                                                                                        userDoc.getString("firstName") + userDoc.getString("lastName")
+                                                                                                        courseOfferingDoc.getString("schedule").split(" ")[1]
                                                                                                 );
+
                                                                                                 if (flag[2] == 0) {
                                                                                                     dailySchedule.removeAllViews();
                                                                                                     flag[2]++;
@@ -589,11 +725,13 @@ public class Home extends AppCompatActivity
                                                                                     if (userTask.isSuccessful()) {
                                                                                         for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
                                                                                             CardView test = createCourseCardView2(
+                                                                                                    courseDoc.getString("courseID"),
+                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName"),
                                                                                                     courseDoc.getString("courseTitle"),
-                                                                                                    courseOfferingDoc.getString("schedule"),
+                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                                     dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                                     courseOfferingDoc.getString("venue"),
-                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName")
+                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[1]
                                                                                             );
                                                                                             if (regDoc.getString("status").equals("Pending")) {
                                                                                                 if (flag[0] == 0) {
