@@ -318,7 +318,7 @@ public class LoginActivity extends AppCompatActivity implements
                                         }
                                         finish();
                                     }
-                                }, 5000); // Delay time in milliseconds (e.g., 1000ms = 1 second)
+                                }, 3500); // Delay time in milliseconds (e.g., 1000ms = 1 second)
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
