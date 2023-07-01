@@ -31,6 +31,9 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 import com.example.trainingcenter.Model.Course;
@@ -159,6 +162,10 @@ public class edit_delete_course extends AppCompatActivity {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                                         //notification
+                                                                        LocalDateTime currentDateTime = LocalDateTime.now();
+                                                                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                                                                        String formattedDateTime = currentDateTime.format(formatter);
+                                                                        Timestamp timestampNote = Timestamp.valueOf(formattedDateTime);
                                                                         String title = "Deleted Course";
                                                                         String body = "The course " + courseTitle + " has been deleted";
                                                                         String noteID = uuid.toString().replace("-", "").substring(0, 20);
@@ -166,6 +173,8 @@ public class edit_delete_course extends AppCompatActivity {
                                                                         note.put("body", body);
                                                                         note.put("title", title);
                                                                         note.put("userID", registrationID);
+                                                                        note.put("noteDate",timestampNote);
+
                                                                         db.collection("NotificationBackup").document(noteID).set(note);
                                                                     }
                                                                 }

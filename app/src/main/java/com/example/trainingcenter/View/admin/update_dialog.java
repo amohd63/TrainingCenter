@@ -36,6 +36,9 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -303,6 +306,10 @@ public class update_dialog extends AppCompatDialogFragment {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                                         String userId = document.getId();
                                                                         //notification
+                                                                        LocalDateTime currentDateTime = LocalDateTime.now();
+                                                                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                                                                        String formattedDateTime = currentDateTime.format(formatter);
+                                                                        Timestamp timestampNote = Timestamp.valueOf(formattedDateTime);
                                                                         String title = "Update course";
                                                                         String body;
                                                                         if(nameTosent.equals(data)) {
@@ -315,6 +322,8 @@ public class update_dialog extends AppCompatDialogFragment {
                                                                         note.put("body", body);
                                                                         note.put("title", title);
                                                                         note.put("userID", userId);
+                                                                        note.put("noteDate",timestampNote);
+
                                                                         db.collection("Notification").document(noteID).set(note);
                                                                     }
                                                                 }

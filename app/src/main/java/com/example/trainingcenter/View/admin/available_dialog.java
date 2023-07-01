@@ -9,6 +9,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -140,6 +143,11 @@ public class available_dialog extends AppCompatDialogFragment {
 
 
                 //notification
+                LocalDateTime currentDateTime = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String formattedDateTime = currentDateTime.format(formatter);
+                Timestamp timestampNote = Timestamp.valueOf(formattedDateTime);
+
                 String title = "New course";
                 String body = "The course "+titleAdmin+" is now available for registration";
                 UUID uuid2 = UUID.randomUUID();
@@ -148,7 +156,7 @@ public class available_dialog extends AppCompatDialogFragment {
                 note.put("body",body);
                 note.put("title",title);
                 note.put("userID","all");
-
+                note.put("noteDate",timestampNote);
                 //
                 Map<String, Object> coureInstroctor = new HashMap<>();
                 UUID uuid3 = UUID.randomUUID();

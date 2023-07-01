@@ -38,6 +38,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -111,6 +113,10 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
                         .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                         .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                 //notification
+                LocalDateTime currentDateTime = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String formattedDateTime = currentDateTime.format(formatter);
+                Timestamp timestampNote = Timestamp.valueOf(formattedDateTime);
                 UUID uuid2 = UUID.randomUUID();
                 String noteID = uuid.toString().replace("-", "").substring(0, 20);
                 String title = "Acceptance";
@@ -119,6 +125,7 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
                 note.put("body",body);
                 note.put("title",title);
                 note.put("userID",userId);
+                note.put("noteDate",timestampNote);
                 db.collection("Notification").document(noteID).set(note);
                 dismiss();
                 getActivity().recreate();
