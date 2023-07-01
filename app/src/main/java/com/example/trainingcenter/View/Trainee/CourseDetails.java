@@ -184,14 +184,14 @@ public class CourseDetails extends AppCompatDialogFragment {
                                 CardView empty = createEmptyCardView("No conflicts");
                                 conflicts.addView(empty);
                             } else {
-                                size2[0] = regTask.getResult().size();
+                                noOfConflicts[0] = regTask.getResult().size();
                                 for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                     db.collection("CourseOffering")
                                             .whereEqualTo("offeringID", regDoc.getString("offeringID"))
                                             //.whereEqualTo("schedule", courseOffering.getSchedule())
                                             .get()
                                             .addOnCompleteListener(courseOfferingTask -> {
-                                                noOfConflicts[0] = courseOfferingTask.getResult().size();
+                                                //noOfConflicts[0] = courseOfferingTask.getResult().size();
                                                 if (courseOfferingTask.isSuccessful()) {
                                                     for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
                                                         db.collection("Course")
@@ -246,7 +246,7 @@ public class CourseDetails extends AppCompatDialogFragment {
                                     } else if (foundConflict[0]) {
                                         Toast.makeText(dialog.getContext(), "Time conflict!", Toast.LENGTH_SHORT).show();
                                     } else {
-                                        String key = courseOffering.getCourseID().substring(0, 8) + courseOffering.getOfferingID().substring(0, 8);
+                                        String key = String.valueOf(System.currentTimeMillis());
                                         Map<String, Object> reg = new HashMap<>();
                                         reg.put("traineeID", email);
                                         reg.put("offeringID", courseOffering.getOfferingID());

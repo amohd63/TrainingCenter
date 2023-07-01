@@ -457,7 +457,6 @@ public class Home extends AppCompatActivity
         return cardView;
     }
 
-
     private CardView createEmptyCardView(String text) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
@@ -509,7 +508,7 @@ public class Home extends AppCompatActivity
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        cardViewParams.setMargins(4, 0, 0, 0);
+        cardViewParams.setMargins(32, 0, 32, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
@@ -598,9 +597,6 @@ public class Home extends AppCompatActivity
         pendingCourses.addView(emptyPending);
         CardView emptyRejected = createEmptyCardView("You don't have any rejected courses!");
         rejectedCourses.addView(emptyRejected);
-
-        CardView cv = createNotificationCard("EXAMS", "Update on CS8214 - Postponed to next week due to unforeseen circumstances.", "10:40 AM");
-        mainLayout.addView(cv);
         DocumentReference docRef = db.collection("User").document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -619,6 +615,23 @@ public class Home extends AppCompatActivity
                 }
             }
         });
+
+        db.collection("NotificationBackup")
+                .whereEqualTo("userID", email)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+                        if (regTask.isSuccessful()) {
+                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
+                                CardView cv = createNotificationCard(regDoc.getString("title"), regDoc.getString("body"), "10:40 AM");
+                                mainLayout.addView(cv);
+                            }
+                        } else {
+                        }
+                    }
+                });
+
 
         final int[] flag = {0, 0, 0};
         Timestamp timestamp = Timestamp.now();
