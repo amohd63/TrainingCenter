@@ -188,6 +188,8 @@ public class show_profile_from_admin_all extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.activity_show_profile_from_admin_all, null);
         builder.setView(view);
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         db = FirebaseFirestore.getInstance();
         cloas = view.findViewById(R.id.imageButton_for_closing);
         personalPhoto = view.findViewById(R.id.personalPhoto2);
@@ -304,9 +306,6 @@ public class show_profile_from_admin_all extends AppCompatDialogFragment {
                 dismiss();
             }
         });
-
-        AlertDialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
     }
 }
