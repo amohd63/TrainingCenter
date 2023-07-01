@@ -178,7 +178,7 @@ public class Home extends AppCompatActivity
 
     public void createNotification(String NOTIFICATION_ID, String title, String body) {
         Intent intent = new Intent(this, Home.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         createNotificationChannel();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
                 MY_CHANNEL_ID)
