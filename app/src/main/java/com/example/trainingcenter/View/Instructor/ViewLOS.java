@@ -138,7 +138,9 @@ public class ViewLOS extends AppCompatActivity {
                                                                             String firstName = document.getString("firstName");
                                                                             String lastName = document.getString("lastName");
                                                                             String fullName = firstName + " " + lastName;
-                                                                            CardView c = createCourseCardView(email, fullName);
+                                                                            String personalPhoto = document.getString("personalPhoto");
+                                                                            //CardView c = createCourseCardView(email, fullName);
+                                                                            CardView c = createCourseCardView2(email, fullName, personalPhoto, "Hebron", "0597544077");
                                                                             mainView.addView(c);
                                                                         }
                                                                     }
@@ -167,6 +169,170 @@ public class ViewLOS extends AppCompatActivity {
         });
 
     }
+
+    private CardView createCourseCardView2(String stEmail, String stName, String stImg, String address, String mobile) {
+        // Create the CardView inside the courses_list LinearLayout
+        CardView cardView = new CardView(this);
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cardViewParams.setMargins(4, 0, 0, 0);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(32);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(32, 32, 32, 32);
+        cardView.setElevation(32);
+
+
+        LinearLayout mainLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        mainLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        mainLinearLayout.setGravity(Gravity.CENTER);
+        innerLinearLayoutParams.setMargins(10, 10, 10, 10);
+
+        int heightInDp = 60;
+        float scale = this.getResources().getDisplayMetrics().density;
+        int heightInPixels = (int) (heightInDp * scale + 0.5f);
+        ImageView imageView = new ImageView(this);
+        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(0, heightInPixels, 25);
+        heightInPixels = (int) (8 * scale + 0.5f);
+        imgParams.setMargins(0, 0, heightInPixels, 0);
+        imageView.setLayoutParams(imgParams);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageResource(R.drawable.mobile_img);
+        Picasso.get().load(stImg).into(imageView);
+
+
+        LinearLayout innerLayout = new LinearLayout(this);
+
+// Set layout parameters
+        innerLayout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 75));
+        innerLayout.setPadding(8, 0, 0, 0);
+        innerLayout.setWeightSum(75);
+        innerLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+//// Create an instance of TextView
+//        TextView titleTV = new TextView(this);
+//
+//// Set layout parameters
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+//        titleTV.setLayoutParams(params);
+//        titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+//        titleTV.setText(courseName);
+//        titleTV.setTextColor(ContextCompat.getColor(this, R.color.lavender));
+//        titleTV.setTextSize(16);
+
+
+// Create an instance of TextView
+        TextView instructorTV = new TextView(this);
+// Set layout parameters
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        instructorTV.setLayoutParams(params);
+        instructorTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        instructorTV.setText(stName);
+        instructorTV.setTextColor(0xFF000000); // Equivalent to #000000 in hexadecimal
+        instructorTV.setTextSize(14);
+
+
+        // Create an instance of TextView
+        TextView testV = new TextView(this);
+// Set layout parameters
+        testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        testV.setText(stEmail);
+        testV.setTextSize(12);
+
+
+        LinearLayout view = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                (int) (1 * scale + 0.5f),
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(marginTop, 0, marginBottom, 0);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        TextView timeTextView = createTextView(this, address, 11, Typeface.DEFAULT, false);
+        timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_16, 0, 0, 0);
+        timeTextView.setCompoundDrawablePadding(32);
+        timeTextView.setPadding(0, 0, 0, 16);
+
+        TextView dateTextView = createTextView(this, mobile, 11, Typeface.DEFAULT, false);
+        dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_phone_16, 0, 0, 0);
+        dateTextView.setCompoundDrawablePadding(32);
+        dateTextView.setPadding(0, 0, 0, 16);
+
+
+        LinearLayout innerLinearLayout1 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams1 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
+        //innerLinearLayout1.setPadding(0, 0, 0, 0);
+//        innerLinearLayout1.setWeightSum(50);
+
+        LinearLayout innerLinearLayout2 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams2 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
+        //innerLinearLayout2.setPadding(0, 0, 0, 0);
+
+        LinearLayout innerLinearLayout3 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        innerLinearLayout3.setOrientation(LinearLayout.HORIZONTAL);
+        innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
+        //innerLinearLayout3.setPadding(0, 32, 0, 32);
+
+        LinearLayout view1 = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        marginTop = (int) (8 * scale + 0.5f);
+        marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams1.setMargins(0, marginTop, 0, marginBottom);
+        view1.setLayoutParams(layoutParams1);
+
+// Set background color
+        view1.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        innerLinearLayout1.addView(timeTextView);
+
+
+        innerLinearLayout2.addView(dateTextView);
+
+        innerLinearLayout3.addView(innerLinearLayout1);
+        innerLinearLayout3.addView(innerLinearLayout2);
+
+
+        innerLayout.addView(instructorTV);
+        innerLayout.addView(testV);
+        innerLayout.addView(view1);
+        innerLayout.addView(innerLinearLayout3);
+
+        mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(view);
+        mainLinearLayout.addView(innerLayout);
+        cardView.addView(mainLinearLayout);
+        return cardView;
+    }
+
+
     private CardView createCourseCardView(String id, String F) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);

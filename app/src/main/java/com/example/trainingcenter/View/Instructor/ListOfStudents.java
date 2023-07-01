@@ -113,8 +113,11 @@ public class ListOfStudents extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String courseId = document.getId();
                                         String courseTitle = document.getString("courseTitle");
-                                        CardView c = createCourseCardView(courseTitle, "");
+                                        String insName = document.getString("courseTitle");
+                                        String courseImg = document.getString("photo");
+                                        CardView c = createCourseCardView2(courseId, insName, courseTitle, courseImg);
                                         mainView.addView(c);
                                         c.setOnClickListener(new View.OnClickListener() {
                                             @Override
@@ -217,6 +220,112 @@ public class ListOfStudents extends AppCompatActivity {
         });
 
     }
+
+    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String courseImg) {
+        // Create the CardView inside the courses_list LinearLayout
+        CardView cardView = new CardView(this);
+        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cardViewParams.setMargins(4, 0, 0, 0);
+        cardView.setLayoutParams(cardViewParams);
+        cardView.setRadius(32);
+        cardView.setUseCompatPadding(true);
+        cardView.setContentPadding(32, 32, 32, 32);
+        cardView.setElevation(32);
+
+
+        LinearLayout mainLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        mainLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        mainLinearLayout.setGravity(Gravity.CENTER);
+        innerLinearLayoutParams.setMargins(10, 10, 10, 10);
+
+        int heightInDp = 60;
+        float scale = this.getResources().getDisplayMetrics().density;
+        int heightInPixels = (int) (heightInDp * scale + 0.5f);
+        ImageView imageView = new ImageView(this);
+        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(0, heightInPixels, 25);
+        heightInPixels = (int) (8 * scale + 0.5f);
+        imgParams.setMargins(0, 0, heightInPixels, 0);
+        imageView.setLayoutParams(imgParams);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageResource(R.drawable.mobile_img);
+        Picasso.get().load(courseImg).into(imageView);
+
+
+        LinearLayout innerLayout = new LinearLayout(this);
+
+// Set layout parameters
+        innerLayout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 75));
+        innerLayout.setPadding(8, 0, 0, 0);
+        innerLayout.setWeightSum(75);
+        innerLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+// Create an instance of TextView
+        TextView titleTV = new TextView(this);
+
+// Set layout parameters
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        titleTV.setLayoutParams(params);
+        titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        titleTV.setText(courseName);
+        titleTV.setTextColor(ContextCompat.getColor(this, R.color.lavender));
+        titleTV.setTextSize(16);
+
+
+// Create an instance of TextView
+        TextView instructorTV = new TextView(this);
+// Set layout parameters
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        instructorTV.setLayoutParams(params);
+        instructorTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        instructorTV.setText(instructor);
+        instructorTV.setTextColor(0xFF000000); // Equivalent to #000000 in hexadecimal
+
+
+        // Create an instance of TextView
+        TextView testV = new TextView(this);
+// Set layout parameters
+        testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        testV.setText(courseID);
+        testV.setTextSize(11);
+
+
+        LinearLayout view = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                (int) (1 * scale + 0.5f),
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(marginTop, 0, marginBottom, 0);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+
+        innerLayout.addView(titleTV);
+        innerLayout.addView(instructorTV);
+        innerLayout.addView(testV);
+        //innerLayout.addView(view);
+
+        mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(view);
+        mainLinearLayout.addView(innerLayout);
+        cardView.addView(mainLinearLayout);
+        return cardView;
+    }
+
     private CardView createCourseCardView(String id, String F) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);

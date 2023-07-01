@@ -705,8 +705,6 @@ public class Home extends AppCompatActivity
                         }
                     }
                 });
-
-
         /*
         rejected + pending courses
          */
