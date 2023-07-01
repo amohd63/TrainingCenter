@@ -6,12 +6,15 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.trainingcenter.R;
@@ -20,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -57,13 +61,16 @@ public class CoursesHistory extends AppCompatActivity {
                                                             .addOnCompleteListener(userTask -> {
                                                                 if (userTask.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                        CardView test = createCourseCardView(
+                                                                        CardView test = createCourseCardView2(
+                                                                                courseDoc.getString("courseID"),
+                                                                                userDoc.getString("firstName") + userDoc.getString("lastName"),
                                                                                 courseDoc.getString("courseTitle"),
-                                                                                courseOfferingDoc.getString("schedule"),
+                                                                                courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                 dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                 courseOfferingDoc.getString("venue"),
-                                                                                userDoc.getString("firstName") + userDoc.getString("lastName")
+                                                                                courseOfferingDoc.getString("schedule").split(" ")[1]
                                                                         );
+
                                                                         mainView.addView(test);
                                                                     }
 
@@ -89,49 +96,98 @@ public class CoursesHistory extends AppCompatActivity {
         return true;
     }
 
-    private CardView createCourseCardView(String courseName, String time, String date, String venue, String instructor) {
+    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);
         cardView.setUseCompatPadding(true);
-        //cardView.setContentPadding(8, 8, 8, 8);
         cardView.setContentPadding(32, 32, 32, 32);
         cardView.setElevation(32);
 
 
-
-        // Create the LinearLayout inside the CardView
         LinearLayout mainLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        mainLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
+        mainLinearLayout.setGravity(Gravity.CENTER);
+        innerLinearLayoutParams.setMargins(10, 10, 10, 10);
 
-        // Create the TextViews inside the LinearLayout
-        TextView titleTextView = createTextView(this, courseName, 16, Typeface.DEFAULT);
-        titleTextView.setTextColor(Color.parseColor("#7884FC"));
-        titleTextView.setPadding(0, 0, 0, 32);
+        int heightInDp = 60;
+        float scale = this.getResources().getDisplayMetrics().density;
+        int heightInPixels = (int) (heightInDp * scale + 0.5f);
+        ImageView imageView = new ImageView(this);
+        LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(0, heightInPixels, 25);
+        heightInPixels = (int) (8 * scale + 0.5f);
+        imgParams.setMargins(0, 0, heightInPixels, 0);
+        imageView.setLayoutParams(imgParams);
+        imageView.setAdjustViewBounds(true);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        imageView.setImageResource(R.drawable.mobile_img);
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fcourse_default.png?alt=media&token=68dd1b73-90b6-4cb9-ac91-460e3dfe6768").into(imageView);
 
-        LinearLayout linearLayout = new LinearLayout(this);
+
+        LinearLayout innerLayout = new LinearLayout(this);
+
+// Set layout parameters
+        innerLayout.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 75));
+        innerLayout.setPadding(8, 0, 0, 0);
+        innerLayout.setWeightSum(75);
+        innerLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+// Create an instance of TextView
+        TextView titleTV = new TextView(this);
+
+// Set layout parameters
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        titleTV.setLayoutParams(params);
+        titleTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        titleTV.setText(courseName);
+        titleTV.setTextColor(ContextCompat.getColor(this, R.color.lavender));
+        titleTV.setTextSize(16);
+
+
+// Create an instance of TextView
+        TextView instructorTV = new TextView(this);
+// Set layout parameters
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 4);
+        instructorTV.setLayoutParams(params);
+        instructorTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        instructorTV.setText(instructor);
+        instructorTV.setTextColor(0xFF000000); // Equivalent to #000000 in hexadecimal
+
+
+        // Create an instance of TextView
+        TextView testV = new TextView(this);
+// Set layout parameters
+        testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        testV.setText(courseID);
+        testV.setTextSize(11);
+
+
+        LinearLayout view = new LinearLayout(this);
 
 // Set layout_width and layout_height to match_parent
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                (int) (1 * scale + 0.5f)
         );
-        linearLayout.setLayoutParams(layoutParams);
-
-// Set marginTop and marginBottom
-        int marginTop = (int) getResources().getDimension(R.dimen.margin_top);
-        int marginBottom = (int) getResources().getDimension(R.dimen.margin_bottom);
-        linearLayout.setPadding(0, marginTop, 0, marginBottom);
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
 
 // Set background color
-        linearLayout.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
 
         TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT, false);
         timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
@@ -148,18 +204,17 @@ public class CoursesHistory extends AppCompatActivity {
         venueTextView.setCompoundDrawablePadding(32);
         venueTextView.setPadding(0, 0, 0, 16);
 
-        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
-        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_outline_red_24dp, 0, 0, 0);
+        TextView instructorTextView = createTextView(this, days, 16, Typeface.DEFAULT, false);
+        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_today_purple_24, 0, 0, 0);
         instructorTextView.setCompoundDrawablePadding(32);
         instructorTextView.setPadding(0, 0, 0, 16);
-
 
         LinearLayout innerLinearLayout1 = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams1 = new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
         innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
         innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
-        innerLinearLayout1.setPadding(0, 32, 0, 32);
+        //innerLinearLayout1.setPadding(0, 0, 0, 0);
 //        innerLinearLayout1.setWeightSum(50);
 
         LinearLayout innerLinearLayout2 = new LinearLayout(this);
@@ -167,22 +222,7 @@ public class CoursesHistory extends AppCompatActivity {
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
         innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
         innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
-        innerLinearLayout2.setPadding(0, 32, 0, 32);
-//        innerLinearLayout2.setWeightSum(50);
-
-//        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT);
-//        instructorTextView.setGravity(Gravity.END);
-
-        // Add the TextViews to the LinearLayout
-        mainLinearLayout.addView(titleTextView);
-        mainLinearLayout.addView(linearLayout);
-
-        innerLinearLayout1.addView(timeTextView);
-        innerLinearLayout1.addView(dateTextView);
-
-
-        innerLinearLayout2.addView(venueTextView);
-        innerLinearLayout2.addView(instructorTextView);
+        //innerLinearLayout2.setPadding(0, 0, 0, 0);
 
         LinearLayout innerLinearLayout3 = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
@@ -191,12 +231,26 @@ public class CoursesHistory extends AppCompatActivity {
         innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
         //innerLinearLayout3.setPadding(0, 32, 0, 32);
 
+        innerLinearLayout1.addView(timeTextView);
+        innerLinearLayout1.addView(instructorTextView);
+
+
+        innerLinearLayout2.addView(venueTextView);
+        innerLinearLayout2.addView(dateTextView);
+
         innerLinearLayout3.addView(innerLinearLayout1);
         innerLinearLayout3.addView(innerLinearLayout2);
 
-        mainLinearLayout.addView(innerLinearLayout3);
 
-        // Add the LinearLayout to the CardView
+        innerLayout.addView(titleTV);
+        innerLayout.addView(instructorTV);
+        innerLayout.addView(testV);
+        innerLayout.addView(view);
+        innerLayout.addView(innerLinearLayout3);
+
+
+        mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(innerLayout);
         cardView.addView(mainLinearLayout);
         return cardView;
     }

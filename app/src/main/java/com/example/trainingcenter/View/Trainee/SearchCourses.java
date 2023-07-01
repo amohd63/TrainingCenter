@@ -152,8 +152,6 @@ public class SearchCourses extends AppCompatActivity {
         cardView.setContentPadding(32, 32, 32, 32);
         cardView.setElevation(32);
 
-
-
         // Create the LinearLayout inside the CardView
         LinearLayout mainLinearLayout = new LinearLayout(this);
         LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
@@ -164,24 +162,30 @@ public class SearchCourses extends AppCompatActivity {
         // Create the TextViews inside the LinearLayout
         TextView titleTextView = createTextView(this, courseName, 16, Typeface.DEFAULT);
         titleTextView.setTextColor(Color.parseColor("#7884FC"));
-        titleTextView.setPadding(0, 0, 0, 32);
+        titleTextView.setPadding(0, 0, 0, 4);
 
-        LinearLayout linearLayout = new LinearLayout(this);
+        // Create an instance of TextView
+        TextView testV = new TextView(this);
+// Set layout parameters
+        testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        testV.setText("0fdff326f5cf4728bd52");
+        testV.setTextSize(11);
 
+        LinearLayout view = new LinearLayout(this);
+        float scale = this.getResources().getDisplayMetrics().density;
 // Set layout_width and layout_height to match_parent
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                (int) (1 * scale + 0.5f)
         );
-        linearLayout.setLayoutParams(layoutParams);
-
-// Set marginTop and marginBottom
-        int marginTop = (int) getResources().getDimension(R.dimen.margin_top);
-        int marginBottom = (int) getResources().getDimension(R.dimen.margin_bottom);
-        linearLayout.setPadding(0, marginTop, 0, marginBottom);
+        int marginTop = (int) (8 * scale + 0.5f);
+        int marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
 
 // Set background color
-        linearLayout.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
 
         TextView timeTextView = createTextView(this, time, 16, Typeface.DEFAULT, false);
         timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
@@ -209,7 +213,7 @@ public class SearchCourses extends AppCompatActivity {
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
         innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
         innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
-        innerLinearLayout1.setPadding(0, 32, 0, 32);
+        //innerLinearLayout1.setPadding(0, 32, 0, 32);
 //        innerLinearLayout1.setWeightSum(50);
 
         LinearLayout innerLinearLayout2 = new LinearLayout(this);
@@ -217,7 +221,7 @@ public class SearchCourses extends AppCompatActivity {
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
         innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
         innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
-        innerLinearLayout2.setPadding(0, 32, 0, 32);
+        //innerLinearLayout2.setPadding(0, 32, 0, 32);
 //        innerLinearLayout2.setWeightSum(50);
 
 //        TextView instructorTextView = createTextView(this, instructor, 16, Typeface.DEFAULT, false);
@@ -225,7 +229,8 @@ public class SearchCourses extends AppCompatActivity {
 
         // Add the TextViews to the LinearLayout
         mainLinearLayout.addView(titleTextView);
-        mainLinearLayout.addView(linearLayout);
+        mainLinearLayout.addView(testV);
+        mainLinearLayout.addView(view);
 
         innerLinearLayout1.addView(timeTextView);
         innerLinearLayout1.addView(dateTextView);
