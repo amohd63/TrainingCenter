@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,7 +37,7 @@ import java.util.regex.Pattern;
 public class SignupActivityTrainee extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField;
     private Button signupButton;
     private TextView loginRedirectText;
     private FirebaseFirestore db;
@@ -42,12 +45,15 @@ public class SignupActivityTrainee extends AppCompatActivity {
     private final int GALLERY_REQ_CODE = 1000;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Ftrainee_default.png?alt=media&token=f4d8a2fd-787d-4af5-9f4d-7cfb5327b8f0";
     Uri selectedImageUri;
-
+    private String[] cities = {"Ramallah", "Hebron", "Salfit", "Nablus", "Jerusalem", "Jenin", "Bethlehem", "Jericho", "Gaza City", "Tulkarm", "Qalqilya", "Rafah", "Khan Yunis", "Beit Lahia", "Beit Hanoun", "Tubas", "Al-Bireh", "Dura", "Beit Jala", "Khan Younis", "Abu Dis", "Rafat", "Deir al-Balah", "Jabalia", "Al-Auja", "Anabta", "Qalqas", "As-Samu", "Other"};
+    private AutoCompleteTextView address;
+    private ArrayAdapter<String> adapterItems;
+    private String selectedCity = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_trainee);
-
+        address = findViewById(R.id.cities);
         auth = FirebaseAuth.getInstance();
         signupEmail = findViewById(R.id.signup_email_trainee);
         signupPassword = findViewById(R.id.signup_password_trainee);
@@ -59,7 +65,16 @@ public class SignupActivityTrainee extends AppCompatActivity {
         lastName = findViewById(R.id.lastName);
         personalPhoto = findViewById(R.id.personalPhoto);
         phoneNumField = findViewById(R.id.phoneNumber);
-        addressField = findViewById(R.id.address);
+        adapterItems = new ArrayAdapter<String>(this, R.layout.item_drop_down, cities);
+        address.setAdapter(adapterItems);
+        address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapterView.getItemAtPosition(i).toString();
+                selectedCity = item;
+            }
+        });
+
         personalPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,37 +94,27 @@ public class SignupActivityTrainee extends AppCompatActivity {
                 String firstName_str = firstName.getText().toString().trim();
                 String lastName_str = lastName.getText().toString().trim();
                 String phoneNum = phoneNumField.getText().toString().trim();
-                String address = addressField.getText().toString().trim();
 
-                if(!User.isValidName(firstName_str)){
+                if (!User.isValidName(firstName_str)) {
                     firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                }
-                else if(!User.isValidName(lastName_str)){
+                } else if (!User.isValidName(lastName_str)) {
                     lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                }
-                else if (email.isEmpty()){
+                } else if (email.isEmpty()) {
                     signupEmail.setError("Email cannot be empty");
-                }
-                else if (pass.isEmpty()){
+                } else if (pass.isEmpty()) {
                     signupPassword.setError("Password cannot be empty");
-                }
-                else if (pass_conf.isEmpty()){
+                } else if (pass_conf.isEmpty()) {
                     signupPasswordConfirm.setError("You must confirm your Password");
-                }
-                else if (!pass_conf.equals(pass)){
+                } else if (!pass_conf.equals(pass)) {
                     signupPassword.setError("Passwords must match");
-                }
-                else if (phoneNum.isEmpty()){
+                } else if (phoneNum.isEmpty()) {
                     phoneNumField.setError("This field is required");
-                }
-                else if (address.isEmpty()){
-                    addressField.setError("This field is required");
-                }
-                else if (!validatePassword(pass)){
+                } else if (selectedCity.isEmpty()) {
+                    address.setError("This field is required");
+                } else if (!validatePassword(pass)) {
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
-                }
-                else{
+                } else {
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -131,7 +136,7 @@ public class SignupActivityTrainee extends AppCompatActivity {
                     db.collection("User").document(email).set(user);
                     user.clear();
                     user.put("mobileNumber", phoneNum);
-                    user.put("address", address);
+                    user.put("address", selectedCity);
                     db.collection("User").document(email).collection("Trainee").document(email).set(user);
                 }
             }
@@ -146,11 +151,12 @@ public class SignupActivityTrainee extends AppCompatActivity {
         });
 
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK){
-            if (requestCode == GALLERY_REQ_CODE){
+        if (resultCode == RESULT_OK) {
+            if (requestCode == GALLERY_REQ_CODE) {
                 selectedImageUri = data.getData();
                 String fileName = String.valueOf(System.currentTimeMillis());
                 StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("images/" + fileName);
@@ -170,6 +176,7 @@ public class SignupActivityTrainee extends AppCompatActivity {
             }
         }
     }
+
     public static boolean validatePassword(String pass) {
         // Minimum 8 characters and maximum 15 characters
         if (pass.length() < 8 || pass.length() > 15) {

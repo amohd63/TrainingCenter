@@ -239,18 +239,18 @@ public class CourseDetails extends AppCompatDialogFragment {
                                         reg.put("status", "Pending");
                                         reg.put("registrationID", key);
                                         db.collection("Registration").document(key).set(reg);
-                                        String st = "size: " + size2[0] + ", j: " + j[0] + ", conflicts: " + noOfConflicts[0];
-                                        courseTitle.setText(st);
                                         Toast.makeText(dialog.getContext(), "Enrolled successfully", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
                                     Toast.makeText(dialog.getContext(), "Registration is closed!", Toast.LENGTH_SHORT).show();
                                 }
-                                //dismiss();
                             }else{
                                 Toast.makeText(dialog.getContext(), "Prerequisites uncompleted!", Toast.LENGTH_SHORT).show();
                             }
+                        }else{
+                            Toast.makeText(dialog.getContext(), "Couldn't fetch prerequisites!", Toast.LENGTH_SHORT).show();
                         }
+                        dismiss();
                     }
                 }, 1000); // Delay time in milliseconds (e.g., 1000ms = 1 second)
             }

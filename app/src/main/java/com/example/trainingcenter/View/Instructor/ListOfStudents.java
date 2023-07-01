@@ -72,19 +72,19 @@ public class ListOfStudents extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_student_course);
-        EditText name = findViewById(R.id.course_name_search);
-        Button search = findViewById(R.id.search_student_button);
-        // Create a reference to the Firestore instance and the collections
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String courseTitle = name.getText().toString(); // The course title to search for
-                Bundle args = new Bundle();
-                args.putString("pointer", courseTitle);
-                show_table_for_course_and_student exampleDialog = new show_table_for_course_and_student();
-                exampleDialog.setArguments(args);
-                exampleDialog.show(getSupportFragmentManager(), "example dialog");
-            }
-        });
+//        EditText name = findViewById(R.id.course_name_search);
+//        Button search = findViewById(R.id.search_student_button);
+//        // Create a reference to the Firestore instance and the collections
+//        search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String courseTitle = name.getText().toString(); // The course title to search for
+//                Bundle args = new Bundle();
+//                args.putString("pointer", courseTitle);
+//                show_table_for_course_and_student exampleDialog = new show_table_for_course_and_student();
+//                exampleDialog.setArguments(args);
+//                exampleDialog.show(getSupportFragmentManager(), "example dialog");
+//            }
+//        });
     }
 }

@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,6 +38,10 @@ public class MyProfile extends AppCompatActivity {
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fadmin_default.png?alt=media&token=6db2f3a0-6bed-48a8-9aae-b9bff0deae01";
     private ImageView personalPhoto;
     private Trainee trainee;
+    private String[] cities = {"Ramallah", "Hebron", "Salfit", "Nablus", "Jerusalem", "Jenin", "Bethlehem", "Jericho", "Gaza City", "Tulkarm", "Qalqilya", "Rafah", "Khan Yunis", "Beit Lahia", "Beit Hanoun", "Tubas", "Al-Bireh", "Dura", "Beit Jala", "Khan Younis", "Abu Dis", "Rafat", "Deir al-Balah", "Jabalia", "Al-Auja", "Anabta", "Qalqas", "As-Samu", "Other"};
+    private AutoCompleteTextView address;
+    private ArrayAdapter<String> adapterItems;
+    int currentField = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +56,26 @@ public class MyProfile extends AppCompatActivity {
         TextView emailView = findViewById(R.id.email);
         EditText firstName = findViewById(R.id.firstname);
         EditText lastName = findViewById(R.id.lastname);
-        EditText address = findViewById(R.id.address);
         EditText mobileNum = findViewById(R.id.mobile_number);
         TextView name = findViewById(R.id.name);
+        Button update = findViewById(R.id.update_btn);
+
+        address = findViewById(R.id.cities);
+        adapterItems = new ArrayAdapter<String>(this, R.layout.item_drop_down, cities);
+        address.setAdapter(adapterItems);
+        address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapterView.getItemAtPosition(i).toString();
+                db.collection("User").document(email).collection("Trainee").document(email)
+                        .update(
+                                "address", item
+                        );
+                Toast.makeText(MyProfile.this, "Address updated successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 
         trainee = new Trainee();
 
@@ -107,6 +132,7 @@ public class MyProfile extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
+                    currentField = 0;
                     String newFirstName = firstName.getText().toString();
                     if (Trainee.isValidName(newFirstName)) {
                         db.collection("User").document(email)
@@ -119,6 +145,8 @@ public class MyProfile extends AppCompatActivity {
                     }else{
                         Toast.makeText(MyProfile.this, "Enter a valid first name!", Toast.LENGTH_SHORT).show();
                     }
+                }else{
+                    currentField = 1;
                 }
             }
         });
@@ -127,6 +155,7 @@ public class MyProfile extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
+                    currentField = 0;
                     String newLastName = lastName.getText().toString();
                     if (Trainee.isValidName(newLastName)) {
                         db.collection("User").document(email)
@@ -139,34 +168,30 @@ public class MyProfile extends AppCompatActivity {
                     }else{
                         Toast.makeText(MyProfile.this, "Enter a valid last name!", Toast.LENGTH_SHORT).show();
                     }
+                }else{
+                    currentField = 2;
                 }
             }
         });
 
-        address.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    String newAddress = address.getText().toString();
-                    db.collection("User").document(email).collection("Trainee").document(email)
-                            .update(
-                                    "address", newAddress
-                            );
-                    Toast.makeText(MyProfile.this, "Address updated successfully", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         mobileNum.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
+                    currentField = 0;
                     String newMobile = mobileNum.getText().toString();
-                    db.collection("User").document(email).collection("Trainee").document(email)
-                            .update(
-                                    "mobileNumber", newMobile
-                            );
-                    Toast.makeText(MyProfile.this, "Mobile No. updated successfully", Toast.LENGTH_SHORT).show();
+                    if (Trainee.isValidMobileNumber(newMobile)) {
+                        db.collection("User").document(email).collection("Trainee").document(email)
+                                .update(
+                                        "mobileNumber", newMobile
+                                );
+                        Toast.makeText(MyProfile.this, "Mobile No. updated successfully", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MyProfile.this, "Invalid mobile No.", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    currentField = 3;
                 }
             }
         });
@@ -177,6 +202,50 @@ public class MyProfile extends AppCompatActivity {
                 Intent iGallery = new Intent(Intent.ACTION_PICK);
                 iGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
+            }
+        });
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (currentField == 1){
+                    String newFirstName = firstName.getText().toString();
+                    if (Trainee.isValidName(newFirstName)) {
+                        db.collection("User").document(email)
+                                .update(
+                                        "firstName", newFirstName
+                                );
+                        Toast.makeText(MyProfile.this, "First name updated successfully", Toast.LENGTH_SHORT).show();
+                        trainee.setFirstName(newFirstName);
+                        name.setText(trainee.getFullName());
+                    }else{
+                        Toast.makeText(MyProfile.this, "Enter a valid first name!", Toast.LENGTH_SHORT).show();
+                    }
+                }else if (currentField == 2){
+                    String newLastName = lastName.getText().toString();
+                    if (Trainee.isValidName(newLastName)) {
+                        db.collection("User").document(email)
+                                .update(
+                                        "lastName", newLastName
+                                );
+                        Toast.makeText(MyProfile.this, "Last name updated successfully", Toast.LENGTH_SHORT).show();
+                        trainee.setLastName(newLastName);
+                        name.setText(trainee.getFullName());
+                    }else{
+                        Toast.makeText(MyProfile.this, "Enter a valid last name!", Toast.LENGTH_SHORT).show();
+                    }
+                }else if (currentField == 3){
+                    String newMobile = mobileNum.getText().toString();
+                    if (Trainee.isValidMobileNumber(newMobile)) {
+                        db.collection("User").document(email).collection("Trainee").document(email)
+                                .update(
+                                        "mobileNumber", newMobile
+                                );
+                        Toast.makeText(MyProfile.this, "Mobile No. updated successfully", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MyProfile.this, "Invalid mobile No.", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
     }

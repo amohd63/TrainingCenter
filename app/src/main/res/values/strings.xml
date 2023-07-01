@@ -13,36 +13,5 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
-
-    <string-array name="cities">
-        <item>Ramallah</item>
-        <item>Hebron</item>
-        <item>Salfit</item>
-        <item>Nablus</item>
-        <item>Jerusalem</item>
-        <item>Jenin</item>
-        <item>Bethlehem</item>
-        <item>Jericho</item>
-        <item>Gaza City</item>
-        <item>Tulkarm</item>
-        <item>Qalqilya</item>
-        <item>Rafah</item>
-        <item>Khan Yunis</item>
-        <item>Beit Lahia</item>
-        <item>Beit Hanoun</item>
-        <item>Tubas</item>
-        <item>Al-Bireh</item>
-        <item>Dura</item>
-        <item>Beit Jala</item>
-        <item>Khan Younis</item>
-        <item>Abu Dis</item>
-        <item>Rafat</item>
-        <item>Deir al-Balah</item>
-        <item>Jabalia</item>
-        <item>Al-Auja</item>
-        <item>Anabta</item>
-        <item>Qalqas</item>
-        <item>As-Samu</item>
-        <item>Other</item>
-    </string-array>
+    <string name="select">Select your city</string>
 </resources>

@@ -40,7 +40,7 @@ public class Trainee extends User{
     }
 
     public static boolean isValidMobileNumber(String mobileNumber) {
-        String regex = "^\\+970\\d{9}$";
+        String regex = "^05\\d{8}$";
         return Pattern.matches(regex, mobileNumber);
     }
 

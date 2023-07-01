@@ -68,7 +68,10 @@ public class Home extends AppCompatActivity
     private String email;
     private FirebaseFirestore db;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
-
+    SimpleDateFormat dateFormat;
+    LinearLayout dailySchedule;
+    LinearLayout rejectedCourses;
+    LinearLayout pendingCourses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +98,10 @@ public class Home extends AppCompatActivity
         String[] documentData = new String[2];
         DocumentReference docRef = db.collection("User").document(email);
         profileEmail.setText(email);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-        LinearLayout dailySchedule = findViewById(R.id.daily_schedule);
-        LinearLayout rejectedCourses = findViewById(R.id.rejected_courses);
-        LinearLayout pendingCourses = findViewById(R.id.pending_courses);
-
+        dailySchedule = findViewById(R.id.daily_schedule);
+        rejectedCourses = findViewById(R.id.rejected_courses);
+        pendingCourses = findViewById(R.id.pending_courses);
+        dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -117,149 +119,6 @@ public class Home extends AppCompatActivity
                 }
             }
         });
-
-        final int[] flag = {0, 0, 0};
-        Timestamp timestamp = Timestamp.now();
-        db.collection("Registration")
-                .whereEqualTo("traineeID", email)
-                .whereEqualTo("status", "Accepted")
-                .whereLessThanOrEqualTo("startDate", timestamp)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
-                        if (regTask.isSuccessful()) {
-                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
-                                db.collection("CourseOffering")
-                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
-                                        .get()
-                                        .addOnCompleteListener(courseOfferingTask -> {
-                                            if (courseOfferingTask.isSuccessful()) {
-                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                    db.collection("Course")
-                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
-                                                            .get()
-                                                            .addOnCompleteListener(courseTask -> {
-                                                                if (courseTask.isSuccessful()) {
-                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
-                                                                        String schedule = courseDoc.getString("schedule");
-                                                                        Calendar calendar = Calendar.getInstance();
-                                                                        calendar.setTime(regDoc.getTimestamp("startDate").toDate());
-                                                                        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                                                                        String dayName = getDayName(dayOfWeek);
-                                                                        if (schedule.contains(dayName)) {
-                                                                            db.collection("User")
-                                                                                    .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
-                                                                                    .get()
-                                                                                    .addOnCompleteListener(userTask -> {
-                                                                                        if (userTask.isSuccessful()) {
-                                                                                            for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                                                CardView test = createCourseCardView2(
-                                                                                                        courseDoc.getString("courseTitle"),
-                                                                                                        courseOfferingDoc.getString("schedule"),
-                                                                                                        dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
-                                                                                                        courseOfferingDoc.getString("venue"),
-                                                                                                        userDoc.getString("firstName") + userDoc.getString("lastName")
-                                                                                                );
-                                                                                                if (flag[2] == 0) {
-                                                                                                    dailySchedule.removeAllViews();
-                                                                                                    flag[2]++;
-                                                                                                }
-                                                                                                dailySchedule.addView(test);
-                                                                                            }
-
-                                                                                        } else {
-                                                                                        }
-                                                                                    });
-                                                                        }
-
-                                                                    }
-
-                                                                } else {
-                                                                }
-                                                            });
-                                                }
-                                            } else {
-                                            }
-                                        });
-                            }
-                        } else {
-                        }
-                    }
-                });
-
-
-        /*
-        rejected + pending courses
-         */
-        Context context = this;
-        db.collection("Registration")
-                .whereEqualTo("traineeID", email)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
-                        if (regTask.isSuccessful()) {
-                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
-                                db.collection("CourseOffering")
-                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
-                                        .get()
-                                        .addOnCompleteListener(courseOfferingTask -> {
-                                            if (courseOfferingTask.isSuccessful()) {
-                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                    db.collection("Course")
-                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
-                                                            .get()
-                                                            .addOnCompleteListener(courseTask -> {
-                                                                if (courseTask.isSuccessful()) {
-                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
-                                                                        db.collection("User")
-                                                                                .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
-                                                                                .get()
-                                                                                .addOnCompleteListener(userTask -> {
-                                                                                    if (userTask.isSuccessful()) {
-                                                                                        for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                                            CardView test = createCourseCardView2(
-                                                                                                    courseDoc.getString("courseTitle"),
-                                                                                                    courseOfferingDoc.getString("schedule"),
-                                                                                                    dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
-                                                                                                    courseOfferingDoc.getString("venue"),
-                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName")
-                                                                                            );
-                                                                                            if (regDoc.getString("status").equals("Pending")) {
-                                                                                                if (flag[0] == 0) {
-                                                                                                    pendingCourses.removeAllViews();
-                                                                                                    flag[0]++;
-                                                                                                }
-                                                                                                pendingCourses.addView(test);
-                                                                                            } else if (regDoc.getString("status").equals("Rejected")) {
-                                                                                                if (flag[1] == 0) {
-                                                                                                    rejectedCourses.removeAllViews();
-                                                                                                    flag[1]++;
-                                                                                                }
-                                                                                                rejectedCourses.addView(test);
-                                                                                            }
-                                                                                        }
-
-                                                                                    } else {
-                                                                                    }
-                                                                                });
-
-                                                                    }
-
-                                                                } else {
-                                                                }
-                                                            });
-                                                }
-                                            } else {
-                                            }
-                                        });
-                            }
-                        } else {
-                        }
-                    }
-                });
-
 
         CollectionReference usersRef = db.collection("Notification");
         usersRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -628,5 +487,146 @@ public class Home extends AppCompatActivity
             }
         });
 
+        final int[] flag = {0, 0, 0};
+        Timestamp timestamp = Timestamp.now();
+        db.collection("Registration")
+                .whereEqualTo("traineeID", email)
+                .whereEqualTo("status", "Accepted")
+                .whereLessThanOrEqualTo("startDate", timestamp)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+                        if (regTask.isSuccessful()) {
+                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
+                                db.collection("CourseOffering")
+                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                        .get()
+                                        .addOnCompleteListener(courseOfferingTask -> {
+                                            if (courseOfferingTask.isSuccessful()) {
+                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                                    db.collection("Course")
+                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                                            .get()
+                                                            .addOnCompleteListener(courseTask -> {
+                                                                if (courseTask.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                        String schedule = courseDoc.getString("schedule");
+                                                                        Calendar calendar = Calendar.getInstance();
+                                                                        calendar.setTime(regDoc.getTimestamp("startDate").toDate());
+                                                                        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                                                                        String dayName = getDayName(dayOfWeek);
+                                                                        if (schedule.contains(dayName)) {
+                                                                            db.collection("User")
+                                                                                    .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                                                    .get()
+                                                                                    .addOnCompleteListener(userTask -> {
+                                                                                        if (userTask.isSuccessful()) {
+                                                                                            for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
+                                                                                                CardView test = createCourseCardView2(
+                                                                                                        courseDoc.getString("courseTitle"),
+                                                                                                        courseOfferingDoc.getString("schedule"),
+                                                                                                        dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
+                                                                                                        courseOfferingDoc.getString("venue"),
+                                                                                                        userDoc.getString("firstName") + userDoc.getString("lastName")
+                                                                                                );
+                                                                                                if (flag[2] == 0) {
+                                                                                                    dailySchedule.removeAllViews();
+                                                                                                    flag[2]++;
+                                                                                                }
+                                                                                                dailySchedule.addView(test);
+                                                                                            }
+
+                                                                                        } else {
+                                                                                        }
+                                                                                    });
+                                                                        }
+
+                                                                    }
+
+                                                                } else {
+                                                                }
+                                                            });
+                                                }
+                                            } else {
+                                            }
+                                        });
+                            }
+                        } else {
+                        }
+                    }
+                });
+
+
+        /*
+        rejected + pending courses
+         */
+        Context context = this;
+        db.collection("Registration")
+                .whereEqualTo("traineeID", email)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+                        if (regTask.isSuccessful()) {
+                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
+                                db.collection("CourseOffering")
+                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                        .get()
+                                        .addOnCompleteListener(courseOfferingTask -> {
+                                            if (courseOfferingTask.isSuccessful()) {
+                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                                    db.collection("Course")
+                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                                            .get()
+                                                            .addOnCompleteListener(courseTask -> {
+                                                                if (courseTask.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                        db.collection("User")
+                                                                                .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                                                .get()
+                                                                                .addOnCompleteListener(userTask -> {
+                                                                                    if (userTask.isSuccessful()) {
+                                                                                        for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
+                                                                                            CardView test = createCourseCardView2(
+                                                                                                    courseDoc.getString("courseTitle"),
+                                                                                                    courseOfferingDoc.getString("schedule"),
+                                                                                                    dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
+                                                                                                    courseOfferingDoc.getString("venue"),
+                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName")
+                                                                                            );
+                                                                                            if (regDoc.getString("status").equals("Pending")) {
+                                                                                                if (flag[0] == 0) {
+                                                                                                    pendingCourses.removeAllViews();
+                                                                                                    flag[0]++;
+                                                                                                }
+                                                                                                pendingCourses.addView(test);
+                                                                                            } else if (regDoc.getString("status").equals("Rejected")) {
+                                                                                                if (flag[1] == 0) {
+                                                                                                    rejectedCourses.removeAllViews();
+                                                                                                    flag[1]++;
+                                                                                                }
+                                                                                                rejectedCourses.addView(test);
+                                                                                            }
+                                                                                        }
+
+                                                                                    } else {
+                                                                                    }
+                                                                                });
+
+                                                                    }
+
+                                                                } else {
+                                                                }
+                                                            });
+                                                }
+                                            } else {
+                                            }
+                                        });
+                            }
+                        } else {
+                        }
+                    }
+                });
     }
 }

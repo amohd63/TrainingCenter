@@ -108,8 +108,11 @@ public class LoginActivity extends AppCompatActivity implements
             //loginEmail.setText("");
         }
 
-        loginEmail.setText("instructor@gmail.com");
-        loginPassword.setText("282610As");
+//        loginEmail.setText("instructor@gmail.com");
+//        loginPassword.setText("282610As");
+
+        loginEmail.setText("ali@gmail.com");
+        loginPassword.setText("123456");
         loginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -291,7 +294,6 @@ public class LoginActivity extends AppCompatActivity implements
                                         }
                                     }
                                 });
-                                name.setText(role[0]);
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -311,6 +313,8 @@ public class LoginActivity extends AppCompatActivity implements
                                             intent.putExtra("email", email);
                                             Toast.makeText(LoginActivity.this, "Logged in successfully", Toast.LENGTH_SHORT).show();
                                             startActivity(intent);
+                                        }else{
+                                            Toast.makeText(LoginActivity.this, "Couldn't fetch the role", Toast.LENGTH_SHORT).show();
                                         }
                                         finish();
                                     }
@@ -319,7 +323,7 @@ public class LoginActivity extends AppCompatActivity implements
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
                                 loginButton.showErrorButton();
                             }
                         });
