@@ -308,8 +308,23 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         innerLayout.addView(view);
         innerLayout.addView(innerLinearLayout3);
 
+        LinearLayout view2 = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(
+                (int) (1 * scale + 0.5f),
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        marginTop = (int) (8 * scale + 0.5f);
+        marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams2.setMargins(marginTop, 0, marginBottom, 0);
+        view2.setLayoutParams(layoutParams2);
+
+// Set background color
+        view2.setBackgroundColor(Color.parseColor("#80D1D1D1"));
 
         mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(view2);
         mainLinearLayout.addView(innerLayout);
         cardView.addView(mainLinearLayout);
         return cardView;

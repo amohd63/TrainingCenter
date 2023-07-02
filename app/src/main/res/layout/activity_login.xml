@@ -39,13 +39,19 @@
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:fontFamily="@font/calibri"
                 android:text=""
                 android:textAlignment="center"
                 android:textColor="@color/lavender"
                 android:textSize="16sp"
+                android:layout_marginTop="4dp"
                 android:textStyle="bold" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp"
+                android:background="#80D1D1D1" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"

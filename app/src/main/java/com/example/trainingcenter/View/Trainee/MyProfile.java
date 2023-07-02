@@ -21,6 +21,7 @@ import com.example.trainingcenter.Model.Trainee;
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -63,17 +64,6 @@ public class MyProfile extends AppCompatActivity {
         address = findViewById(R.id.cities);
         adapterItems = new ArrayAdapter<String>(this, R.layout.item_drop_down, cities);
         address.setAdapter(adapterItems);
-        address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String item = adapterView.getItemAtPosition(i).toString();
-                db.collection("User").document(email).collection("Trainee").document(email)
-                        .update(
-                                "address", item
-                        );
-                Toast.makeText(MyProfile.this, "Address updated successfully", Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
 
@@ -277,6 +267,24 @@ public class MyProfile extends AppCompatActivity {
                         });
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapterView.getItemAtPosition(i).toString();
+                address.showDropDown();
+                db.collection("User").document(email).collection("Trainee").document(email)
+                        .update(
+                                "address", item
+                        );
+                Toast.makeText(MyProfile.this, "Address updated successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

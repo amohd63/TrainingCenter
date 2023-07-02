@@ -55,6 +55,12 @@
 
                             </androidx.cardview.widget.CardView>
 
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="16dp"
+                                android:background="#80D1D1D1" />
+
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -142,9 +148,9 @@
                                 android:id="@+id/emailBox"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="50"
+                                android:layout_weight="75"
                                 android:fontFamily="@font/calibri"
-                                android:text="Test"
+                                android:text=""
                                 android:textColor="@color/lavender"
                                 android:textSize="16sp" />
 
@@ -176,7 +182,7 @@
                                 android:id="@+id/firstname"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="50"
+                                android:layout_weight="75"
                                 android:background="@android:color/transparent"
                                 android:fontFamily="@font/calibri"
                                 android:text=""
@@ -212,7 +218,43 @@
                                 android:id="@+id/lastname"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_weight="75"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="@font/calibri"
+                                android:text=""
+                                android:textColor="@color/lavender"
+                                android:textSize="16sp"
+                                android:theme="@style/custom_cursor" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="#80D1D1D1" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="100"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
                                 android:layout_weight="50"
+                                android:fontFamily="@font/calibri"
+                                android:text="Mobile number"
+                                android:textColor="#000000"
+                                android:textSize="16sp" />
+
+                            <EditText
+                                android:id="@+id/mobile_number"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="75"
                                 android:background="@android:color/transparent"
                                 android:fontFamily="@font/calibri"
                                 android:text=""
@@ -246,8 +288,9 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                android:id="@+id/cities_parent"
                                 android:layout_width="0dp"
-                                android:layout_weight="85"
+                                android:layout_weight="75"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
                                 app:boxStrokeColor="@color/bright_orange"
@@ -265,42 +308,6 @@
                                     android:inputType="none"
                                     android:textSize="16sp" />
                             </com.google.android.material.textfield.TextInputLayout>
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:background="#80D1D1D1" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="100"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="50"
-                                android:fontFamily="@font/calibri"
-                                android:text="Mobile number"
-                                android:textColor="#000000"
-                                android:textSize="16sp" />
-
-                            <EditText
-                                android:id="@+id/mobile_number"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="50"
-                                android:background="@android:color/transparent"
-                                android:fontFamily="@font/calibri"
-                                android:text=""
-                                android:textColor="@color/lavender"
-                                android:textSize="16sp"
-                                android:theme="@style/custom_cursor" />
 
                         </LinearLayout>
 

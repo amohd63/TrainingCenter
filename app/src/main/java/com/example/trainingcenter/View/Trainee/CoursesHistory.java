@@ -248,8 +248,23 @@ public class CoursesHistory extends AppCompatActivity {
         innerLayout.addView(view);
         innerLayout.addView(innerLinearLayout3);
 
+        LinearLayout view1 = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
+                (int) (1 * scale + 0.5f),
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        marginTop = (int) (8 * scale + 0.5f);
+        marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams1.setMargins(marginTop, 0, marginBottom, 0);
+        view1.setLayoutParams(layoutParams1);
+
+// Set background color
+        view1.setBackgroundColor(Color.parseColor("#80D1D1D1"));
 
         mainLinearLayout.addView(imageView);
+        mainLinearLayout.addView(view1);
         mainLinearLayout.addView(innerLayout);
         cardView.addView(mainLinearLayout);
         return cardView;
