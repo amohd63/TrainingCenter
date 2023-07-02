@@ -57,6 +57,7 @@ public class Courses extends AppCompatActivity {
         performQuery2(email);
     }
 
+
     private void performQuery2(String instructorEmail){
         mainView.removeAllViews();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
