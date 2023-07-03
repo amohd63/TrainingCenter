@@ -34,8 +34,6 @@ public class Schedule extends AppCompatActivity {
     private TextView Fri[] = new TextView[6];
     private TextView Sat[] = new TextView[6];
     SimpleDateFormat dateFormat;
-    TextView[] sunTextViews = new TextView[6];
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -368,51 +366,16 @@ public class Schedule extends AppCompatActivity {
 //    }
     }
 
-    private void performQuery2(String instructorEmail) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference courseRef = db.collection("InstructorCourse");
-        Query courseQuery = courseRef.whereEqualTo("instructorID", instructorEmail);
-        courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot documentIns : task.getResult()) {
-                        String courseId = documentIns.getString("courseID");
-                        // 2. Retrieve offeringIDs by courseID
-                        CollectionReference offeringRef = db.collection("Course");
-                        Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId);
-                        offeringQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        String courseTitle = document.getString("courseTitle");
-
-                                    }
-
-                                } else {
-                                    Log.w("Firestore", "Error getting documents.", task.getException());
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    Log.w("Firestore", "Error getting documents.", task.getException());
-                }
-            }
-        });
-    }
-
     private void performQuery(String instructorEmail) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference courseRef = db.collection("InstructorCourse");
+        CollectionReference courseRef = db.collection("CourseOffering");
         Query courseQuery = courseRef.whereEqualTo("instructorID", instructorEmail);
         courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot documentIns : task.getResult()) {
-                        String courseId = documentIns.getString("courseID");
+                    for (QueryDocumentSnapshot documentOfferings : task.getResult()) {
+                        String courseId = documentOfferings.getString("courseID");
                         // 2. Retrieve offeringIDs by courseID
                         CollectionReference offeringRef = db.collection("Course");
                         Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId);
@@ -421,16 +384,6 @@ public class Schedule extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                        String courseId = document.getId();
-                                        // 2. Retrieve offeringIDs by courseID
-                                        CollectionReference offeringRef = db.collection("CourseOffering");
-                                        Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId).whereEqualTo("instructorID", documentIns.getString("instructorID"));//.whereNotEqualTo("status", "ended");
-                                        offeringQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @SuppressLint("SetTextI18n")
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot documentOfferings : task.getResult()) {
                                                         String courseTitle = document.getString("courseTitle");
                                                         String courseTime = documentOfferings.getString("schedule").split(" ")[1];
                                                         String date = dateFormat.format(documentOfferings.getTimestamp("startDate").toDate());
@@ -467,14 +420,14 @@ public class Schedule extends AppCompatActivity {
 
 
                                                     }
-                                                }
-                                            }
-                                        });
-                                    }
+                                } else {
+                                    Log.w("Firestore", "Error getting documents.", task.getException());
                                 }
                             }
                         });
                     }
+                } else {
+                    Log.w("Firestore", "Error getting documents.", task.getException());
                 }
             }
         });

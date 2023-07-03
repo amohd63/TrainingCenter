@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 import com.example.trainingcenter.Model.Course;
 import com.example.trainingcenter.Model.CourseOffering;
@@ -81,30 +82,31 @@ import java.util.regex.Pattern;
 public class ListOfStudents extends AppCompatActivity {
     private String email;
     private Context context;
+    SimpleDateFormat dateFormat;
     private LinearLayout mainView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liststudent_instructor);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mainView = (LinearLayout) findViewById(R.id.show_the_student_for_a_course_laty);
+        dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
         context = this;
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
-        //performQuery("java programming", email);
         performQuery2(email);
     }
-    private void performQuery2(String instructorEmail){
+    private void performQuery2(String instructorEmail) {
         mainView.removeAllViews();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference courseRef = db.collection("InstructorCourse");
+        CollectionReference courseRef = db.collection("CourseOffering");
         Query courseQuery = courseRef.whereEqualTo("instructorID", instructorEmail);
         courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String courseId = document.getString("courseID");
+                    for (QueryDocumentSnapshot documentOfferings : task.getResult()) {
+                        String courseId = documentOfferings.getString("courseID");
                         // 2. Retrieve offeringIDs by courseID
                         CollectionReference offeringRef = db.collection("Course");
                         Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId);
@@ -114,96 +116,23 @@ public class ListOfStudents extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         String courseId = document.getId();
+                                        // 2. Retrieve offeringIDs by courseID
+
                                         String courseTitle = document.getString("courseTitle");
+                                        String courseTime = Objects.requireNonNull(documentOfferings.getString("schedule")).split(" ")[1];
+                                        String date = dateFormat.format(Objects.requireNonNull(documentOfferings.getTimestamp("startDate")).toDate());
                                         String insName = document.getString("courseTitle");
-                                        String courseImg = document.getString("photo");
-                                        CardView c = createCourseCardView2(courseId, insName, courseTitle, courseImg);
-                                        mainView.addView(c);
-                                        c.setOnClickListener(new View.OnClickListener() {
+                                        String days = Objects.requireNonNull(documentOfferings.getString("schedule")).split(" ")[0];
+                                        String venue = documentOfferings.getString("venue");
+                                        CardView cardView = createCourseCardView(courseId, insName, courseTitle, days, date, venue, courseTime);
+                                        mainView.addView(cardView);
+                                        cardView.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
                                                 Intent intent = new Intent(getApplicationContext(), ViewLOS.class);
                                                 intent.putExtra("courseTitle", courseTitle);
                                                 intent.putExtra("email", instructorEmail);
                                                 startActivity(intent);
-                                            }
-                                        });
-                                    }
-
-                                }
-                                else {
-                                    Log.w("Firestore", "Error getting documents.", task.getException());
-                                }
-                            }
-                        });
-                    }
-                }
-                else {
-                    Log.w("Firestore", "Error getting documents.", task.getException());
-                }
-            }
-        });
-    }
-
-    private void performQuery(String courseTitle, String instructorEmail){
-        mainView.removeAllViews();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // 1. Retrieve courseID by courseTitle
-        CollectionReference courseRef = db.collection("Course");
-        Query courseQuery = courseRef.whereEqualTo("courseTitle", courseTitle);
-        courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String courseId = document.getId();
-                        // 2. Retrieve offeringIDs by courseID
-                        CollectionReference offeringRef = db.collection("CourseOffering");
-                        Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId).whereEqualTo("instructorID", instructorEmail);
-                        offeringQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        String offeringId = document.getId();
-                                        // 3. Retrieve emails by offeringID
-                                        CollectionReference registrationRef = db.collection("Registration");
-                                        Query registrationQuery = registrationRef.whereEqualTo("offeringID", offeringId);
-                                        registrationQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        String email = document.getString("traineeID");
-                                                        String status = document.getString("status");
-                                                        // 4. Retrieve user details by email
-                                                        CollectionReference userRef = db.collection("User");
-                                                        Query userQuery = userRef.whereEqualTo("email", email);
-                                                        userQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                            @Override
-                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                if (task.isSuccessful()) {
-                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                        if(status.equals("Accepted")) {
-                                                                            String email = document.getString("email");
-                                                                            String firstName = document.getString("firstName");
-                                                                            String lastName = document.getString("lastName");
-                                                                            String fullName = firstName + " " + lastName;
-                                                                            CardView c = createCourseCardView(email, fullName);
-                                                                            CardView c2 = createCourseCardView(email, fullName);
-                                                                            mainView.addView(c);
-                                                                            mainView.addView(c2);
-                                                                        }
-                                                                    }
-                                                                } else {
-                                                                    Log.w("Firestore", "Error getting documents.", task.getException());
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                } else {
-                                                    Log.w("Firestore", "Error getting documents.", task.getException());
-                                                }
                                             }
                                         });
                                     }
@@ -218,10 +147,10 @@ public class ListOfStudents extends AppCompatActivity {
                 }
             }
         });
-
     }
 
-    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String courseImg) {
+
+    private CardView createCourseCardView(String courseID, String instructor, String courseName, String days, String date, String venue, String time) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -253,7 +182,7 @@ public class ListOfStudents extends AppCompatActivity {
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageResource(R.drawable.mobile_img);
-        Picasso.get().load(courseImg).into(imageView);
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fcourse_default.png?alt=media&token=68dd1b73-90b6-4cb9-ac91-460e3dfe6768").into(imageView);
 
 
         LinearLayout innerLayout = new LinearLayout(this);
@@ -302,80 +231,110 @@ public class ListOfStudents extends AppCompatActivity {
 
 // Set layout_width and layout_height to match_parent
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                (int) (1 * scale + 0.5f),
-                LinearLayout.LayoutParams.MATCH_PARENT
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
         );
         int marginTop = (int) (8 * scale + 0.5f);
         int marginBottom = (int) (8 * scale + 0.5f);
-        layoutParams.setMargins(marginTop, 0, marginBottom, 0);
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
         view.setLayoutParams(layoutParams);
 
 // Set background color
         view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
 
 
+        TextView timeTextView = createTextView(this, time);
+        timeTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_red_24dp, 0, 0, 0);
+        timeTextView.setCompoundDrawablePadding(32);
+        timeTextView.setPadding(0, 0, 0, 16);
+
+        TextView dateTextView = createTextView(this, date);
+        dateTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_red_24dp, 0, 0, 0);
+        dateTextView.setCompoundDrawablePadding(32);
+        dateTextView.setPadding(0, 0, 0, 16);
+
+        TextView venueTextView = createTextView(this, venue);
+        venueTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_red_24dp, 0, 0, 0);
+        venueTextView.setCompoundDrawablePadding(32);
+        venueTextView.setPadding(0, 0, 0, 16);
+
+        TextView instructorTextView = createTextView(this, days);
+        instructorTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_today_purple_24, 0, 0, 0);
+        instructorTextView.setCompoundDrawablePadding(32);
+        instructorTextView.setPadding(0, 0, 0, 16);
+
+        LinearLayout innerLinearLayout1 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams1 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout1.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout1.setLayoutParams(innerLinearLayoutParams1);
+        //innerLinearLayout1.setPadding(0, 0, 0, 0);
+//        innerLinearLayout1.setWeightSum(50);
+
+        LinearLayout innerLinearLayout2 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams2 = new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 50);
+        innerLinearLayout2.setOrientation(LinearLayout.VERTICAL);
+        innerLinearLayout2.setLayoutParams(innerLinearLayoutParams2);
+        //innerLinearLayout2.setPadding(0, 0, 0, 0);
+
+        LinearLayout innerLinearLayout3 = new LinearLayout(this);
+        LinearLayout.LayoutParams innerLinearLayoutParams3 = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 100);
+        innerLinearLayout3.setOrientation(LinearLayout.HORIZONTAL);
+        innerLinearLayout3.setLayoutParams(innerLinearLayoutParams3);
+        //innerLinearLayout3.setPadding(0, 32, 0, 32);
+
+        innerLinearLayout1.addView(timeTextView);
+        innerLinearLayout1.addView(instructorTextView);
+
+
+        innerLinearLayout2.addView(venueTextView);
+        innerLinearLayout2.addView(dateTextView);
+
+        innerLinearLayout3.addView(innerLinearLayout1);
+        innerLinearLayout3.addView(innerLinearLayout2);
+
+
         innerLayout.addView(titleTV);
         innerLayout.addView(instructorTV);
         innerLayout.addView(testV);
-        //innerLayout.addView(view);
+        innerLayout.addView(view);
+        innerLayout.addView(innerLinearLayout3);
+
+
+        LinearLayout view1 = new LinearLayout(this);
+
+// Set layout_width and layout_height to match_parent
+        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
+                (int) (1 * scale + 0.5f),
+                LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        marginTop = (int) (8 * scale + 0.5f);
+        marginBottom = (int) (8 * scale + 0.5f);
+        layoutParams1.setMargins(marginTop, 0, marginBottom, 0);
+        view1.setLayoutParams(layoutParams1);
+
+// Set background color
+        view1.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
 
         mainLinearLayout.addView(imageView);
-        mainLinearLayout.addView(view);
+        mainLinearLayout.addView(view1);
         mainLinearLayout.addView(innerLayout);
         cardView.addView(mainLinearLayout);
         return cardView;
     }
 
-    private CardView createCourseCardView(String id, String F) {
-        // Create the CardView inside the courses_list LinearLayout
-        CardView cardView = new CardView(this);
-        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
-        cardViewParams.setMargins(4, 0, 0, 0);
-        cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(32);
-        cardView.setUseCompatPadding(true);
-        //cardView.setContentPadding(8, 8, 8, 8);
-        cardView.setContentPadding(32, 32, 32, 32);
-
-        // Create the LinearLayout inside the CardView
-        LinearLayout mainLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
-
-        // Create the TextViews inside the LinearLayout
-        TextView titleTextView = createTextView(this, id, 24, Typeface.DEFAULT, false);
-        titleTextView.setTextColor(Color.parseColor("#7884FC"));
-        titleTextView.setPadding(0, 0, 0, 32);
-
-        // Create the TextViews inside the LinearLayout
-        TextView titleTextView2 = createTextView(this, F, 24, Typeface.DEFAULT, false);
-        titleTextView2.setTextColor(Color.parseColor("#7884FC"));
-        titleTextView2.setPadding(0, 0, 0, 32);
-
-        // Add the TextViews to the LinearLayout
-        mainLinearLayout.addView(titleTextView);
-        mainLinearLayout.addView(titleTextView2);
-
-        cardView.addView(mainLinearLayout);
-        return cardView;
-    }
-
-    private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
+    private TextView createTextView(Context context, String text) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         textView.setText(text);
         textView.setTypeface(ResourcesCompat.getFont(context, R.font.calibri));
         //textView.setTextColor(Color.parseColor("#000000"));
-        if (setText) {
-            textView.setTextSize(textSize);
-        }
         return textView;
     }
-
     @Override
     public boolean onSupportNavigateUp() {
         finish();
@@ -383,106 +342,7 @@ public class ListOfStudents extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setQueryHint("Type here to search");
-        searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mainView.removeAllViews();
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mainView.removeAllViews();
-                String courseTitle = newText;
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                // 1. Retrieve courseID by courseTitle
-                CollectionReference courseRef = db.collection("Course");
-                Query courseQuery = courseRef.whereEqualTo("courseTitle", courseTitle);
-                courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String courseId = document.getId();
-                                // 2. Retrieve offeringIDs by courseID
-                                CollectionReference offeringRef = db.collection("CourseOffering");
-                                Query offeringQuery = offeringRef.whereEqualTo("courseID", courseId);
-                                offeringQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                String offeringId = document.getId();
-                                                // 3. Retrieve emails by offeringID
-                                                CollectionReference registrationRef = db.collection("Registration");
-                                                Query registrationQuery = registrationRef.whereEqualTo("offeringID", offeringId);
-                                                registrationQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                String email = document.getString("traineeID");
-                                                                String status = document.getString("status");
-                                                                // 4. Retrieve user details by email
-                                                                CollectionReference userRef = db.collection("User");
-                                                                Query userQuery = userRef.whereEqualTo("email", email);
-                                                                userQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                        if (task.isSuccessful()) {
-                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                if(status.equals("Accepted")) {
-                                                                                    String email = document.getString("email");
-                                                                                    String firstName = document.getString("firstName");
-                                                                                    String lastName = document.getString("lastName");
-                                                                                    CardView c = createCourseCardView(email,firstName+" "+lastName);
-                                                                                    mainView.addView(c);
-                                                                                }
-                                                                            }
-                                                                        } else {
-                                                                            Log.w("Firestore", "Error getting documents.", task.getException());
-                                                                        }
-                                                                    }
-                                                                });
-                                                            }
-                                                        } else {
-                                                            Log.w("Firestore", "Error getting documents.", task.getException());
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        } else {
-                                            Log.w("Firestore", "Error getting documents.", task.getException());
-                                        }
-                                    }
-                                });
-                            }
-                        } else {
-                            Log.w("Firestore", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
         return super.onOptionsItemSelected(item);
     }
-
-
 }
