@@ -36,6 +36,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.trainingcenter.View.LoginActivity;
+import com.example.trainingcenter.View.admin.StatusUpdater;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,15 +53,18 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -74,10 +78,13 @@ public class Home extends AppCompatActivity
     LinearLayout rejectedCourses;
     LinearLayout pendingCourses;
     LinearLayout mainLayout;
+    private static final long UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Start the timer to run the StatusUpdater periodically
         db = FirebaseFirestore.getInstance();
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
@@ -128,18 +135,26 @@ public class Home extends AppCompatActivity
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
-                    // Handle any errors
                     return;
                 }
-                // Process the query snapshot and handle the updates
                 for (DocumentChange documentChange : querySnapshot.getDocumentChanges()) {
-                    DocumentSnapshot documentSnapshot = documentChange.getDocument();
-                    String documentId = documentSnapshot.getId();
-                    String userID = documentSnapshot.getString("userID");
-                    if (userID.equals(email)) {
-                        String title = documentSnapshot.getString("title");
-                        String body = documentSnapshot.getString("body");
+                    DocumentSnapshot notificationDoc = documentChange.getDocument();
+                    String documentId = notificationDoc.getId();
+                    String userID = notificationDoc.getString("userID");
+                    String title = notificationDoc.getString("title");
+                    String body = notificationDoc.getString("body");
+                    Timestamp noteDate = notificationDoc.getTimestamp("noteDate");
+                    Boolean fetched = notificationDoc.getBoolean("fetch");
+                    if (userID.equals(email) && !fetched) {
+
                         createNotification(documentId, title, body);
+
+                        db.collection("Notification").document(documentId)
+                                .update(
+                                        "fetch", true
+                                );
+
+
 //                        Handler handler = new Handler();
 //                        handler.postDelayed(new Runnable() {
 //                            @Override
@@ -153,7 +168,8 @@ public class Home extends AppCompatActivity
 //                                                notificationBackup.put("userID", userID);
 //                                                notificationBackup.put("title", title);
 //                                                notificationBackup.put("body", body);
-//                                                db.collection("Notification").document().set(notificationBackup);
+//                                                notificationBackup.put("noteDate", noteDate);
+//                                                db.collection("NotificationBackup").document().set(notificationBackup);
 //                                            }
 //                                        })
 //                                        .addOnFailureListener(new OnFailureListener() {
@@ -585,18 +601,23 @@ public class Home extends AppCompatActivity
         return cardView;
     }
 
-
     protected void onResume() {
         super.onResume();
+        timer = new Timer();
+        timer.schedule(new StatusUpdater(), 0, UPDATE_INTERVAL);
         ImageView profileImg = profile.findViewById(R.id.profileimage);
         TextView profileName = profile.findViewById(R.id.profilename);
         String[] documentData = new String[2];
         pendingCourses.removeAllViews();
         rejectedCourses.removeAllViews();
+        dailySchedule.removeAllViews();
+        mainLayout.removeAllViews();
         CardView emptyPending = createEmptyCardView("You don't have any pending course!");
         pendingCourses.addView(emptyPending);
         CardView emptyRejected = createEmptyCardView("You don't have any rejected courses!");
         rejectedCourses.addView(emptyRejected);
+        CardView emptySchedule = createEmptyCardView("You are not enrolled in any course yet!");
+        dailySchedule.addView(emptySchedule);
         DocumentReference docRef = db.collection("User").document(email);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -616,16 +637,20 @@ public class Home extends AppCompatActivity
             }
         });
 
-        db.collection("NotificationBackup")
-                .whereEqualTo("userID", email)
+        db.collection("Notification")
+                .orderBy("noteDate", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
                         if (regTask.isSuccessful()) {
                             for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
-                                CardView cv = createNotificationCard(regDoc.getString("title"), regDoc.getString("body"), "10:40 AM");
-                                mainLayout.addView(cv);
+                                if (regDoc.getString("userID").equals(email)) {
+                                    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.getDefault());
+                                    String formattedTimestamp = sdf.format(regDoc.getTimestamp("noteDate").toDate());
+                                    CardView cv = createNotificationCard(regDoc.getString("title"), regDoc.getString("body"), formattedTimestamp);
+                                    mainLayout.addView(cv);
+                                }
                             }
                         } else {
                         }

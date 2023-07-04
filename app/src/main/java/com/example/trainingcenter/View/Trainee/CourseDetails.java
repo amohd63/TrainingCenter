@@ -100,6 +100,7 @@ public class CourseDetails extends AppCompatDialogFragment {
         final boolean[] flag = {true};
         final int[] i = {0};
         final int[] size = {1};
+        final boolean[] clearFlag = {false};
         db.collection("Prerequisite")
                 .whereEqualTo("courseID", course.getCourseID())
                 .get()

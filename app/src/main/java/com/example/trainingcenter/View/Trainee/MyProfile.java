@@ -276,7 +276,6 @@ public class MyProfile extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String item = adapterView.getItemAtPosition(i).toString();
-                address.showDropDown();
                 db.collection("User").document(email).collection("Trainee").document(email)
                         .update(
                                 "address", item

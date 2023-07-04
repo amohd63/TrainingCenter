@@ -55,6 +55,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -69,7 +70,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
@@ -113,19 +113,17 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
                         .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                         .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                 //notification
-                LocalDateTime currentDateTime = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String formattedDateTime = currentDateTime.format(formatter);
-                Timestamp timestampNote = Timestamp.valueOf(formattedDateTime);
+                Timestamp timestampNote = Timestamp.now();
                 UUID uuid2 = UUID.randomUUID();
                 String noteID = uuid.toString().replace("-", "").substring(0, 20);
-                String title = "Acceptance";
-                String body = "You have been accepted to the course "+courseTitle+".";
+                String title = "Acceptance | " + courseTitle;
+                String body = "Your application to join "+courseTitle+" is accepted. Welcome!";
                 Map<String, Object> note = new HashMap<>();
                 note.put("body",body);
                 note.put("title",title);
                 note.put("userID",userId);
                 note.put("noteDate",timestampNote);
+                note.put("fetch", false);
                 db.collection("Notification").document(noteID).set(note);
                 dismiss();
                 getActivity().recreate();
@@ -141,12 +139,15 @@ public class Registration_applications_dialog extends AppCompatDialogFragment {
                 //notification
                 UUID uuid2 = UUID.randomUUID();
                 String noteID = uuid.toString().replace("-", "").substring(0, 20);
-                String title = "Rejection";
-                String body = "You have been rejected from joining the course "+courseTitle+".";
+                String title = "Rejection | " + courseTitle;
+                String body = "Sadly, your request to enroll in "+courseTitle+" is rejected. See you next times!";
                 Map<String, Object> note = new HashMap<>();
                 note.put("body",body);
                 note.put("title",title);
                 note.put("userID",userId);
+                Timestamp timestampNote = Timestamp.now();
+                note.put("noteDate",timestampNote);
+                note.put("fetch", false);
                 db.collection("Notification").document(noteID).set(note);
                 dismiss();
                 getActivity().recreate();
