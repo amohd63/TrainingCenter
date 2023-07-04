@@ -176,7 +176,7 @@
                             android:textColor="#000000"
                             android:textSize="16sp" />
 
-                        <EditText
+                        <TextView
                             android:id="@+id/prerequisites_insert"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -184,9 +184,12 @@
                             android:background="@android:color/transparent"
                             android:fontFamily="@font/calibri"
                             android:text=""
+                            android:hint="Select prerequisites"
+                            android:textColorHint="@color/black"
                             android:textColor="@color/lavender"
                             android:textSize="16sp"
-                            android:theme="@style/custom_cursor" />
+                            android:theme="@style/custom_cursor"
+                            android:drawableEnd="@android:drawable/arrow_down_float" />
 
                     </LinearLayout>
 

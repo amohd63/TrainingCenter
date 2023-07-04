@@ -91,6 +91,7 @@ public class available_dialog extends AppCompatDialogFragment {
         Spinner instroctor = view.findViewById(R.id.instroctor_add_spinner);
         Button mKa = view.findViewById(R.id.make_available_in_make_available_daialog);
         ImageButton mma = view.findViewById(R.id.close_make_availbal_dialog_now);
+
         db = FirebaseFirestore.getInstance();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = db.collection("User");

@@ -8,6 +8,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,12 +17,15 @@ import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.Collections;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,8 +59,14 @@ import java.util.Map;
 public class add_courses extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseFirestore db2;
-    EditText cName, cMainTopics, cPre;
+    EditText cName, cMainTopics ;
+    TextView cPre;
     Button addCourseAdmin;
+
+    boolean[] selectedPre;
+    ArrayList<Integer> preList = new ArrayList<>();
+    String[] preArray;
+    ArrayList<String>  myList = new ArrayList<>();
     private final int GALLERY_REQ_CODE = 1000;
     Uri selectedImageUri;
     private ImageView coursePhoto;
@@ -73,6 +84,77 @@ public class add_courses extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         db2 = FirebaseFirestore.getInstance();
 
+        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference collectionRef = db.collection("Course");
+        collectionRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null) {
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        String courseTitle = (String) document.get("courseTitle");
+                        myList.add(courseTitle);
+                    }
+                    preArray = myList.toArray(new String[myList.size()]);
+                    selectedPre = new boolean[preArray.length];
+                }
+            }
+        });
+        cPre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        add_courses.this
+                );
+                builder.setTitle("Select Prerequisites");
+                builder.setCancelable(false);
+                builder.setMultiChoiceItems(preArray, selectedPre, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                        if(b) {
+                            preList.add(i);
+                            Collections.sort(preList);
+                        }else {
+                            if(preList.contains(i)) {
+                                preList.remove((Integer) i);
+                            }
+                        }
+                    }
+                });
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for(int j=0 ;j<preList.size();j++) {
+                            stringBuilder.append(preArray[preList.get(j)]);
+                            if(j != preList.size() -1){
+                                stringBuilder.append(",");
+                            }
+                        }
+                        cPre.setText(stringBuilder.toString());
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                       dialogInterface.dismiss();
+                    }
+                });
+                builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        for(int j=0 ;j<preList.size();j++) {
+                            selectedPre[j] = false;
+                            preList.clear();
+                            cPre.setText("");
+                        }
+                    }
+                });
+                builder.show();
+            }
+        });
+
+
         coursePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +171,7 @@ public class add_courses extends AppCompatActivity {
                 String c_main_topics[] = cMainTopics.getText().toString().split("\n");
                 ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(c_main_topics));
 
-                String c_pre[] = cPre.getText().toString().split("\n");
+                String c_pre[] = cPre.getText().toString().split(",");
 
                 UUID uuid = UUID.randomUUID();
                 String courseID = uuid.toString().replace("-", "").substring(0, 20);
