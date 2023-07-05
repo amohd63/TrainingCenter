@@ -189,6 +189,7 @@ public class SignupActivityInstructor extends AppCompatActivity {
                 if (email.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
 //                    signupEmail.setBackgroundColor(Color.RED);
+                    signupEmail.setBackgroundResource(R.drawable.edittext_error);
                 }
                 else if (pass.isEmpty()){
                     signupPassword.setError("Password cannot be empty");

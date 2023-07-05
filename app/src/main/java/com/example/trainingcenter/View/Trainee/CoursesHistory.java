@@ -68,7 +68,8 @@ public class CoursesHistory extends AppCompatActivity {
                                                                                 courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                 dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                 courseOfferingDoc.getString("venue"),
-                                                                                courseOfferingDoc.getString("schedule").split(" ")[1]
+                                                                                courseOfferingDoc.getString("schedule").split(" ")[1],
+                                                                                courseDoc.getString("photo")
                                                                         );
 
                                                                         mainView.addView(test);
@@ -96,7 +97,7 @@ public class CoursesHistory extends AppCompatActivity {
         return true;
     }
 
-    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time) {
+    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time, String imgURL) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -128,7 +129,7 @@ public class CoursesHistory extends AppCompatActivity {
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageResource(R.drawable.mobile_img);
-        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fcourse_default.png?alt=media&token=68dd1b73-90b6-4cb9-ac91-460e3dfe6768").into(imageView);
+        Picasso.get().load(imgURL).into(imageView);
 
 
         LinearLayout innerLayout = new LinearLayout(this);

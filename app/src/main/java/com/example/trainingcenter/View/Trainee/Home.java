@@ -315,7 +315,7 @@ public class Home extends AppCompatActivity
         }
     }
 
-    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time) {
+    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time, String imgURL) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -347,7 +347,7 @@ public class Home extends AppCompatActivity
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageResource(R.drawable.mobile_img);
-        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fcourse_default.png?alt=media&token=68dd1b73-90b6-4cb9-ac91-460e3dfe6768").into(imageView);
+        Picasso.get().load(imgURL).into(imageView);
 
 
         LinearLayout innerLayout = new LinearLayout(this);
@@ -663,7 +663,6 @@ public class Home extends AppCompatActivity
         db.collection("Registration")
                 .whereEqualTo("traineeID", email)
                 .whereEqualTo("status", "Accepted")
-                .whereLessThanOrEqualTo("startDate", timestamp)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -676,51 +675,56 @@ public class Home extends AppCompatActivity
                                         .addOnCompleteListener(courseOfferingTask -> {
                                             if (courseOfferingTask.isSuccessful()) {
                                                 for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                    db.collection("Course")
-                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
-                                                            .get()
-                                                            .addOnCompleteListener(courseTask -> {
-                                                                if (courseTask.isSuccessful()) {
-                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
-                                                                        String schedule = courseDoc.getString("schedule");
-                                                                        Calendar calendar = Calendar.getInstance();
-                                                                        calendar.setTime(regDoc.getTimestamp("startDate").toDate());
-                                                                        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                                                                        String dayName = getDayName(dayOfWeek);
-                                                                        if (schedule.contains(dayName)) {
-                                                                            db.collection("User")
-                                                                                    .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
-                                                                                    .get()
-                                                                                    .addOnCompleteListener(userTask -> {
-                                                                                        if (userTask.isSuccessful()) {
-                                                                                            for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                                                CardView test = createCourseCardView2(
-                                                                                                        courseDoc.getString("courseID"),
-                                                                                                        userDoc.getString("firstName") + userDoc.getString("lastName"),
-                                                                                                        courseDoc.getString("courseTitle"),
-                                                                                                        courseOfferingDoc.getString("schedule").split(" ")[0],
-                                                                                                        dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
-                                                                                                        courseOfferingDoc.getString("venue"),
-                                                                                                        courseOfferingDoc.getString("schedule").split(" ")[1]
-                                                                                                );
+                                                    if (courseOfferingDoc.getTimestamp("startDate").compareTo(timestamp) <= 0) {
+                                                        db.collection("Course")
+                                                                .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                                                .get()
+                                                                .addOnCompleteListener(courseTask -> {
+                                                                    if (courseTask.isSuccessful()) {
+                                                                        for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                            String schedule = courseOfferingDoc.getString("schedule");
+                                                                            Calendar calendar = Calendar.getInstance();
+                                                                            calendar.setTime(timestamp.toDate());
+                                                                            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                                                                            String dayName = getDayName(dayOfWeek);
+                                                                            Log.d("schedule ", schedule);
+                                                                            Log.d("dayName ", dayName);
+                                                                            if (schedule.contains(dayName)) {
+                                                                                db.collection("User")
+                                                                                        .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                                                        .get()
+                                                                                        .addOnCompleteListener(userTask -> {
+                                                                                            if (userTask.isSuccessful()) {
+                                                                                                for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
+                                                                                                    CardView test = createCourseCardView2(
+                                                                                                            courseDoc.getString("courseID"),
+                                                                                                            userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                                            courseDoc.getString("courseTitle"),
+                                                                                                            courseOfferingDoc.getString("schedule").split(" ")[0],
+                                                                                                            dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
+                                                                                                            courseOfferingDoc.getString("venue"),
+                                                                                                            courseOfferingDoc.getString("schedule").split(" ")[1],
+                                                                                                            courseDoc.getString("photo")
+                                                                                                    );
 
-                                                                                                if (flag[2] == 0) {
-                                                                                                    dailySchedule.removeAllViews();
-                                                                                                    flag[2]++;
+                                                                                                    if (flag[2] == 0) {
+                                                                                                        dailySchedule.removeAllViews();
+                                                                                                        flag[2]++;
+                                                                                                    }
+                                                                                                    dailySchedule.addView(test);
                                                                                                 }
-                                                                                                dailySchedule.addView(test);
-                                                                                            }
 
-                                                                                        } else {
-                                                                                        }
-                                                                                    });
+                                                                                            } else {
+                                                                                            }
+                                                                                        });
+                                                                            }
+
                                                                         }
 
+                                                                    } else {
                                                                     }
-
-                                                                } else {
-                                                                }
-                                                            });
+                                                                });
+                                                    }
                                                 }
                                             } else {
                                             }
@@ -767,7 +771,8 @@ public class Home extends AppCompatActivity
                                                                                                     courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                                     dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                                     courseOfferingDoc.getString("venue"),
-                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[1]
+                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[1],
+                                                                                                    courseDoc.getString("photo")
                                                                                             );
                                                                                             if (regDoc.getString("status").equals("Pending")) {
                                                                                                 if (flag[0] == 0) {

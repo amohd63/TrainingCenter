@@ -13,4 +13,5 @@
     <color name="colorPrimaryDark">#7884FC</color>
     <color name="colorAccent">#7884FC</color>
     <color name="bright_orange">#f3bba2</color>
+    <color name="red">#ff0000</color>
 </resources>
