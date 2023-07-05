@@ -10,8 +10,11 @@ import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -27,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -49,9 +53,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -72,6 +80,8 @@ import java.util.UUID;
 
 public class available_dialog extends AppCompatDialogFragment {
     private FirebaseFirestore db;
+
+    private AutoCompleteTextView address;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -82,15 +92,75 @@ public class available_dialog extends AppCompatDialogFragment {
         String documentPath = args.getString("pointer");
         String emailForAdmin = args.getString("emailId");
         String titleAdmin = args.getString("title");
+
+        address = view.findViewById(R.id.instroctor_add_spinner);
         DocumentReference docRef = FirebaseFirestore.getInstance().document(documentPath);
         ArrayList<String>  myList = new ArrayList<>();
-        EditText registration_deadline = view.findViewById(R.id.new_registration_in_make_available);
-        EditText course_start_date = view.findViewById(R.id.new_start_date_in_make_available);
+
+        TextView registration_deadline = view.findViewById(R.id.new_registration_in_make_available);
+        TextView course_start_date = view.findViewById(R.id.new_start_date_in_make_available);
         EditText course_schedule = view.findViewById(R.id.new_course_schedule_in_make_available);
         EditText venue = view.findViewById(R.id.new_venue_in_make_available);
-        Spinner instroctor = view.findViewById(R.id.instroctor_add_spinner);
         Button mKa = view.findViewById(R.id.make_available_in_make_available_daialog);
         ImageButton mma = view.findViewById(R.id.close_make_availbal_dialog_now);
+
+        registration_deadline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MaterialDatePicker<Long> materialDatePicker = MaterialDatePicker.Builder.datePicker()
+                        .setTitleText("Registration deadline")
+                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                        .build();
+                materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+                    @Override
+                    public void onPositiveButtonClick(Long selection) {
+                        String date = new SimpleDateFormat("yyyy-MM-dd" , Locale.ENGLISH).format(new Date(selection));
+                        MaterialTimePicker materialTimePicker = new MaterialTimePicker.Builder().setTitleText("Select a time")
+                                .setTimeFormat(TimeFormat.CLOCK_24H)
+                                .build();
+                        materialTimePicker.addOnPositiveButtonClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int hour = materialTimePicker.getHour();
+                                int minute = materialTimePicker.getMinute();
+                                registration_deadline.setText(date+" "+hour+":"+minute+":"+"00");
+                            }
+                        });
+                        materialTimePicker.show(getParentFragmentManager(),"MATERIAL_TIME_PICKER");
+                    }
+                });
+                materialDatePicker.show(getParentFragmentManager(),"MATERIAL_DATE_PICKER");
+            }
+        });
+
+        course_start_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MaterialDatePicker<Long> materialDatePicker = MaterialDatePicker.Builder.datePicker()
+                        .setTitleText("Registration deadline")
+                        .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                        .build();
+                materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
+                    @Override
+                    public void onPositiveButtonClick(Long selection) {
+                        String date = new SimpleDateFormat("yyyy-MM-dd" , Locale.ENGLISH).format(new Date(selection));
+                        MaterialTimePicker materialTimePicker = new MaterialTimePicker.Builder().setTitleText("Select a time")
+                                .setTimeFormat(TimeFormat.CLOCK_24H)
+                                .build();
+                        materialTimePicker.addOnPositiveButtonClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                int hour = materialTimePicker.getHour();
+                                int minute = materialTimePicker.getMinute();
+                                course_start_date.setText(date+" "+hour+":"+minute+":"+"00");
+                            }
+                        });
+                        materialTimePicker.show(getParentFragmentManager(),"MATERIAL_TIME_PICKER");
+                    }
+                });
+                materialDatePicker.show(getParentFragmentManager(),"MATERIAL_DATE_PICKER");
+            }
+        });
 
         db = FirebaseFirestore.getInstance();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -112,7 +182,7 @@ public class available_dialog extends AppCompatDialogFragment {
                                     String[] options = myList.toArray(new String[myList.size()]);
                                     ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, options);
                                     spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    instroctor.setAdapter(spinnerAdapter);
+                                    address.setAdapter(spinnerAdapter);
                                 }
                             }
                         });
@@ -128,7 +198,7 @@ public class available_dialog extends AppCompatDialogFragment {
                 Timestamp timestamp2 = Timestamp.valueOf(course_start_date.getText().toString());
                 String venuePlace = venue.getText().toString();
                 String schedule = course_schedule.getText().toString();
-                String instroctorw = instroctor.getSelectedItem().toString();
+                String instroctorw = address.getText().toString();
                 UUID uuid = UUID.randomUUID();
                 String offeringID = uuid.toString().replace("-", "").substring(0, 20);
                 String cId = docRef.getId();

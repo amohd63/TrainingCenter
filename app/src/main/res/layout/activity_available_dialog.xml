@@ -29,51 +29,184 @@
             android:background="@android:color/transparent"
             android:src="@drawable/ic_close" />
 
-        <EditText
-            android:id="@+id/new_registration_in_make_available"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:hint="registration deadline(yyyy-mm-dd hh:mm:ss)"
-            android:textColorHint="@color/black"
-            android:textSize="20sp" />
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/calibri"
+            android:text="Section details"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold"  />
 
-        <EditText
-            android:id="@+id/new_start_date_in_make_available"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:hint="course start date(yyyy-mm-dd hh:mm:ss)"
-            android:textColorHint="@color/black"
-            android:textSize="20sp" />
+            android:layout_weight="100"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/new_course_schedule_in_make_available"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text="registration deadline"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/new_registration_in_make_available"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text=""
+                android:hint="Select deadline date"
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:drawableEnd="@android:drawable/arrow_down_float"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#80D1D1D1" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:hint="course  schedule"
-            android:textColorHint="@color/black"
-            android:textSize="20sp" />
+            android:layout_weight="100"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/new_venue_in_make_available"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text="course start date"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/new_start_date_in_make_available"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text=""
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:drawableEnd="@android:drawable/arrow_down_float"
+                android:hint="course start date"
+                 />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#80D1D1D1" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:hint="venue"
-            android:textColorHint="@color/black"
-            android:textSize="20sp" />
+            android:layout_weight="100"
+            android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/instroctor_add_spinner"
-            android:layout_marginTop="20dp"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text="Course  schedule"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/new_course_schedule_in_make_available"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text=""
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#80D1D1D1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="100"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text="Venue"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/new_venue_in_make_available"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_weight="50"
+                android:fontFamily="@font/calibri"
+                android:text=""
+                android:textColorHint="@color/black"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#80D1D1D1" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
+            app:boxStrokeColor="@color/bright_orange"
+            android:hint="@string/select_instructor"
+            app:startIconDrawable="@drawable/baseline_person_24"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/instroctor_add_spinner"
+                android:enabled="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:editable="false"
+                android:inputType="none"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/make_available_in_make_available_daialog"
@@ -92,7 +225,7 @@
         android:background="@drawable/dialog_bg"
         android:elevation="10dp"
         android:padding="15dp"
-        android:src="@drawable/alert_icon"
+        android:src="@drawable/baseline_drive_file_rename_outline_24"
         app:layout_constraintEnd_toEndOf="@+id/linearLayout3"
         app:layout_constraintStart_toStartOf="@+id/linearLayout3"
         app:layout_constraintTop_toTopOf="parent" />
