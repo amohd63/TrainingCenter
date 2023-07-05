@@ -85,7 +85,6 @@ public class add_courses extends AppCompatActivity {
         db2 = FirebaseFirestore.getInstance();
 
         db = FirebaseFirestore.getInstance();
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = db.collection("Course");
         collectionRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {

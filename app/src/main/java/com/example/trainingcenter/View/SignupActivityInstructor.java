@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,12 +25,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -37,9 +43,9 @@ import java.util.regex.Pattern;
 public class SignupActivityInstructor extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField, specializationField, courseField;
-    private Button signupButton, addCourse;
-    private TextView loginRedirectText;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField, specializationField ;
+    private Button signupButton;
+    private TextView loginRedirectText, courseTextView;
     private RadioGroup degreeRadioGroup;
     private FirebaseFirestore db;
     private ImageView personalPhoto;
@@ -48,6 +54,11 @@ public class SignupActivityInstructor extends AppCompatActivity {
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Finstructor_default.png?alt=media&token=344f2027-9792-4df3-ad34-926c67f81be9";
     private ArrayList<String> instructorCourses = new ArrayList<>();
     Uri selectedImageUri;
+    ArrayList<String>  myList = new ArrayList<>();
+    ArrayList<Integer> courseList = new ArrayList<>();
+
+    String[] courseArray;
+    boolean[] selectedCourses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +79,81 @@ public class SignupActivityInstructor extends AppCompatActivity {
         personalPhoto = findViewById(R.id.personalPhoto);
         specializationField = findViewById(R.id.specialization);
         degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
-        addCourse = findViewById(R.id.add_course);
-        courseField = findViewById(R.id.course);
-
-
+        courseTextView = findViewById(R.id.courseInsert);
         degree = "";
+
+        CollectionReference collectionRef = db.collection("Course");
+        collectionRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null) {
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        String courseTitle = (String) document.get("courseTitle");
+                        myList.add(courseTitle);
+                    }
+                    courseArray = myList.toArray(new String[myList.size()]);
+                    selectedCourses = new boolean[courseArray.length];
+                }
+            }
+        });
+        courseTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        SignupActivityInstructor.this
+                );
+                builder.setTitle("Select Courses");
+                builder.setCancelable(false);
+                builder.setMultiChoiceItems(courseArray, selectedCourses, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                        if(b) {
+                            courseList.add(i);
+                            Collections.sort(courseList);
+                        }else {
+                            if(courseList.contains(i)) {
+                                courseList.remove((Integer) i);
+                            }
+                        }
+                    }
+                });
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for(int j = 0; j< courseList.size(); j++) {
+                            stringBuilder.append(courseArray[courseList.get(j)]);
+                            if(j != courseList.size() -1){
+                                stringBuilder.append(",");
+                            }
+                        }
+                        courseTextView.setText(stringBuilder.toString());
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        for(int j = 0; j< courseList.size(); j++) {
+                            try {
+                                selectedCourses[j] = false;
+                            }catch (ArrayIndexOutOfBoundsException ignored){
+
+                            }
+                            courseTextView.setText("");
+                        }
+                        courseList.clear();
+                    }
+                });
+                builder.show();
+            }
+        });
+
         degreeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -81,17 +162,6 @@ public class SignupActivityInstructor extends AppCompatActivity {
                 // Get the text of the selected radio button
                 degree = selectedRadioButton.getText().toString();
                 Toast.makeText(getApplicationContext(), "Selected option: " + degree, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-
-        addCourse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                instructorCourses.add(courseField.getText().toString());
-                courseField.setText("");
-                courseField.setHint("Add course");
             }
         });
 

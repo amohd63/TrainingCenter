@@ -180,32 +180,27 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="20dp">
+                    android:layout_height="70dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/course"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/courseInsert"
+                        android:layout_width="0dp"
                         android:layout_height="50dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_weight="50"
                         android:background="@drawable/custom_edittext"
                         android:drawableLeft="@drawable/baseline_drive_file_rename_outline_24"
+                        android:drawableEnd="@android:drawable/arrow_down_float"
                         android:drawablePadding="8dp"
-                        android:hint="Add course"
-                        android:layout_weight="2"
-                        android:layout_margin="3dp"
-                        android:textColor="@color/black"/>
-
-                    <Button
-                        android:id="@+id/add_course"
-                        android:layout_width="wrap_content"
-                        android:layout_height="55dp"
-                        android:layout_weight="1"
-                        android:text="Add course"
-                        android:textSize="18sp"
-                        app:cornerRadius="20dp"
-                        android:layout_margin="3dp"
-                        android:backgroundTint="@color/lavender"/>
+                        android:hint="Select Courses"
+                        android:padding="8dp"
+                        android:text=""
+                        android:textColor="@color/lavender"
+                        android:textColorHint="@color/black"
+                        android:textSize="16sp"
+                        android:theme="@style/custom_cursor" />
                 </LinearLayout>
 
                 <Button
