@@ -137,7 +137,7 @@ public class available_dialog extends AppCompatDialogFragment {
             @Override
             public void onClick(View view) {
                 MaterialDatePicker<Long> materialDatePicker = MaterialDatePicker.Builder.datePicker()
-                        .setTitleText("Registration deadline")
+                        .setTitleText("Course start date")
                         .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                         .build();
                 materialDatePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
