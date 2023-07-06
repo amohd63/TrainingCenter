@@ -70,14 +70,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
         setContentView(R.layout.activity_home_admin);
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab2);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout2);
         NavigationView navigationView = findViewById(R.id.nav_view2);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
