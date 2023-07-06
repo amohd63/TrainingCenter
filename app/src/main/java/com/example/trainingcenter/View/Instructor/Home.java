@@ -1,6 +1,5 @@
 package com.example.trainingcenter.View.Instructor;
 
-import android.accounts.AccountManagerFuture;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,11 +30,8 @@ import com.example.trainingcenter.View.LoginActivity;
 import com.example.trainingcenter.View.admin.StatusUpdater;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.example.trainingcenter.R;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -47,7 +43,6 @@ import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Timer;
 
 public class Home extends AppCompatActivity
@@ -59,7 +54,7 @@ public class Home extends AppCompatActivity
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fsignup_default.jpg?alt=media&token=83206b02-8fdc-40a1-8259-e39ad0d78d24";
     private static final long UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
     private Timer timer;
-    LinearLayout onGoingCourses, allCourses;
+    LinearLayout onGoingCourses, todayCourses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +80,7 @@ public class Home extends AppCompatActivity
         ImageView profileImg = profile.findViewById(R.id.profileimage);
         TextView profileName = profile.findViewById(R.id.profilename);
         onGoingCourses = findViewById(R.id.ongoing_courses_currently);
-        allCourses = findViewById(R.id.all_courses);
+        todayCourses = findViewById(R.id.todayClasses);
         String[] documentData = new String[2];
         DocumentReference docRef = db.collection("User").document(email);
         profileEmail.setText(email);
@@ -179,7 +174,7 @@ public class Home extends AppCompatActivity
         timer = new Timer();
         timer.schedule(new StatusUpdater(), 0, UPDATE_INTERVAL);
 
-        allCourses.removeAllViews();
+        todayCourses.removeAllViews();
         onGoingCourses.removeAllViews();
         fillCourses();
         fillOnGoingClass();
@@ -203,6 +198,27 @@ public class Home extends AppCompatActivity
             }
         });
 
+    }
+    private char getCurrentDay(){
+        LocalDate currentDate = LocalDate.now();
+        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
+        String dayOfWeekSTR = dayOfWeek.toString();
+
+        switch (dayOfWeekSTR) {
+            case "MONDAY":
+                return 'M';
+            case "TUESDAY":
+                return 'T';
+            case "WEDNESDAY":
+                return 'W';
+            case "THURSDAY":
+                return 'R';
+            case "FRIDAY":
+                return 'F';
+            case "SATURDAY":
+                return 'S';
+        }
+        return 'E';
     }
     private void fillOnGoingClass(){
         final int[] flag = {0};
@@ -260,16 +276,10 @@ public class Home extends AppCompatActivity
                     }
                 });
     }
-    private char getCurrentDay(){
-        LocalDate currentDate = LocalDate.now();
-        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-
-        return 'e';
-    }
     private void fillCourses(){
         final int[] flag = {0};
         CardView emptyOnGoing = createEmptyCardView("you don't have any courses this semester!");
-        onGoingCourses.addView(emptyOnGoing);
+        todayCourses.addView(emptyOnGoing);
         final SimpleDateFormat[] dateFormat = {new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)};
         db.collection("Course")
                 .get()
@@ -291,7 +301,7 @@ public class Home extends AppCompatActivity
                                                             .addOnCompleteListener(userTask -> {
                                                                 if (userTask.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                        if(status.equals("Ongoing")) {
+                                                                        if(status.equals("Ongoing") && courseOfferingDoc.getString("schedule").split(" ")[0].contains(String.valueOf(getCurrentDay()))) {
                                                                             CardView test = createCourseCardView4(
                                                                                     courseDoc.getString("courseID"),
                                                                                     userDoc.getString("firstName") + userDoc.getString("lastName"),
@@ -302,10 +312,10 @@ public class Home extends AppCompatActivity
                                                                                     courseOfferingDoc.getString("schedule").split(" ")[1]
                                                                             );
                                                                             if(flag[0] == 0){
-                                                                                allCourses.removeAllViews();
+                                                                                todayCourses.removeAllViews();
                                                                                 flag[0]++;
                                                                             }
-                                                                            allCourses.addView(test);
+                                                                            todayCourses.addView(test);
                                                                         }
                                                                     }
                                                                 } else {
@@ -327,7 +337,7 @@ public class Home extends AppCompatActivity
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                1100, ViewGroup.LayoutParams.WRAP_CONTENT);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);
