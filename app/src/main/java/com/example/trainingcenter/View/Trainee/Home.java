@@ -145,7 +145,8 @@ public class Home extends AppCompatActivity
                     String body = notificationDoc.getString("body");
                     Timestamp noteDate = notificationDoc.getTimestamp("noteDate");
                     Boolean fetched = notificationDoc.getBoolean("fetch");
-                    if (userID.equals(email) && !fetched) {
+                    assert userID != null;
+                    if (userID.equals(email) && Boolean.FALSE.equals(fetched)) {
 
                         createNotification(documentId, title, body);
 
@@ -299,7 +300,9 @@ public class Home extends AppCompatActivity
             intent.putExtra("email", email);
             startActivity(intent);
         } else if (id == R.id.nav_logout) {
-            finish();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+//            finish();
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

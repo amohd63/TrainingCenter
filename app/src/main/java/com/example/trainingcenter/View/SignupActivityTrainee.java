@@ -70,8 +70,7 @@ public class SignupActivityTrainee extends AppCompatActivity {
         address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String item = adapterView.getItemAtPosition(i).toString();
-                selectedCity = item;
+                selectedCity = adapterView.getItemAtPosition(i).toString();
             }
         });
 
@@ -95,26 +94,62 @@ public class SignupActivityTrainee extends AppCompatActivity {
                 String lastName_str = lastName.getText().toString().trim();
                 String phoneNum = phoneNumField.getText().toString().trim();
 
-                if (!User.isValidName(firstName_str)) {
-                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                } else if (!User.isValidName(lastName_str)) {
-                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                } else if (email.isEmpty()) {
+                if (email.isEmpty()) {
+                    reInitializeEditText();
                     signupEmail.setError("Email cannot be empty");
-                } else if (pass.isEmpty()) {
+                    signupEmail.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Email cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+                else if (pass.isEmpty()) {
+                    reInitializeEditText();
                     signupPassword.setError("Password cannot be empty");
-                } else if (pass_conf.isEmpty()) {
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+                else if (pass_conf.isEmpty()) {
+                    reInitializeEditText();
                     signupPasswordConfirm.setError("You must confirm your Password");
-                } else if (!pass_conf.equals(pass)) {
+                    signupPasswordConfirm.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "You must confirm your Password", Toast.LENGTH_SHORT).show();
+                }
+                else if (!pass_conf.equals(pass)) {
+                    reInitializeEditText();
                     signupPassword.setError("Passwords must match");
-                } else if (phoneNum.isEmpty()) {
-                    phoneNumField.setError("This field is required");
-                } else if (selectedCity.isEmpty()) {
-                    address.setError("This field is required");
-                } else if (!validatePassword(pass)) {
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Passwords must match", Toast.LENGTH_SHORT).show();
+                }
+                else if (!validatePassword(pass)) {
+                    reInitializeEditText();
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
-                } else {
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Password\nMinimum 8 characters and maximum 15 characters\nIt must " +
+                            "contain at least one number, one lowercase letter, and one uppercase letter.", Toast.LENGTH_SHORT).show();
+                }
+                else if (!User.isValidName(firstName_str)) {
+                    reInitializeEditText();
+                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                    firstName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
+                }
+                else if (!User.isValidName(lastName_str)) {
+                    reInitializeEditText();
+                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                    lastName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
+                }
+                else if (selectedCity.isEmpty()) {
+                    reInitializeEditText();
+                    address.setError("This field is required");
+                    address.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Address field is required", Toast.LENGTH_SHORT).show();
+                }
+                else if (phoneNum.isEmpty()) {
+                    reInitializeEditText();
+                    phoneNumField.setError("Phone number field is required");
+                }
+                else {
+                    reInitializeEditText();
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -150,6 +185,15 @@ public class SignupActivityTrainee extends AppCompatActivity {
             }
         });
 
+    }
+    private void reInitializeEditText(){
+        signupEmail.setBackgroundResource(R.drawable.custom_edittext);
+        signupPassword.setBackgroundResource(R.drawable.custom_edittext);
+        signupPasswordConfirm.setBackgroundResource(R.drawable.custom_edittext);
+        firstName.setBackgroundResource(R.drawable.custom_edittext);
+        lastName.setBackgroundResource(R.drawable.custom_edittext);
+        address.setBackgroundResource(R.drawable.custom_edittext);
+        phoneNumField.setBackgroundResource(R.drawable.custom_edittext);
     }
 
     @Override

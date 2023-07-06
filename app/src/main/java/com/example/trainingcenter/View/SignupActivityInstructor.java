@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -34,6 +37,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +47,8 @@ import java.util.regex.Pattern;
 public class SignupActivityInstructor extends AppCompatActivity {
 
     private FirebaseAuth auth;
-    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, addressField, specializationField ;
+    private EditText signupEmail, signupPassword, signupPasswordConfirm, firstName, lastName, phoneNumField, specializationField ;
+    private AutoCompleteTextView addressField;
     private Button signupButton;
     private TextView loginRedirectText, courseTextView;
     private RadioGroup degreeRadioGroup;
@@ -58,7 +63,10 @@ public class SignupActivityInstructor extends AppCompatActivity {
     ArrayList<Integer> courseList = new ArrayList<>();
 
     String[] courseArray;
+    private ArrayAdapter<String> adapterItems;
+    private String[] cities = {"Ramallah", "Hebron", "Salfit", "Nablus", "Jerusalem", "Jenin", "Bethlehem", "Jericho", "Gaza City", "Tulkarm", "Qalqilya", "Rafah", "Khan Yunis", "Beit Lahia", "Beit Hanoun", "Tubas", "Al-Bireh", "Dura", "Beit Jala", "Khan Younis", "Abu Dis", "Rafat", "Deir al-Balah", "Jabalia", "Al-Auja", "Anabta", "Qalqas", "As-Samu", "Other"};
     boolean[] selectedCourses;
+    private String selectedCity = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +83,21 @@ public class SignupActivityInstructor extends AppCompatActivity {
         firstName = findViewById(R.id.firstName);
         lastName = findViewById(R.id.lastName);
         phoneNumField = findViewById(R.id.phoneNumber);
-        addressField = findViewById(R.id.address);
+        addressField = findViewById(R.id.cities);
         personalPhoto = findViewById(R.id.personalPhoto);
         specializationField = findViewById(R.id.specialization);
         degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
         courseTextView = findViewById(R.id.courseInsert);
         degree = "";
+        adapterItems = new ArrayAdapter<String>(this, R.layout.item_drop_down, cities);
+
+        addressField.setAdapter(adapterItems);
+        addressField.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedCity = adapterView.getItemAtPosition(i).toString();
+            }
+        });
 
         CollectionReference collectionRef = db.collection("Course");
         collectionRef.get().addOnCompleteListener(task -> {
@@ -139,14 +156,8 @@ public class SignupActivityInstructor extends AppCompatActivity {
                 builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        for(int j = 0; j< courseList.size(); j++) {
-                            try {
-                                selectedCourses[j] = false;
-                            }catch (ArrayIndexOutOfBoundsException ignored){
-
-                            }
-                            courseTextView.setText("");
-                        }
+                        Arrays.fill(selectedCourses, false);
+                        courseTextView.setText("");
                         courseList.clear();
                     }
                 });
@@ -182,57 +193,77 @@ public class SignupActivityInstructor extends AppCompatActivity {
                 String firstName_str = firstName.getText().toString().trim();
                 String lastName_str = lastName.getText().toString().trim();
                 String phoneNum = phoneNumField.getText().toString().trim();
-                String address = addressField.getText().toString().trim();
                 String specialization = specializationField.getText().toString().trim();
 
 
                 if (email.isEmpty()){
+                    reInitializeEditText();
                     signupEmail.setError("Email cannot be empty");
-//                    signupEmail.setBackgroundColor(Color.RED);
                     signupEmail.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Email cannot be empty", Toast.LENGTH_SHORT).show();
                 }
                 else if (pass.isEmpty()){
+                    reInitializeEditText();
                     signupPassword.setError("Password cannot be empty");
-//                    signupPassword.setBackgroundColor(Color.RED);
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
                 }
                  else if (pass_conf.isEmpty()){
-                     signupPasswordConfirm.setError("You must confirm your Password");
-//                    signupPasswordConfirm.setBackgroundColor(Color.RED);
+                    reInitializeEditText();
+                    signupPasswordConfirm.setError("You must confirm your Password");
+                    signupPasswordConfirm.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "You must confirm your Password", Toast.LENGTH_SHORT).show();
                  }
                  else if (!pass_conf.equals(pass)){
+                    reInitializeEditText();
                      signupPassword.setError("Passwords must match");
-//                    signupPassword.setBackgroundColor(Color.RED);
+                     signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Passwords must match", Toast.LENGTH_SHORT).show();
                  }
                 else if(!User.isValidName(firstName_str)){
+                    reInitializeEditText();
                     firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-//                    firstName.setHighlightColor(Color);
+                    firstName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
                 }
                 else if(!User.isValidName(lastName_str)){
+                    reInitializeEditText();
                     lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-//                    lastName.setBackgroundColor(Color.RED);
+                    lastName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
                 }
-                else if (address.isEmpty()){
+                else if (selectedCity.isEmpty()){
+                    reInitializeEditText();
                     addressField.setError("This field is required");
-//                    addressField.setBackgroundColor(Color.RED);
+                    addressField.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Address field is required", Toast.LENGTH_SHORT).show();
                 }
                  else if (phoneNum.isEmpty()){
+                    reInitializeEditText();
                      phoneNumField.setError("This field is required");
-//                    phoneNumField.setBackgroundColor(Color.RED);
+                    phoneNumField.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Phone number field is required", Toast.LENGTH_SHORT).show();
                  }
                 else if (specialization.isEmpty()){
+                    reInitializeEditText();
                     specializationField.setError("This field is required");
-//                    specializationField.setBackgroundColor(Color.RED);
+                    specializationField.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Specialization field is required", Toast.LENGTH_SHORT).show();
                 }
                 else if (degree.isEmpty()){
+                    reInitializeEditText();
                     Toast.makeText(getApplicationContext(), "You must select a degree", Toast.LENGTH_SHORT).show();
-//                    specializationField.setBackgroundColor(Color.RED);
                 }
                 else if (!validatePassword(pass)){
+                    reInitializeEditText();
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
-//                    signupPassword.setBackgroundColor(Color.RED);
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Password\nMinimum 8 characters and maximum 15 characters\nIt must " +
+                            "contain at least one number, one lowercase letter, and one uppercase letter.", Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    reInitializeEditText();
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -253,7 +284,7 @@ public class SignupActivityInstructor extends AppCompatActivity {
                     db.collection("User").document(email).set(user);
                     user.clear();
                     user.put("mobileNumber", phoneNum);
-                    user.put("address", address);
+                    user.put("address", selectedCity);
                     user.put("specialization", specialization);
                     user.put("degree", degree);
                     user.put("courses", instructorCourses);
@@ -269,6 +300,17 @@ public class SignupActivityInstructor extends AppCompatActivity {
                 startActivity(new Intent(SignupActivityInstructor.this, LoginActivity.class));
             }
         });
+
+    }
+    private void reInitializeEditText(){
+        signupEmail.setBackgroundResource(R.drawable.custom_edittext);
+        signupPassword.setBackgroundResource(R.drawable.custom_edittext);
+        signupPasswordConfirm.setBackgroundResource(R.drawable.custom_edittext);
+        firstName.setBackgroundResource(R.drawable.custom_edittext);
+        lastName.setBackgroundResource(R.drawable.custom_edittext);
+        addressField.setBackgroundResource(R.drawable.custom_edittext);
+        phoneNumField.setBackgroundResource(R.drawable.custom_edittext);
+        specializationField.setBackgroundResource(R.drawable.custom_edittext);
 
     }
     @Override

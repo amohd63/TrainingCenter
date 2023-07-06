@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.trainingcenter.R;
+import com.example.trainingcenter.View.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -213,7 +214,9 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
                 startActivity(intent);
             }
             else if (id == R.id.nav_logout) {
-                finish();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+//                finish();
             }
 
             DrawerLayout drawer = findViewById(R.id.drawer_layout2);

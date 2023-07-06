@@ -76,6 +76,7 @@
                     android:drawableLeft="@drawable/baseline_lock_24"
                     android:drawablePadding="8dp"
                     android:hint="Password"
+                    android:inputType="textPassword"
                     android:padding="8dp"
                     android:textColor="@color/black" />
 
@@ -88,6 +89,7 @@
                     android:drawableLeft="@drawable/baseline_lock_24"
                     android:drawablePadding="8dp"
                     android:hint="Confirm Password"
+                    android:inputType="textPassword"
                     android:padding="8dp"
                     android:textColor="@color/black" />
 

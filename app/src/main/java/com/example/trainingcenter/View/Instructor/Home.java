@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.trainingcenter.View.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -142,7 +143,9 @@ public class Home extends AppCompatActivity
             intent.putExtra("email", email);
             startActivity(intent);
         }else if (id == R.id.nav_logout) {
-            finish();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+//            finish();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

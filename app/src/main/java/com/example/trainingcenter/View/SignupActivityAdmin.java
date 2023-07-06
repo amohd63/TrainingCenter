@@ -76,23 +76,52 @@ public class SignupActivityAdmin extends AppCompatActivity {
                 String pass_conf = signupPasswordConfirm.getText().toString().trim();
                 String firstName_str = firstName.getText().toString().trim();
                 String lastName_str = lastName.getText().toString().trim();
-
-                if (!User.isValidName(firstName_str)) {
-                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                } else if (!User.isValidName(lastName_str)) {
-                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
-                } else if (email.isEmpty()) {
+                if (email.isEmpty()) {
+                    reInitializeEditText();
                     signupEmail.setError("Email cannot be empty");
-                } else if (pass.isEmpty()) {
+                    signupEmail.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Email cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+                else if (pass.isEmpty()) {
+                    reInitializeEditText();
                     signupPassword.setError("Password cannot be empty");
-                } else if (pass_conf.isEmpty()) {
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+                else if (pass_conf.isEmpty()) {
+                    reInitializeEditText();
                     signupPasswordConfirm.setError("You must confirm your Password");
-                } else if (!pass_conf.equals(pass)) {
+                    signupPasswordConfirm.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "You must confirm your Password", Toast.LENGTH_SHORT).show();
+                }
+                else if (!pass_conf.equals(pass)) {
+                    reInitializeEditText();
                     signupPassword.setError("Passwords must match");
-                } else if (!validatePassword(pass)) {
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Passwords must match", Toast.LENGTH_SHORT).show();
+                }
+                else if (!validatePassword(pass)) {
+                    reInitializeEditText();
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
-                } else {
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Password\nMinimum 8 characters and maximum 15 characters\nIt must " +
+                            "contain at least one number, one lowercase letter, and one uppercase letter.", Toast.LENGTH_SHORT).show();
+                }
+                else if (!User.isValidName(firstName_str)) {
+                    reInitializeEditText();
+                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                    firstName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
+                }
+                else if (!User.isValidName(lastName_str)) {
+                    reInitializeEditText();
+                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                    lastName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    reInitializeEditText();
                     Map<String, Object> user = new HashMap<>();
                     user.put("email", email);
                     user.put("firstName", firstName_str);
@@ -110,20 +139,6 @@ public class SignupActivityAdmin extends AppCompatActivity {
                             }
                         }
                     });
-
-//                    db.collection("Admin")
-//                            .add(user)
-//                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                                @Override
-//                                public void onSuccess(DocumentReference documentReference) {
-//                                    Toast.makeText(SignUp_Admin_Activity.this, "Added", Toast.LENGTH_SHORT).show();
-//                                }
-//                            }).addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull @NotNull Exception e) {
-//                                    Toast.makeText(SignUp_Admin_Activity.this, "Not added", Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
                     db.collection("User").document(email).set(user);
                 }
 
@@ -137,6 +152,14 @@ public class SignupActivityAdmin extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void reInitializeEditText(){
+        signupEmail.setBackgroundResource(R.drawable.custom_edittext);
+        signupPassword.setBackgroundResource(R.drawable.custom_edittext);
+        signupPasswordConfirm.setBackgroundResource(R.drawable.custom_edittext);
+        firstName.setBackgroundResource(R.drawable.custom_edittext);
+        lastName.setBackgroundResource(R.drawable.custom_edittext);
     }
 
     @Override
