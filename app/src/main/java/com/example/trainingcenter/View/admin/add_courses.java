@@ -142,11 +142,11 @@ public class add_courses extends AppCompatActivity {
                 builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        for(int j=0 ;j<preList.size();j++) {
+                        for(int j=0 ;j<selectedPre.length;j++) {
                             selectedPre[j] = false;
-                            preList.clear();
-                            cPre.setText("");
                         }
+                        preList.clear();
+                        cPre.setText("");
                     }
                 });
                 builder.show();
