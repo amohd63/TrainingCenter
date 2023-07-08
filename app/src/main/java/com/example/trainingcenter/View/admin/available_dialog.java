@@ -13,12 +13,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -80,7 +82,8 @@ import java.util.UUID;
 
 public class available_dialog extends AppCompatDialogFragment {
     private FirebaseFirestore db;
-
+    String [] dayArray = {"T,R","M,W","S,M","S,W"};
+    String [] timeArray = {"08:30-10:00","10:00-11:30","11:30-13:00","13:30-15:00","15:00-16:30","16:30-18:00"};
     private AutoCompleteTextView address;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -96,10 +99,9 @@ public class available_dialog extends AppCompatDialogFragment {
         address = view.findViewById(R.id.instroctor_add_spinner);
         DocumentReference docRef = FirebaseFirestore.getInstance().document(documentPath);
         ArrayList<String>  myList = new ArrayList<>();
-
         TextView registration_deadline = view.findViewById(R.id.new_registration_in_make_available);
         TextView course_start_date = view.findViewById(R.id.new_start_date_in_make_available);
-        EditText course_schedule = view.findViewById(R.id.new_course_schedule_in_make_available);
+        TextView course_schedule = view.findViewById(R.id.new_course_schedule_in_make_available);
         EditText venue = view.findViewById(R.id.new_venue_in_make_available);
         Button mKa = view.findViewById(R.id.make_available_in_make_available_daialog);
         ImageButton mma = view.findViewById(R.id.close_make_availbal_dialog_now);
@@ -132,6 +134,12 @@ public class available_dialog extends AppCompatDialogFragment {
                 materialDatePicker.show(getParentFragmentManager(),"MATERIAL_DATE_PICKER");
             }
         });
+        course_schedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new SingleChoiceDialogFragment(dayArray,timeArray, course_schedule).show(getParentFragmentManager(), "single_choice_dialog");
+            }
+        });
 
         course_start_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +169,8 @@ public class available_dialog extends AppCompatDialogFragment {
                 materialDatePicker.show(getParentFragmentManager(),"MATERIAL_DATE_PICKER");
             }
         });
+
+
 
         db = FirebaseFirestore.getInstance();
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();

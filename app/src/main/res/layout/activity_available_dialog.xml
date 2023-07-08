@@ -126,7 +126,7 @@
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/new_course_schedule_in_make_available"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -135,8 +135,9 @@
                 android:fontFamily="@font/calibri"
                 android:text=""
                 android:textColor="@color/black"
-                android:hint="Format: T,R - 08:30-10:00"
-                android:textSize="16sp" />
+                android:hint="Select schedule"
+                android:textSize="16sp"
+                android:drawableEnd="@android:drawable/arrow_down_float"/>
         </LinearLayout>
 
         <View
@@ -170,7 +171,7 @@
                 android:fontFamily="@font/calibri"
                 android:text=""
                 android:textColor="@color/black"
-                android:hint="Course plcae"
+                android:hint="Course place"
                 android:textSize="16sp" />
         </LinearLayout>
 
