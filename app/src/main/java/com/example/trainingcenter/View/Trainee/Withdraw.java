@@ -58,6 +58,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
                             for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                 db.collection("CourseOffering")
                                         .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                        .whereIn("status", Arrays.asList("Pending", "Ongoing"))
                                         .get()
                                         .addOnCompleteListener(courseOfferingTask -> {
                                             if (courseOfferingTask.isSuccessful()) {
@@ -385,6 +386,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
                             for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                 db.collection("CourseOffering")
                                         .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                        .whereIn("status", Arrays.asList("Pending", "Ongoing"))
                                         .get()
                                         .addOnCompleteListener(courseOfferingTask -> {
                                             if (courseOfferingTask.isSuccessful()) {

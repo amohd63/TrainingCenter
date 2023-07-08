@@ -2,24 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
-    <group android:checkableBehavior="single">
+    <item android:title="Center">
+        <menu>
+            <item
+                android:id="@+id/nav_courses"
+                android:icon="@drawable/ic_baseline_search_24"
+                android:title="Search courses" />
+            <item
+                android:id="@+id/nav_events"
+                android:icon="@drawable/ic_baseline_history_24"
+                android:title="Courses history" />
+        </menu>
+    </item>
+    <group>
         <item
-            android:id="@+id/nav_courses"
-            android:icon="@drawable/ic_baseline_search_24"
-            android:title="Search courses" />
-        <item
-            android:id="@+id/nav_events"
-            android:icon="@drawable/ic_baseline_history_24"
-            android:title="Courses history" />
+            android:id="@+id/nav_lectures"
+            android:icon="@drawable/ic_import_contacts_black_24dp"
+            android:title="My courses" />
         <item
             android:id="@+id/nav_announcements"
             android:icon="@drawable/ic_baseline_remove_circle_outline_24"
             android:title="Withdraw" />
         <item
-            android:id="@+id/nav_lectures"
-            android:icon="@drawable/ic_import_contacts_black_24dp"
-            android:title="My courses" />
+            android:id="@+id/nav_previous_courses"
+            android:icon="@drawable/ic_baseline_history_24"
+            android:title="Previous courses" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"

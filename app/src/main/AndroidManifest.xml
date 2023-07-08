@@ -102,6 +102,10 @@
             android:configChanges="orientation|screenSize"
             android:label="Courses history" />
         <activity
+            android:name=".View.Trainee.TraineeCourseHistory"
+            android:configChanges="orientation|screenSize"
+            android:label="My courses history" />
+        <activity
             android:name=".View.Trainee.SearchCourses"
             android:configChanges="orientation|screenSize"
             android:label="Search courses" />

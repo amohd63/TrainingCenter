@@ -133,17 +133,24 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                                     .whereEqualTo("status", "Accepted")
                                                                                     .whereEqualTo("offeringID", courseOfferingDoc.getString("offeringID"))
                                                                                     .get()
-                                                                                    .addOnCompleteListener(instructorTask -> {
-                                                                                        if (instructorTask.isSuccessful()) {
-                                                                                            if (instructorTask.getResult().isEmpty()) {
+                                                                                    .addOnCompleteListener(registrationTask -> {
+                                                                                        if (registrationTask.isSuccessful()) {
+                                                                                            if (registrationTask.getResult().isEmpty()) {
                                                                                                 CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", 0);
                                                                                                 prerequisite.addView(prerequisiteCardView);
                                                                                                 flag[0] = false;
                                                                                                 i[0]++;
                                                                                             } else {
-                                                                                                for (QueryDocumentSnapshot instructorDoc : instructorTask.getResult()) {
-                                                                                                    CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Completed", 1);
+                                                                                                if (courseOfferingDoc.getString("status").equals("Ended")) {
+                                                                                                    for (QueryDocumentSnapshot instructorDoc : registrationTask.getResult()) {
+                                                                                                        CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Completed", 1);
+                                                                                                        prerequisite.addView(prerequisiteCardView);
+                                                                                                        i[0]++;
+                                                                                                    }
+                                                                                                } else {
+                                                                                                    CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", 0);
                                                                                                     prerequisite.addView(prerequisiteCardView);
+                                                                                                    flag[0] = false;
                                                                                                     i[0]++;
                                                                                                 }
                                                                                             }
@@ -153,12 +160,10 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                             break;
                                                                         }
                                                                     }
-
                                                                 } else {
                                                                 }
                                                             });
                                                 }
-
                                             } else {
                                             }
                                         });
@@ -191,8 +196,10 @@ public class CourseDetails extends AppCompatDialogFragment {
                                             .whereEqualTo("offeringID", regDoc.getString("offeringID"))
                                             .get()
                                             .addOnCompleteListener(courseOfferingTask -> {
-                                                //noOfConflicts[0] = courseOfferingTask.getResult().size();
                                                 if (courseOfferingTask.isSuccessful()) {
+                                                    if (courseOfferingTask.getResult().isEmpty()){
+                                                        j[0]++;
+                                                    }
                                                     for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
                                                         db.collection("Course")
                                                                 .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
@@ -220,7 +227,6 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                                 courseConflict[0] = true;
                                                                             }
                                                                             j[0]++;
-                                                                            //noOfConflicts[0]--;
                                                                         }
                                                                     } else {
                                                                     }
@@ -237,6 +243,7 @@ public class CourseDetails extends AppCompatDialogFragment {
                 });
         //must check deadline, number of students
         Timestamp timestamp = Timestamp.now();
+        boolean isClicked = false;
         enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -274,7 +281,7 @@ public class CourseDetails extends AppCompatDialogFragment {
                         }
                         dismiss();
                     }
-                }, 1000); // Delay time in milliseconds (e.g., 1000ms = 1 second)
+                }, 3000); // Delay time in milliseconds (e.g., 3000ms = 3 second)
             }
         });
 

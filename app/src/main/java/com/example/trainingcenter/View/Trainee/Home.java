@@ -301,6 +301,10 @@ public class Home extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
 //            finish();
+        }else if (id == R.id.nav_previous_courses){
+            Intent intent = new Intent(getApplicationContext(), TraineeCourseHistory.class);
+            intent.putExtra("email", email);
+            startActivity(intent);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

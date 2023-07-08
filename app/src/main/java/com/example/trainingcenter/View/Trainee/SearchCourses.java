@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.text.SimpleDateFormat;
@@ -72,6 +73,9 @@ public class SearchCourses extends AppCompatActivity {
                     if (courseOfferingTask.isSuccessful()) {
                         AtomicInteger size = new AtomicInteger(courseOfferingTask.getResult().size());
                         for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                            if (courseOfferingDoc.getString("status").equals("Ended")){
+                                continue;
+                            }
                             db.collection("Course")
                                     .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
                                     .whereEqualTo("isAvailableForRegistration", true)

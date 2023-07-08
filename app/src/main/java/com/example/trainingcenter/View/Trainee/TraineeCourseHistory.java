@@ -28,52 +28,67 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class CoursesHistory extends AppCompatActivity {
-    LinearLayout mainView;
+public class TraineeCourseHistory extends AppCompatActivity {
+    private LinearLayout mainView;
     private FirebaseFirestore db;
+    private String email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_events_trainee);
+        setContentView(R.layout.activity_previous_courses_trainee);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Intent intent = getIntent();
+        email = intent.getStringExtra("email");
         db = FirebaseFirestore.getInstance();
         mainView = findViewById(R.id.history_main_view);
         mainView.setPadding(16, 16, 16, 16);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
 
-        db.collection("Course")
+        db.collection("Registration")
+                .whereEqualTo("traineeID", email)
+                .whereEqualTo("status", "Accepted")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> courseTask) {
-                        if (courseTask.isSuccessful()) {
-                            for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+                        if (regTask.isSuccessful()) {
+                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                 db.collection("CourseOffering")
-                                        .whereEqualTo("courseID", courseDoc.getString("courseID"))
+                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
                                         .whereEqualTo("status", "Ended")
                                         .get()
                                         .addOnCompleteListener(courseOfferingTask -> {
                                             if (courseOfferingTask.isSuccessful()) {
                                                 for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                    db.collection("User")
-                                                            .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                    db.collection("Course")
+                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
                                                             .get()
-                                                            .addOnCompleteListener(userTask -> {
-                                                                if (userTask.isSuccessful()) {
-                                                                    for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                        CardView test = createCourseCardView2(
-                                                                                courseDoc.getString("courseID"),
-                                                                                userDoc.getString("firstName") + userDoc.getString("lastName"),
-                                                                                courseDoc.getString("courseTitle"),
-                                                                                courseOfferingDoc.getString("schedule").split(" ")[0],
-                                                                                dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
-                                                                                courseOfferingDoc.getString("venue"),
-                                                                                courseOfferingDoc.getString("schedule").split(" ")[1],
-                                                                                courseDoc.getString("photo")
-                                                                        );
+                                                            .addOnCompleteListener(courseTask -> {
+                                                                if (courseTask.isSuccessful()) {
+                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                        db.collection("User")
+                                                                                .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                                                .get()
+                                                                                .addOnCompleteListener(userTask -> {
+                                                                                    if (userTask.isSuccessful()) {
+                                                                                        for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
+                                                                                            CardView test = createCourseCardView2(
+                                                                                                    courseDoc.getString("courseID"),
+                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                                    courseDoc.getString("courseTitle"),
+                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[0],
+                                                                                                    dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
+                                                                                                    courseOfferingDoc.getString("venue"),
+                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[1],
+                                                                                                    courseDoc.getString("photo")
+                                                                                            );
+                                                                                            mainView.addView(test);
+                                                                                        }
 
-                                                                        mainView.addView(test);
+                                                                                    } else {
+                                                                                    }
+                                                                                });
+
                                                                     }
 
                                                                 } else {
@@ -83,9 +98,7 @@ public class CoursesHistory extends AppCompatActivity {
                                             } else {
                                             }
                                         });
-
                             }
-
                         } else {
                         }
                     }
@@ -298,5 +311,4 @@ public class CoursesHistory extends AppCompatActivity {
         //textView.setFontFamily(getResources().getFont(R.font.calibri));
         return textView;
     }
-
 }

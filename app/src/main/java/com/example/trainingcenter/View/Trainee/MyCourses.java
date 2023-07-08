@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class MyCourses extends AppCompatActivity {
@@ -57,6 +58,8 @@ public class MyCourses extends AppCompatActivity {
                             for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                 db.collection("CourseOffering")
                                         .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                        //.whereNotEqualTo("status", "Ended")
+                                        .whereIn("status", Arrays.asList("Pending", "Ongoing"))
                                         .get()
                                         .addOnCompleteListener(courseOfferingTask -> {
                                             if (courseOfferingTask.isSuccessful()) {
