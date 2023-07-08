@@ -61,15 +61,27 @@
                 android:layout_weight="1"
                 android:text="TextView" />
 
+<!--            <EditText-->
+<!--                android:id="@+id/new_value"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:gravity="center"-->
+<!--                android:hint="New Value"-->
+<!--                android:textColorHint="@color/black"-->
+<!--                android:textSize="20sp" />-->
+
             <EditText
                 android:id="@+id/new_value"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:hint="New Value"
-                android:textColorHint="@color/black"
-                android:textSize="20sp" />
+                android:background="@drawable/custom_edittext"
+                android:drawablePadding="8dp"
+                android:hint="Enter your new value"
+                android:paddingLeft="25dp"
+                android:textColor="@color/black" />
+
         </LinearLayout>
 
         <Button
@@ -82,18 +94,5 @@
             android:backgroundTint="@color/lavender"
             android:text="UPDATE" />
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/dialog_bg"
-        android:elevation="10dp"
-        android:padding="15dp"
-        android:src="@drawable/alert_icon"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout3"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout3"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

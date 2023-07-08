@@ -175,8 +175,9 @@ public class edit_delete_course extends AppCompatActivity {
                                                                         note.put("title", title);
                                                                         note.put("userID", registrationID);
                                                                         note.put("noteDate",timestampNote);
+                                                                        note.put("fetch", false);
 
-                                                                        db.collection("NotificationBackup").document(noteID).set(note);
+                                                                        db.collection("Notification").document(noteID).set(note);
                                                                     }
                                                                 }
                                                             }

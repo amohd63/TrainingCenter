@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="50"
                 android:fontFamily="@font/calibri"
-                android:text="registration deadline"
+                android:text="Registration deadline"
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
@@ -63,7 +63,6 @@
                 android:fontFamily="@font/calibri"
                 android:text=""
                 android:hint="Select deadline date"
-                android:textColorHint="@color/black"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:drawableEnd="@android:drawable/arrow_down_float"/>
@@ -86,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="50"
                 android:fontFamily="@font/calibri"
-                android:text="course start date"
+                android:text="Start date"
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
@@ -98,11 +97,10 @@
                 android:layout_weight="50"
                 android:fontFamily="@font/calibri"
                 android:text=""
-                android:textColorHint="@color/black"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:drawableEnd="@android:drawable/arrow_down_float"
-                android:hint="course start date"
+                android:hint="Select start date"
                  />
         </LinearLayout>
 
@@ -124,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="50"
                 android:fontFamily="@font/calibri"
-                android:text="Course  schedule"
+                android:text="Course schedule"
                 android:textColor="#000000"
                 android:textSize="16sp" />
 
@@ -136,8 +134,8 @@
                 android:layout_weight="50"
                 android:fontFamily="@font/calibri"
                 android:text=""
-                android:textColorHint="@color/black"
                 android:textColor="@color/black"
+                android:hint="Format: T,R - 08:30-10:00"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -171,8 +169,8 @@
                 android:layout_weight="50"
                 android:fontFamily="@font/calibri"
                 android:text=""
-                android:textColorHint="@color/black"
                 android:textColor="@color/black"
+                android:hint="Course plcae"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -218,16 +216,5 @@
             android:backgroundTint="@color/lavender"
             android:text="Make available" />
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/dialog_bg"
-        android:elevation="10dp"
-        android:padding="15dp"
-        android:src="@drawable/baseline_drive_file_rename_outline_24"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout3"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout3"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

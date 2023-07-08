@@ -228,6 +228,7 @@ public class available_dialog extends AppCompatDialogFragment {
                 note.put("title",title);
                 note.put("userID","all");
                 note.put("noteDate",timestampNote);
+                note.put("fetch", false);
                 //
                 Map<String, Object> coureInstroctor = new HashMap<>();
                 UUID uuid3 = UUID.randomUUID();

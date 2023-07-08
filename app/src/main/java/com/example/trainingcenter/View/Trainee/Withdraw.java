@@ -85,7 +85,6 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
                                                                                                     courseOfferingDoc.getString("schedule").split(" ")[1],
                                                                                                     courseDoc.getString("photo")
                                                                                             );
-
                                                                                             String regDocID = regDoc.getString("registrationID");
                                                                                             cardView.setOnClickListener(new View.OnClickListener() {
                                                                                                 @Override
@@ -373,8 +372,6 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
 
     @Override
     public void refresh() {
-        mainView = findViewById(R.id.withdraw_main_view);
-        mainView.setPadding(16, 16, 16, 16);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
         mainView.removeAllViews();
         db.collection("Registration")

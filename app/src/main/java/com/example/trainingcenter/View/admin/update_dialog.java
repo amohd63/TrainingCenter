@@ -186,7 +186,7 @@ public class update_dialog extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.activity_update_dialog, null);
         builder.setView(view);
-        String[] options = { "courseTitle", "mainTopics", "photo"};
+        String[] options = { "Course title", "Main topics", "Photo"};
         EditText value =  view.findViewById(R.id.new_value);
         Button updateB = view.findViewById(R.id.update_in_dialog_update);
         Spinner spinner = view.findViewById(R.id.spinner);
@@ -208,13 +208,13 @@ public class update_dialog extends AppCompatDialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String filed = spinner.getSelectedItem().toString();
-                if(filed == "courseTitle" ){
+                if(filed.equals("Course title")){
                     value.setVisibility(View.VISIBLE);
                     coursePhoto.setVisibility(View.INVISIBLE);
-                } else if(filed == "mainTopics") {
+                } else if(filed.equals("Main topics")) {
                     value.setVisibility(View.VISIBLE);
                     coursePhoto.setVisibility(View.INVISIBLE);
-                } else if(filed == "photo"){
+                } else if(filed.equals("Photo")){
                     coursePhoto.setVisibility(View.VISIBLE);
                     value.setVisibility(View.INVISIBLE);
                 }
@@ -229,20 +229,20 @@ public class update_dialog extends AppCompatDialogFragment {
                 updateB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(filed == "courseTitle" ){
+                        if(filed.equals("Course title")){
                             String newValue = value.getText().toString();
                             docRef.update(filed, newValue)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                             sendNotifacation(newValue);
-                        } else if(filed == "mainTopics") {
+                        } else if(filed.equals("Main topics")) {
                             String newValue[] = value.getText().toString().split("\n");
                             ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(newValue));
                             docRef.update(filed, arrayList)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                             sendNotifacation(nameTosent);
-                        }else if(filed == "photo"){
+                        }else if(filed.equals("Photo")){
                             docRef.update(filed, imgUrl)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
@@ -323,7 +323,7 @@ public class update_dialog extends AppCompatDialogFragment {
                                                                         note.put("title", title);
                                                                         note.put("userID", userId);
                                                                         note.put("noteDate",timestampNote);
-
+                                                                        note.put("fetch", false);
                                                                         db.collection("Notification").document(noteID).set(note);
                                                                     }
                                                                 }

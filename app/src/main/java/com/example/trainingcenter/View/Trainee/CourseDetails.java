@@ -189,7 +189,6 @@ public class CourseDetails extends AppCompatDialogFragment {
                                 for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                     db.collection("CourseOffering")
                                             .whereEqualTo("offeringID", regDoc.getString("offeringID"))
-                                            //.whereEqualTo("schedule", courseOffering.getSchedule())
                                             .get()
                                             .addOnCompleteListener(courseOfferingTask -> {
                                                 //noOfConflicts[0] = courseOfferingTask.getResult().size();
@@ -201,11 +200,19 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                 .addOnCompleteListener(courseTask -> {
                                                                     if (courseTask.isSuccessful()) {
                                                                         for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
-                                                                            if (courseOfferingDoc.getString("schedule").equals(courseOffering.getSchedule())) {
-                                                                                String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
-                                                                                CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);
-                                                                                conflicts.addView(conflictView);
-                                                                                foundConflict[0] = true;
+                                                                            String course1Days = courseOfferingDoc.getString("schedule").split(" ")[0];
+                                                                            String[] course2Days = courseOffering.getSchedule().split(" ")[0].split(",");
+
+                                                                            String course1Time = courseOfferingDoc.getString("schedule").split(" ")[1];
+                                                                            String course2Time = courseOffering.getSchedule().split(" ")[1];
+
+                                                                            if (course1Days.contains(course2Days[0]) || course1Days.contains(course2Days[1])) {
+                                                                                if (course1Time.equals(course2Time)) {
+                                                                                    String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
+                                                                                    CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);
+                                                                                    conflicts.addView(conflictView);
+                                                                                    foundConflict[0] = true;
+                                                                                }
                                                                             } else if (courseDoc.getString("courseID").equals(course.getCourseID())) {
                                                                                 String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
                                                                                 CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);

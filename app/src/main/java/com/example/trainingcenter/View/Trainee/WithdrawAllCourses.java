@@ -58,6 +58,7 @@ public class WithdrawAllCourses extends AppCompatDialogFragment {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(dialog.getContext(), "Withdraw canceled", Toast.LENGTH_SHORT).show();
                 dialog.cancel();
             }
         });

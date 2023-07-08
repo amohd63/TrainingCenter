@@ -114,6 +114,7 @@
                             android:fontFamily="@font/calibri"
                             android:text=""
                             android:textColor="@color/lavender"
+                            android:hint="Enter course title"
                             android:textSize="16sp" />
 
                     </LinearLayout>
@@ -150,6 +151,7 @@
                             android:text=""
                             android:textColor="@color/lavender"
                             android:textSize="16sp"
+                            android:hint="Enter main topics"
                             android:theme="@style/custom_cursor" />
 
                     </LinearLayout>
@@ -185,7 +187,6 @@
                             android:fontFamily="@font/calibri"
                             android:text=""
                             android:hint="Select prerequisites"
-                            android:textColorHint="@color/black"
                             android:textColor="@color/lavender"
                             android:textSize="16sp"
                             android:theme="@style/custom_cursor"

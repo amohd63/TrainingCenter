@@ -46,10 +46,6 @@ public class MyCourses extends AppCompatActivity {
         mainView = (LinearLayout) findViewById(R.id.lectures_main_view);
         mainView.setPadding(16, 16, 16, 16);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-//        for (int i = 0; i < 10; i++) {
-//            CardView cv = createCourseCardView2("Test", "10:00-11:25", "19 Jul 2023", "LKS123",  "M,W");
-//            mainView.addView(cv);
-//        }
         db.collection("Registration")
                 .whereEqualTo("traineeID", email)
                 .whereEqualTo("status", "Accepted")

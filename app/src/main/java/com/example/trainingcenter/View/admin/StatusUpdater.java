@@ -26,8 +26,6 @@ public class StatusUpdater extends TimerTask {
         // Get a reference to the Firestore collection
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference offeringRef = firestore.collection("CourseOffering");
-
-        // Retrieve the course offerings from Firestore
         offeringRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
@@ -89,7 +87,7 @@ public class StatusUpdater extends TimerTask {
                                                                         Timestamp timestampNote = Timestamp.now();
                                                                         note.put("noteDate",timestampNote);
                                                                         note.put("fetch", false);
-                                                                        firestore.collection("Notification").document().set(note);
+                                                                        //firestore.collection("Notification").document().set(note);
                                                                     }
 
                                                                 } else {
