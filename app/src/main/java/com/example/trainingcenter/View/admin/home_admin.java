@@ -598,7 +598,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
 
     private void fillCourese(){
         final int[] flag = {0};
-        CardView emptyCourses = createEmptyCardView("There are no available courses in the training center!");
+        CardView emptyCourses = createEmptyCardView("There are no offered courses in the training center!");
         allCourses.addView(emptyCourses);
         FirebaseFirestore db2 = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = db2.collection("Course");
@@ -698,7 +698,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
     }
     private void fillOnGoingClass(){
         final int[] flag = {0};
-        CardView emptyOnGoing = createEmptyCardView("There are no Ongoing courses currently!");
+        CardView emptyOnGoing = createEmptyCardView("There are no Ongoing courses!");
         onGoingCourses.addView(emptyOnGoing);
         db.collection("Course").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

@@ -231,19 +231,19 @@ public class update_dialog extends AppCompatDialogFragment {
                     public void onClick(View view) {
                         if(filed.equals("Course title")){
                             String newValue = value.getText().toString();
-                            docRef.update(filed, newValue)
+                            docRef.update("courseTitle", newValue)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                             sendNotifacation(newValue);
                         } else if(filed.equals("Main topics")) {
                             String newValue[] = value.getText().toString().split("\n");
                             ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(newValue));
-                            docRef.update(filed, arrayList)
+                            docRef.update("mainTopics", arrayList)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                             sendNotifacation(nameTosent);
                         }else if(filed.equals("Photo")){
-                            docRef.update(filed, imgUrl)
+                            docRef.update("photo", imgUrl)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                             sendNotifacation(nameTosent);

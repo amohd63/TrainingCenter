@@ -17,12 +17,7 @@
         <item
             android:id="@+id/nav_Addregistration"
             android:icon="@drawable/ic_event_black_24dp"
-            android:title="Courses availability"
-            />
-        <item
-            android:id="@+id/nav_VSC"
-            android:icon="@drawable/ic_event_black_24dp"
-            android:title="View the students"
+            android:title="Make Offerings"
             />
         <item
             android:id="@+id/nav_Rapplications"
@@ -30,14 +25,19 @@
             android:title="Registration applications"
             />
         <item
-            android:id="@+id/nav_ViewProfiles"
-            android:icon="@drawable/ic_person_outline_red_24dp"
-            android:title="View profiles"
+            android:id="@+id/nav_VSC"
+            android:icon="@drawable/ic_baseline_search_24"
+            android:title="View course students"
             />
         <item
             android:id="@+id/nav_CourseHistory"
-            android:icon="@drawable/ic_schedule_black_24dp"
-            android:title="Offering history"
+            android:icon="@drawable/ic_baseline_search_24"
+            android:title="View course Offering history"
+            />
+        <item
+            android:id="@+id/nav_ViewProfiles"
+            android:icon="@drawable/ic_person_outline_red_24dp"
+            android:title="View profiles"
             />
         <item
             android:id="@+id/nav_logout"
