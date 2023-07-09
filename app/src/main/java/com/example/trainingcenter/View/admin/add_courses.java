@@ -167,7 +167,7 @@ public class add_courses extends AppCompatActivity {
             public void onClick(View view) {
                 String c_name = cName.getText().toString();
 
-                String c_main_topics[] = cMainTopics.getText().toString().split("\n");
+                String c_main_topics[] = cMainTopics.getText().toString().split(",");
                 ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(c_main_topics));
 
                 String c_pre[] = cPre.getText().toString().split(",");

@@ -236,7 +236,7 @@ public class update_dialog extends AppCompatDialogFragment {
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                             sendNotifacation(newValue);
                         } else if(filed.equals("Main topics")) {
-                            String newValue[] = value.getText().toString().split("\n");
+                            String newValue[] = value.getText().toString().split(",");
                             ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(newValue));
                             docRef.update("mainTopics", arrayList)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
