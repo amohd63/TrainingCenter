@@ -81,7 +81,6 @@ import java.util.regex.Pattern;
 
 public class ListOfStudents extends AppCompatActivity {
     private String email;
-    private Context context;
     SimpleDateFormat dateFormat;
     private LinearLayout mainView;
     @Override
@@ -89,9 +88,8 @@ public class ListOfStudents extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liststudent_instructor);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        mainView = (LinearLayout) findViewById(R.id.show_the_student_for_a_course_laty);
+        mainView = findViewById(R.id.show_the_student_for_a_course_laty);
         dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-        context = this;
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
         performQuery2(email);

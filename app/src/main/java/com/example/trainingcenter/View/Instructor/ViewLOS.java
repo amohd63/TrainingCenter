@@ -80,15 +80,13 @@ import java.util.regex.Pattern;
 
 public class ViewLOS extends AppCompatActivity {
     private String email, courseTitle;
-    private Context context;
     private LinearLayout mainView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liststudent_instructor);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mainView = (LinearLayout) findViewById(R.id.show_the_student_for_a_course_laty);
-        context = this;
+        mainView = findViewById(R.id.show_the_student_for_a_course_laty);
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
         courseTitle = intent.getStringExtra("courseTitle");
@@ -133,6 +131,7 @@ public class ViewLOS extends AppCompatActivity {
                                                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                                                 if (task.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                        assert status != null;
                                                                         if(status.equals("Accepted")) {
                                                                             String email = document.getString("email");
                                                                             String firstName = document.getString("firstName");
@@ -331,45 +330,6 @@ public class ViewLOS extends AppCompatActivity {
         cardView.addView(mainLinearLayout);
         return cardView;
     }
-
-
-    private CardView createCourseCardView(String id, String F) {
-        // Create the CardView inside the courses_list LinearLayout
-        CardView cardView = new CardView(this);
-        LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
-        cardViewParams.setMargins(4, 0, 0, 0);
-        cardView.setLayoutParams(cardViewParams);
-        cardView.setRadius(32);
-        cardView.setUseCompatPadding(true);
-        //cardView.setContentPadding(8, 8, 8, 8);
-        cardView.setContentPadding(32, 32, 32, 32);
-
-        // Create the LinearLayout inside the CardView
-        LinearLayout mainLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams innerLinearLayoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mainLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        mainLinearLayout.setLayoutParams(innerLinearLayoutParams);
-
-        // Create the TextViews inside the LinearLayout
-        TextView titleTextView = createTextView(this, id, 24, Typeface.DEFAULT, false);
-        titleTextView.setTextColor(Color.parseColor("#7884FC"));
-        titleTextView.setPadding(0, 0, 0, 32);
-
-        // Create the TextViews inside the LinearLayout
-        TextView titleTextView2 = createTextView(this, F, 24, Typeface.DEFAULT, false);
-        titleTextView2.setTextColor(Color.parseColor("#7884FC"));
-        titleTextView2.setPadding(0, 0, 0, 32);
-
-        // Add the TextViews to the LinearLayout
-        mainLinearLayout.addView(titleTextView);
-        mainLinearLayout.addView(titleTextView2);
-
-        cardView.addView(mainLinearLayout);
-        return cardView;
-    }
-
     private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(

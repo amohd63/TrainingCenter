@@ -197,7 +197,6 @@ public class Home extends AppCompatActivity
                 }
             }
         });
-
     }
     private char getCurrentDay(){
         LocalDate currentDate = LocalDate.now();

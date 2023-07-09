@@ -34,7 +34,6 @@ public class Schedule extends AppCompatActivity {
     private TextView Fri[] = new TextView[6];
     private TextView Sat[] = new TextView[6];
     SimpleDateFormat dateFormat;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,274 +95,8 @@ public class Schedule extends AppCompatActivity {
         Sat[3] = findViewById(R.id.Saturday4);
         Sat[4] = findViewById(R.id.Saturday5);
         Sat[5] = findViewById(R.id.Saturday6);
+
         performQuery(email);
-
-
-//        Sun1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Sun1.setText("NLP\nMASRI204");
-//            }
-//        });
-//        Sun2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//
-//            }
-//        });
-//        Sun3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//            }
-//        });
-//        Sun4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//            }
-//        });
-//        Sun5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//            }
-//        });
-//        Sun6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//
-//        Mon1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Mon2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//            }
-//        });
-//        Mon3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Mon4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//            }
-//        });
-//        Mon5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//            }
-//        });
-//        Mon6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//
-//        Tue1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Tue2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Tue3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Tue4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Tue5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-//        Tue6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//
-//
-//        Wed1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Wed2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Wed3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Wed4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Wed5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Wed6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//
-//        Thu1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Thu2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Thu3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Thu4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Thu5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Thu6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//
-//
-//        Fri1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Fri2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-//        Fri3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Fri4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-//        Fri5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Fri6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//
-//        Sat1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Sat2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Sat3.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Sat4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-//        Sat5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        Sat6.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//    }
     }
 
     private void performQuery(String instructorEmail) {
@@ -392,33 +125,26 @@ public class Schedule extends AppCompatActivity {
                                                         String[] day = days.split(",");
                                                         String time= courseTime.split("-")[0];
                                                         String venue = documentOfferings.getString("venue");
-
-                                                        if(courseTitle.equals("Test4")){
-                                                            // THIS COURSE HAS INVALID DATE
+                                                        int i = calcPos(time);
+                                                        if(day[0].equals("S") || day[1].equals("S")){
+                                                            Sat[i].setText(courseTitle+"\n"+venue);
                                                         }
-                                                        else{
-                                                            int i = calcPos(time);
-                                                            if(day[0].equals("S") || day[1].equals("S")){
-                                                                Sat[i].setText(courseTitle+"\n"+venue);
-                                                            }
-                                                            if(day[0].equals("M") || day[1].equals("M")){
-                                                                Mon[i].setText(courseTitle+"\n"+venue);
-                                                            }
-                                                            if(day[0].equals("T") || day[1].equals("T")){
-                                                                Thu[i].setText(courseTitle+"\n"+venue);
-                                                            }
-                                                            if(day[0].equals("W") || day[1].equals("W")){
-                                                                Wed[i].setText(courseTitle+"\n"+venue);
-                                                            }
-                                                            if(day[0].equals("R") || day[1].equals("R")){
-                                                                Thu[i].setText(courseTitle+"\n"+venue);
-                                                            }
-                                                            if(day[0].equals("F") || day[1].equals("F")){
-                                                                Fri[i].setText(courseTitle+"\n"+venue);
-                                                            }
+                                                        if(day[0].equals("M") || day[1].equals("M")){
+                                                            Mon[i].setText(courseTitle+"\n"+venue);
                                                         }
+                                                        if(day[0].equals("T") || day[1].equals("T")){
+                                                            Thu[i].setText(courseTitle+"\n"+venue);
+                                                        }
+                                                        if(day[0].equals("W") || day[1].equals("W")){
+                                                            Wed[i].setText(courseTitle+"\n"+venue);
+                                                        }
+                                                        if(day[0].equals("R") || day[1].equals("R")){
+                                                            Thu[i].setText(courseTitle+"\n"+venue);
+                                                        }
+                                                        if(day[0].equals("F") || day[1].equals("F")){
+                                                            Fri[i].setText(courseTitle+"\n"+venue);
 
-
+                                                        }
                                                     }
                                 } else {
                                     Log.w("Firestore", "Error getting documents.", task.getException());
@@ -449,6 +175,5 @@ public class Schedule extends AppCompatActivity {
             default:
                 return 5;
         }
-
     }
 }
