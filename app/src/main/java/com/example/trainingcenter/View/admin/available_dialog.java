@@ -207,12 +207,12 @@ public class available_dialog extends AppCompatDialogFragment {
             }
         });
         final boolean[] flag2 = {false};
-        if (venue.getText().toString().trim().length() == 0) {
-            flag2[0] = true;
-        }
         mKa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (venue.getText().toString().trim().length() == 0) {
+                    flag2[0] = true;
+                }
                 if(flag2[0] == true){
                     Toast.makeText(dialog.getContext(), "Please select a place for the section", Toast.LENGTH_SHORT).show();
                 }else {

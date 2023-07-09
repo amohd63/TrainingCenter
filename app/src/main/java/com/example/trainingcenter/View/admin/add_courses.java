@@ -164,15 +164,15 @@ public class add_courses extends AppCompatActivity {
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
             }
         });
-        if(cName.getText().toString().trim().length() == 0){
-            flag[0] = true;
-        }
-        if(cMainTopics.getText().toString().trim().length() == 0){
-            flag2[0] = true;
-        }
         addCourseAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(cName.getText().toString().trim().length() == 0){
+                    flag[0] = true;
+                }
+                if(cMainTopics.getText().toString().isEmpty()){
+                    flag2[0] = true;
+                }
                 if(flag[0] == true){
                     Toast.makeText(add_courses.this, "Course title is empty", Toast.LENGTH_SHORT).show();
                 } else if (flag2[0] == true) {

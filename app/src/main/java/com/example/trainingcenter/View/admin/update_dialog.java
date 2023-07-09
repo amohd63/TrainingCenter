@@ -235,13 +235,12 @@ public class update_dialog extends AppCompatDialogFragment {
                 });
                 final boolean[] flag1 = {false};
                 final boolean[] flag2 = {false};
-
-                if(value.getText().toString().trim().length() == 0){
-                    flag1[0] = true;
-                }
                 updateB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if(value.getText().toString().trim().length() == 0){
+                            flag1[0] = true;
+                        }
                         if(filed.equals("Course title")){
                             if(flag1[0] == true){
                                 Toast.makeText(dialog.getContext(), "Course title is empty", Toast.LENGTH_SHORT).show();
