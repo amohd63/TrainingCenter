@@ -154,8 +154,6 @@ public class add_courses extends AppCompatActivity {
             }
         });
 
-        final boolean[] flag = {false};
-        final boolean[] flag2 = {false};
         coursePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,17 +165,14 @@ public class add_courses extends AppCompatActivity {
         addCourseAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(cName.getText().toString().trim().length() == 0){
-                    flag[0] = true;
-                }
-                if(cMainTopics.getText().toString().isEmpty()){
-                    flag2[0] = true;
-                }
-                if(flag[0] == true){
+                if (cName.getText().toString().isEmpty()){
                     Toast.makeText(add_courses.this, "Course title is empty", Toast.LENGTH_SHORT).show();
-                } else if (flag2[0] == true) {
-                    Toast.makeText(add_courses.this, "Course main is empty", Toast.LENGTH_SHORT).show();
-                }else {
+                }else if (cMainTopics.getText().toString().isEmpty()){
+                    Toast.makeText(add_courses.this, "Course main topics is empty", Toast.LENGTH_SHORT).show();
+                }else if (cPre.getText().toString().isEmpty()){
+                    Toast.makeText(add_courses.this, "Prerequisites is empty", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(add_courses.this, "Course added successfully", Toast.LENGTH_SHORT).show();
                     String c_name = cName.getText().toString();
 
                     String c_main_topics[] = cMainTopics.getText().toString().split(",");
