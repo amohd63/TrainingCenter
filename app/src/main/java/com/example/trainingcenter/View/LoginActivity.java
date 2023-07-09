@@ -108,11 +108,11 @@ public class LoginActivity extends AppCompatActivity implements
             //loginEmail.setText("");
         }
 
-        loginEmail.setText("instructor@gmail.com");
-        loginPassword.setText("282610As");
+//        loginEmail.setText("instructor@gmail.com");
+//        loginPassword.setText("282610As");
 
-//        loginEmail.setText("mf@gmail.com");
-//        loginPassword.setText("123456789Mf");
+        loginEmail.setText("mf@gmail.com");
+        loginPassword.setText("123456789Mf");
 
 //        loginEmail.setText("ali@gmail.com");
 //        loginPassword.setText("123456");

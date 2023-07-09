@@ -1,4 +1,5 @@
 package com.example.trainingcenter.View.admin;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -41,6 +42,7 @@ public class make_available extends AppCompatActivity {
     //LinearLayout secondLinearLayout;
     private LinearLayout coursesMainView;
     String emailAdmin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class make_available extends AppCompatActivity {
         createCourses();
     }
 
-    private void createCourses(){
+    private void createCourses() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         // Get a reference to the collection
         CollectionReference collectionRef = firestore.collection("Course");
@@ -70,10 +72,11 @@ public class make_available extends AppCompatActivity {
                 QuerySnapshot querySnapshot = task.getResult();
                 if (querySnapshot != null) {
                     for (QueryDocumentSnapshot document : querySnapshot) {
+
                         String Id = document.getId();
                         String course_name = (String) document.get("courseTitle");
                         String photo = (String) document.get("photo");
-                        CardView c = createCourseCardView2(course_name,Id,photo);
+                        CardView c = createCourseCardView2(course_name, Id, photo);
                         coursesMainView.addView(c);
                         DocumentReference docRef = collectionRef.document(Id);
                         c.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +168,7 @@ public class make_available extends AppCompatActivity {
         cardView.addView(mainLinearLayout);
         return cardView;
     }
+
     private TextView createTextView(Context context, String text, int textSize, Typeface typeface, boolean setText) {
         TextView textView = new TextView(context);
         textView.setLayoutParams(new ViewGroup.LayoutParams(
