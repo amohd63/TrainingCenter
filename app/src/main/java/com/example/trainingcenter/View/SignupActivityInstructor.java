@@ -274,7 +274,14 @@ public class SignupActivityInstructor extends AppCompatActivity {
                     signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
                             "It must contain at least one number, one lowercase letter, and one uppercase letter.");
                 }
+                else if(courseTextView.getText().toString().isEmpty()){
+                    reInitializeEditText();
+                    courseTextView.setError("This field is required");
+                    courseTextView.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Instructor courses field is required", Toast.LENGTH_SHORT).show();
+                }
                 else {
+                    courseTextView.setError(null);
                     reInitializeEditText();
                     auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
