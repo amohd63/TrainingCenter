@@ -64,7 +64,8 @@ public class SearchCourses extends AppCompatActivity {
         Timestamp timestamp = Timestamp.now();
         search();
     }
-    private void search(){
+
+    private void search() {
         Timestamp timestamp = Timestamp.now();
         db.collection("CourseOffering")
                 .whereGreaterThanOrEqualTo("registrationDeadline", timestamp)
@@ -73,7 +74,7 @@ public class SearchCourses extends AppCompatActivity {
                     if (courseOfferingTask.isSuccessful()) {
                         AtomicInteger size = new AtomicInteger(courseOfferingTask.getResult().size());
                         for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                            if (courseOfferingDoc.getString("status").equals("Ended")){
+                            if (courseOfferingDoc.getString("status").equals("Ended")) {
                                 continue;
                             }
                             db.collection("Course")
@@ -107,9 +108,10 @@ public class SearchCourses extends AppCompatActivity {
                                                                                 courseOfferingDoc.getString("schedule"),
                                                                                 courseOfferingDoc.getString("venue")
                                                                         );
+                                                                        String courseStatus = courseOfferingDoc.getString("status");
                                                                         String instructor = instructorDoc.getString("firstName") + " " + instructorDoc.getString("lastName");
                                                                         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-                                                                        CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), courseOfferings.getVenue(), instructor);
+                                                                        CardView cardView = createCourseCardView(courses.getCourseTitle(), courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), courseOfferings.getVenue(), instructor, courses.getCourseID(), courseStatus, courses.isAvailableForRegistration());
                                                                         cardView.setOnClickListener(new View.OnClickListener() {
                                                                             @Override
                                                                             public void onClick(View view) {
@@ -143,7 +145,7 @@ public class SearchCourses extends AppCompatActivity {
 
     }
 
-    private CardView createCourseCardView(String courseName, String time, String date, String venue, String instructor) {
+    private CardView createCourseCardView(String courseName, String time, String date, String venue, String instructor, String courseID, String status, boolean available) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -173,7 +175,7 @@ public class SearchCourses extends AppCompatActivity {
 // Set layout parameters
         testV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         testV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
-        testV.setText("0fdff326f5cf4728bd52");
+        testV.setText(courseID);
         testV.setTextSize(11);
 
         LinearLayout view = new LinearLayout(this);
@@ -255,6 +257,59 @@ public class SearchCourses extends AppCompatActivity {
 
         mainLinearLayout.addView(innerLinearLayout3);
 
+        view = new LinearLayout(this);
+        layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+        mainLinearLayout.addView(view);
+
+        // Create an instance of TextView
+        TextView statusTV = new TextView(this);
+// Set layout parameters
+        statusTV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        statusTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        String statusOut;
+        if (status.equals("Pending")) {
+            statusOut = "Course has not started yet!";
+        } else if (status.equals("Ongoing")) {
+            statusOut = "Course already started!";
+        } else {
+            statusOut = "Course ended!";
+        }
+        statusTV.setText(statusOut);
+        statusTV.setTextSize(14);
+
+        // Create an instance of TextView
+        TextView availableTV = new TextView(this);
+// Set layout parameters
+        availableTV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        availableTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        availableTV.setText(available ? "Course is available for registration" : "Course is not available for registration");
+        availableTV.setTextSize(14);
+
+
+        view = new LinearLayout(this);
+        layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        mainLinearLayout.addView(availableTV);
+        mainLinearLayout.addView(view);
+        mainLinearLayout.addView(statusTV);
+
+
         // Add the LinearLayout to the CardView
         cardView.addView(mainLinearLayout);
         return cardView;
@@ -333,6 +388,7 @@ public class SearchCourses extends AppCompatActivity {
                 coursesListLayoutParams[0].setMargins(coursesListLayoutParams[0].leftMargin, coursesListLayoutParams[0].topMargin, coursesListLayoutParams[0].rightMargin, marginInPixels[0]);
                 coursesListLayout[0].setLayoutParams(coursesListLayoutParams[0]);
                 coursesListLayout[0].setId(View.generateViewId());
+
                 Timestamp timestamp = Timestamp.now();
                 db.collection("CourseOffering")
                         .whereGreaterThanOrEqualTo("registrationDeadline", timestamp)
@@ -341,6 +397,9 @@ public class SearchCourses extends AppCompatActivity {
                             if (courseOfferingTask.isSuccessful()) {
                                 AtomicInteger size = new AtomicInteger(courseOfferingTask.getResult().size());
                                 for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                    if (courseOfferingDoc.getString("status").equals("Ended")) {
+                                        continue;
+                                    }
                                     db.collection("Course")
                                             .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
                                             .whereEqualTo("isAvailableForRegistration", true)
@@ -374,9 +433,10 @@ public class SearchCourses extends AppCompatActivity {
                                                                                             courseOfferingDoc.getString("schedule"),
                                                                                             courseOfferingDoc.getString("venue")
                                                                                     );
+                                                                                    String courseStatus = courseOfferingDoc.getString("status");
                                                                                     String instructor = instructorDoc.getString("firstName") + " " + instructorDoc.getString("lastName");
                                                                                     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-                                                                                    CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), courseOfferings.getVenue(), instructor);
+                                                                                    CardView cardView = createCourseCardView(courses.getCourseTitle() /*String.valueOf(size)*/, courseOfferings.getSchedule(), dateFormat.format(courseOfferings.getRegistrationDeadline().toDate()), courseOfferings.getVenue(), instructor, courses.getCourseID(), courseStatus, courses.isAvailableForRegistration());
                                                                                     cardView.setOnClickListener(new View.OnClickListener() {
                                                                                         @Override
                                                                                         public void onClick(View view) {
@@ -391,20 +451,15 @@ public class SearchCourses extends AppCompatActivity {
                                                                             }
                                                                         });
                                                             }
-
-
                                                         }
                                                         //Log.d("expectedTasks2", String.valueOf(expectedTasks));
                                                     } else {
                                                         // Handle error
                                                         //Log.d(TAG, "Error getting documents: ", task.getException());
                                                     }
-
                                                 }
-
                                             });
                                 }
-
                             } else {
                                 // Handle order query error
                             }

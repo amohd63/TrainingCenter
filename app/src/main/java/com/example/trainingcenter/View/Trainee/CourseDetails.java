@@ -101,6 +101,8 @@ public class CourseDetails extends AppCompatDialogFragment {
         final int[] i = {0};
         final int[] size = {1};
         final boolean[] clearFlag = {false};
+        CardView emptyPre = createEmptyCardView("No prerequisites");
+        prerequisite.addView(emptyPre);
         db.collection("Prerequisite")
                 .whereEqualTo("courseID", course.getCourseID())
                 .get()
@@ -115,6 +117,9 @@ public class CourseDetails extends AppCompatDialogFragment {
                                         .get()
                                         .addOnCompleteListener(courseTask -> {
                                             if (courseTask.isSuccessful()) {
+                                                if (courseTask.getResult().isEmpty()){
+                                                    i[0]++;
+                                                }
                                                 for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
                                                     db.collection("CourseOffering")
                                                             .whereEqualTo("courseID", courseDoc.getString("courseID"))
@@ -123,6 +128,10 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                 if (courseOfferingTask.isSuccessful()) {
                                                                     if (courseOfferingTask.getResult().isEmpty()) {
                                                                         CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", 0);
+                                                                        if (!clearFlag[0]){
+                                                                            clearFlag[0] = true;
+                                                                            prerequisite.removeAllViews();
+                                                                        }
                                                                         prerequisite.addView(prerequisiteCardView);
                                                                         flag[0] = false;
                                                                         i[0]++;
@@ -137,6 +146,10 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                                         if (registrationTask.isSuccessful()) {
                                                                                             if (registrationTask.getResult().isEmpty()) {
                                                                                                 CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", 0);
+                                                                                                if (!clearFlag[0]){
+                                                                                                    clearFlag[0] = true;
+                                                                                                    prerequisite.removeAllViews();
+                                                                                                }
                                                                                                 prerequisite.addView(prerequisiteCardView);
                                                                                                 flag[0] = false;
                                                                                                 i[0]++;
@@ -144,11 +157,19 @@ public class CourseDetails extends AppCompatDialogFragment {
                                                                                                 if (courseOfferingDoc.getString("status").equals("Ended")) {
                                                                                                     for (QueryDocumentSnapshot instructorDoc : registrationTask.getResult()) {
                                                                                                         CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Completed", 1);
+                                                                                                        if (!clearFlag[0]){
+                                                                                                            clearFlag[0] = true;
+                                                                                                            prerequisite.removeAllViews();
+                                                                                                        }
                                                                                                         prerequisite.addView(prerequisiteCardView);
                                                                                                         i[0]++;
                                                                                                     }
                                                                                                 } else {
                                                                                                     CardView prerequisiteCardView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), "Uncompleted", 0);
+                                                                                                    if (!clearFlag[0]){
+                                                                                                        clearFlag[0] = true;
+                                                                                                        prerequisite.removeAllViews();
+                                                                                                    }
                                                                                                     prerequisite.addView(prerequisiteCardView);
                                                                                                     flag[0] = false;
                                                                                                     i[0]++;
@@ -177,7 +198,9 @@ public class CourseDetails extends AppCompatDialogFragment {
         final boolean[] courseConflict = {false};
         final int[] j = {0};
         final int[] noOfConflicts = {0};
-        final int[] size2 = {1};
+        final int[] emptyFlag = {0};
+        CardView empty = createEmptyCardView("No conflicts");
+        conflicts.addView(empty);
         db.collection("Registration")
                 .whereEqualTo("traineeID", email)
                 .whereIn("status", Arrays.asList("Accepted", "Pending"))
@@ -187,8 +210,8 @@ public class CourseDetails extends AppCompatDialogFragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
                         if (regTask.isSuccessful()) {
                             if (regTask.getResult().isEmpty()) {
-                                CardView empty = createEmptyCardView("No conflicts");
-                                conflicts.addView(empty);
+                                noOfConflicts[0] = 0;
+                                j[0] = 0;
                             } else {
                                 noOfConflicts[0] = regTask.getResult().size();
                                 for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
@@ -212,17 +235,24 @@ public class CourseDetails extends AppCompatDialogFragment {
 
                                                                             String course1Time = courseOfferingDoc.getString("schedule").split(" ")[1];
                                                                             String course2Time = courseOffering.getSchedule().split(" ")[1];
-
                                                                             if (course1Days.contains(course2Days[0]) || course1Days.contains(course2Days[1])) {
                                                                                 if (course1Time.equals(course2Time)) {
                                                                                     String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
                                                                                     CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);
+                                                                                    if (emptyFlag[0] == 0){
+                                                                                        emptyFlag[0]++;
+                                                                                        conflicts.removeAllViews();
+                                                                                    }
                                                                                     conflicts.addView(conflictView);
                                                                                     foundConflict[0] = true;
                                                                                 }
                                                                             } else if (courseDoc.getString("courseID").equals(course.getCourseID())) {
                                                                                 String courseID = courseDoc.getString("courseID").substring(0, 6) + "..";
                                                                                 CardView conflictView = createPrerequisiteCardView(courseDoc.getString("courseTitle"), courseID, 2);
+                                                                                if (emptyFlag[0] == 0){
+                                                                                    emptyFlag[0]++;
+                                                                                    conflicts.removeAllViews();
+                                                                                }
                                                                                 conflicts.addView(conflictView);
                                                                                 courseConflict[0] = true;
                                                                             }
@@ -251,6 +281,8 @@ public class CourseDetails extends AppCompatDialogFragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+//                        String st = String.valueOf(i[0]) + " " + String.valueOf(size[0]);
+//                        Toast.makeText(dialog.getContext(), st, Toast.LENGTH_SHORT).show();
                         if (i[0] == size[0] && j[0] == noOfConflicts[0]) {
                             if (flag[0]) {
                                 if (courseOffering.getRegistrationDeadline().compareTo(timestamp) >= 0) {

@@ -84,7 +84,8 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
                                                                                                     dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                                     courseOfferingDoc.getString("venue"),
                                                                                                     courseOfferingDoc.getString("schedule").split(" ")[1],
-                                                                                                    courseDoc.getString("photo")
+                                                                                                    courseDoc.getString("photo"),
+                                                                                                    courseOfferingDoc.getString("status")
                                                                                             );
                                                                                             String regDocID = regDoc.getString("registrationID");
                                                                                             cardView.setOnClickListener(new View.OnClickListener() {
@@ -132,7 +133,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         return true;
     }
 
-    private CardView createCourseCardView2(String status, String courseID, String instructor, String courseName, String days, String date, String venue, String time, String imgURL) {
+    private CardView createCourseCardView2(String status, String courseID, String instructor, String courseName, String days, String date, String venue, String time, String imgURL, String courseStatus) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -294,7 +295,6 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         innerLinearLayout1.addView(timeTextView);
         innerLinearLayout1.addView(instructorTextView);
 
-
         innerLinearLayout2.addView(venueTextView);
         innerLinearLayout2.addView(dateTextView);
 
@@ -308,6 +308,37 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
         innerLayout.addView(testV);
         innerLayout.addView(view);
         innerLayout.addView(innerLinearLayout3);
+
+        // Create an instance of TextView
+        TextView courseStatusTV = new TextView(this);
+// Set layout parameters
+        courseStatusTV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        courseStatusTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        String statusOut;
+        if (courseStatus.equals("Pending")){
+            statusOut = "Course has not started yet!";
+        }else if (courseStatus.equals("Ongoing")){
+            statusOut = "Course already started!";
+        }else{
+            statusOut = "Course ended!";
+        }
+        courseStatusTV.setText(statusOut);
+        courseStatusTV.setTextSize(14);
+
+        view = new LinearLayout(this);
+// Set layout_width and layout_height to match_parent
+        layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        innerLayout.addView(view);
+        innerLayout.addView(courseStatusTV);
 
         LinearLayout view2 = new LinearLayout(this);
 
@@ -412,7 +443,8 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
                                                                                                     dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                                     courseOfferingDoc.getString("venue"),
                                                                                                     courseOfferingDoc.getString("schedule").split(" ")[1],
-                                                                                                    courseDoc.getString("photo")
+                                                                                                    courseDoc.getString("photo"),
+                                                                                                    courseOfferingDoc.getString("status")
                                                                                             );
                                                                                             String regDocID = regDoc.getString("registrationID");
                                                                                             cardView.setOnClickListener(new View.OnClickListener() {
