@@ -233,17 +233,13 @@ public class update_dialog extends AppCompatDialogFragment {
                         startActivityForResult(iGallery, GALLERY_REQ_CODE);
                     }
                 });
-                final boolean[] flag1 = {false};
-                final boolean[] flag2 = {false};
+
                 updateB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(value.getText().toString().trim().length() == 0){
-                            flag1[0] = true;
-                        }
                         if(filed.equals("Course title")){
-                            if(flag1[0] == true){
-                                Toast.makeText(dialog.getContext(), "Course title is empty", Toast.LENGTH_SHORT).show();
+                            if(value.getText().toString().isEmpty()){
+                                Toast.makeText(dialog.getContext(), "new value is empty", Toast.LENGTH_SHORT).show();
                             }else {
                                 String newValue = value.getText().toString();
                                 docRef.update("courseTitle", newValue)
@@ -254,8 +250,8 @@ public class update_dialog extends AppCompatDialogFragment {
                                 getActivity().recreate();
                             }
                         } else if(filed.equals("Main topics")) {
-                            if(flag1[0] == true){
-                                Toast.makeText(dialog.getContext(), "Course title is empty", Toast.LENGTH_SHORT).show();
+                            if(value.getText().toString().isEmpty()){
+                                Toast.makeText(dialog.getContext(), "new value is empty", Toast.LENGTH_SHORT).show();
                             }else {
                                 String newValue[] = value.getText().toString().split(",");
                                 ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(newValue));
