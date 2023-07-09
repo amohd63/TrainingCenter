@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -20,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.trainingcenter.R;
+import com.example.trainingcenter.View.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -404,75 +407,83 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
 
     @Override
     public void refresh() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
-        mainView.removeAllViews();
-        db.collection("Registration")
-                .whereEqualTo("traineeID", email)
-                .whereIn("status", Arrays.asList("Accepted", "Pending"))
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
-                        if (regTask.isSuccessful()) {
-                            for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
-                                db.collection("CourseOffering")
-                                        .whereEqualTo("offeringID", regDoc.getString("offeringID"))
-                                        .whereIn("status", Arrays.asList("Pending", "Ongoing"))
-                                        .get()
-                                        .addOnCompleteListener(courseOfferingTask -> {
-                                            if (courseOfferingTask.isSuccessful()) {
-                                                for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
-                                                    db.collection("Course")
-                                                            .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
-                                                            .get()
-                                                            .addOnCompleteListener(courseTask -> {
-                                                                if (courseTask.isSuccessful()) {
-                                                                    for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
-                                                                        db.collection("User")
-                                                                                .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
-                                                                                .get()
-                                                                                .addOnCompleteListener(userTask -> {
-                                                                                    if (userTask.isSuccessful()) {
-                                                                                        for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
-                                                                                            CardView cardView = createCourseCardView2(
-                                                                                                    regDoc.getString("status"),
-                                                                                                    courseDoc.getString("courseID"),
-                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName"),
-                                                                                                    courseDoc.getString("courseTitle"),
-                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[0],
-                                                                                                    dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
-                                                                                                    courseOfferingDoc.getString("venue"),
-                                                                                                    courseOfferingDoc.getString("schedule").split(" ")[1],
-                                                                                                    courseDoc.getString("photo"),
-                                                                                                    courseOfferingDoc.getString("status")
-                                                                                            );
-                                                                                            String regDocID = regDoc.getString("registrationID");
-                                                                                            cardView.setOnClickListener(new View.OnClickListener() {
-                                                                                                @Override
-                                                                                                public void onClick(View view) {
-                                                                                                    openDialog(regDocID);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+                mainView.removeAllViews();
+                db.collection("Registration")
+                        .whereEqualTo("traineeID", email)
+                        .whereIn("status", Arrays.asList("Accepted", "Pending"))
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
+                                if (regTask.isSuccessful()) {
+                                    for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
+                                        db.collection("CourseOffering")
+                                                .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                                .whereIn("status", Arrays.asList("Pending", "Ongoing"))
+                                                .get()
+                                                .addOnCompleteListener(courseOfferingTask -> {
+                                                    if (courseOfferingTask.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot courseOfferingDoc : courseOfferingTask.getResult()) {
+                                                            db.collection("Course")
+                                                                    .whereEqualTo("courseID", courseOfferingDoc.getString("courseID"))
+                                                                    .get()
+                                                                    .addOnCompleteListener(courseTask -> {
+                                                                        if (courseTask.isSuccessful()) {
+                                                                            for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
+                                                                                db.collection("User")
+                                                                                        .whereEqualTo("email", courseOfferingDoc.getString("instructorID"))
+                                                                                        .get()
+                                                                                        .addOnCompleteListener(userTask -> {
+                                                                                            if (userTask.isSuccessful()) {
+                                                                                                for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
+                                                                                                    CardView cardView = createCourseCardView2(
+                                                                                                            regDoc.getString("status"),
+                                                                                                            courseDoc.getString("courseID"),
+                                                                                                            userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                                            courseDoc.getString("courseTitle"),
+                                                                                                            courseOfferingDoc.getString("schedule").split(" ")[0],
+                                                                                                            dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
+                                                                                                            courseOfferingDoc.getString("venue"),
+                                                                                                            courseOfferingDoc.getString("schedule").split(" ")[1],
+                                                                                                            courseDoc.getString("photo"),
+                                                                                                            courseOfferingDoc.getString("status")
+                                                                                                    );
+                                                                                                    String regDocID = regDoc.getString("registrationID");
+                                                                                                    cardView.setOnClickListener(new View.OnClickListener() {
+                                                                                                        @Override
+                                                                                                        public void onClick(View view) {
+                                                                                                            openDialog(regDocID);
+                                                                                                        }
+                                                                                                    });
+                                                                                                    mainView.addView(cardView);
                                                                                                 }
-                                                                                            });
-                                                                                            mainView.addView(cardView);
-                                                                                        }
 
-                                                                                    } else {
-                                                                                    }
-                                                                                });
+                                                                                            } else {
+                                                                                            }
+                                                                                        });
 
-                                                                    }
+                                                                            }
 
-                                                                } else {
-                                                                }
-                                                            });
-                                                }
-                                            } else {
-                                            }
-                                        });
+                                                                        } else {
+                                                                        }
+                                                                    });
+                                                        }
+                                                    } else {
+                                                    }
+                                                });
+                                    }
+                                } else {
+                                }
                             }
-                        } else {
-                        }
-                    }
-                });
+                        });
+            }
+        }, 1500); // Delay time in milliseconds (e.g., 1000ms = 1 second)
+
+
     }
 }

@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,11 +63,16 @@ public class SignupActivityInstructor extends AppCompatActivity {
     String[] courseArray;
     boolean[] selectedCourses;
 
+    private String[] cities = {"Ramallah", "Hebron", "Salfit", "Nablus", "Jerusalem", "Jenin", "Bethlehem", "Jericho", "Gaza City", "Tulkarm", "Qalqilya", "Rafah", "Khan Yunis", "Beit Lahia", "Beit Hanoun", "Tubas", "Al-Bireh", "Dura", "Beit Jala", "Khan Younis", "Abu Dis", "Rafat", "Deir al-Balah", "Jabalia", "Al-Auja", "Anabta", "Qalqas", "As-Samu", "Other"};
+    private AutoCompleteTextView address;
+    private ArrayAdapter<String> adapterItems;
+    private String selectedCity = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_instructor);
-
+        address = findViewById(R.id.cities);
         auth = FirebaseAuth.getInstance();
         signupEmail = findViewById(R.id.signup_email_instructor);
         signupPassword = findViewById(R.id.signup_password_instructor);
@@ -81,6 +89,15 @@ public class SignupActivityInstructor extends AppCompatActivity {
         degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
         courseTextView = findViewById(R.id.courseInsert);
         degree = "";
+
+        adapterItems = new ArrayAdapter<String>(this, R.layout.item_drop_down, cities);
+        address.setAdapter(adapterItems);
+        address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedCity = adapterView.getItemAtPosition(i).toString();
+            }
+        });
 
         CollectionReference collectionRef = db.collection("Course");
         collectionRef.get().addOnCompleteListener(task -> {
@@ -184,8 +201,107 @@ public class SignupActivityInstructor extends AppCompatActivity {
                 String firstName_str = firstName.getText().toString().trim();
                 String lastName_str = lastName.getText().toString().trim();
                 String phoneNum = phoneNumField.getText().toString().trim();
-                String address = addressField.getText().toString().trim();
                 String specialization = specializationField.getText().toString().trim();
+
+
+                if (email.isEmpty()) {
+                    reInitializeEditText();
+                    signupEmail.setError("Email cannot be empty");
+                    signupEmail.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Email cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+                else if (pass.isEmpty()) {
+                    reInitializeEditText();
+                    signupPassword.setError("Password cannot be empty");
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
+                }
+                else if (pass_conf.isEmpty()) {
+                    reInitializeEditText();
+                    signupPasswordConfirm.setError("You must confirm your Password");
+                    signupPasswordConfirm.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "You must confirm your Password", Toast.LENGTH_SHORT).show();
+                }
+                else if (!pass_conf.equals(pass)) {
+                    reInitializeEditText();
+                    signupPassword.setError("Passwords must match");
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Passwords must match", Toast.LENGTH_SHORT).show();
+                }
+                else if (!validatePassword(pass)) {
+                    reInitializeEditText();
+                    signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
+                            "It must contain at least one number, one lowercase letter, and one uppercase letter.");
+                    signupPassword.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Password\nMinimum 8 characters and maximum 15 characters\nIt must " +
+                            "contain at least one number, one lowercase letter, and one uppercase letter.", Toast.LENGTH_SHORT).show();
+                }
+                else if (!User.isValidName(firstName_str)) {
+                    reInitializeEditText();
+                    firstName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                    firstName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
+                }
+                else if (!User.isValidName(lastName_str)) {
+                    reInitializeEditText();
+                    lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
+                    lastName.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Invalid Name\nThe name must be 3 and 20 characters", Toast.LENGTH_SHORT).show();
+                }
+                else if (selectedCity.isEmpty()) {
+                    reInitializeEditText();
+                    address.setError("This field is required");
+                    address.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Address field is required", Toast.LENGTH_SHORT).show();
+                }
+                else if (phoneNum.isEmpty()) {
+                    address.setError(null);
+                    reInitializeEditText();
+                    phoneNumField.setError("Phone number field is required");
+                    phoneNumField.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Phone number field is required", Toast.LENGTH_SHORT).show();
+                }
+                else if (specialization.isEmpty()){
+                    reInitializeEditText();
+                    specializationField.setError("This field is required");
+                    specializationField.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Specialization field is required", Toast.LENGTH_SHORT).show();
+                }
+                else if (degree.isEmpty()){
+                    Toast.makeText(getApplicationContext(), "You must select a degree", Toast.LENGTH_SHORT).show();
+                }
+                else if (!validatePassword(pass)){
+                    signupPassword.setError("Invalid Password\nMinimum 8 characters and maximum 15 characters\n" +
+                            "It must contain at least one number, one lowercase letter, and one uppercase letter.");
+                }
+                else {
+                    reInitializeEditText();
+                    auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(SignupActivityInstructor.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(SignupActivityInstructor.this, LoginActivity.class));
+                            } else {
+                                Toast.makeText(SignupActivityInstructor.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    Map<String, Object> user = new HashMap<>();
+                    user.put("email", email);
+                    user.put("firstName", firstName_str);
+                    user.put("lastName", lastName_str);
+                    user.put("personalPhoto", imgUrl);
+                    user.put("role", "Instructor");
+                    db.collection("User").document(email).set(user);
+                    user.clear();
+                    user.put("mobileNumber", phoneNum);
+                    user.put("address", address);
+                    user.put("specialization", specialization);
+                    user.put("degree", degree);
+                    user.put("courses", instructorCourses);
+                    db.collection("User").document(email).collection("Instructor").document(email).set(user);
+                }
 
 
                 if (email.isEmpty()){
@@ -213,11 +329,13 @@ public class SignupActivityInstructor extends AppCompatActivity {
                     lastName.setError("Invalid Name\nThe name must be 3 and 20 characters");
 //                    lastName.setBackgroundColor(Color.RED);
                 }
-                else if (address.isEmpty()){
-                    addressField.setError("This field is required");
-//                    addressField.setBackgroundColor(Color.RED);
+                else if (selectedCity.isEmpty()) {
+                    address.setError("This field is required");
+                    //address.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Address field is required", Toast.LENGTH_SHORT).show();
                 }
                  else if (phoneNum.isEmpty()){
+                     address.setError(null);
                      phoneNumField.setError("This field is required");
 //                    phoneNumField.setBackgroundColor(Color.RED);
                  }
@@ -239,10 +357,10 @@ public class SignupActivityInstructor extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(SignupActivityInstructor.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivityInstructor.this, "Signed up successfully", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(SignupActivityInstructor.this, LoginActivity.class));
                             } else {
-                                Toast.makeText(SignupActivityInstructor.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivityInstructor.this, "Signup failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -273,6 +391,15 @@ public class SignupActivityInstructor extends AppCompatActivity {
         });
 
     }
+
+    private void reInitializeEditText(){
+        signupEmail.setBackgroundResource(R.drawable.custom_edittext);
+        signupPassword.setBackgroundResource(R.drawable.custom_edittext);
+        signupPasswordConfirm.setBackgroundResource(R.drawable.custom_edittext);
+        firstName.setBackgroundResource(R.drawable.custom_edittext);
+        lastName.setBackgroundResource(R.drawable.custom_edittext);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
