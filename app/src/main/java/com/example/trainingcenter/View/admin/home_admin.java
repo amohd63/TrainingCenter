@@ -202,7 +202,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
             else if (id == R.id.nav_logout) {
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
-//                finish();
+                finish();
             }
 
             DrawerLayout drawer = findViewById(R.id.drawer_layout2);
