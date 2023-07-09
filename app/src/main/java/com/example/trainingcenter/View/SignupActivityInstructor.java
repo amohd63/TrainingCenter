@@ -296,7 +296,7 @@ public class SignupActivityInstructor extends AppCompatActivity {
                     db.collection("User").document(email).set(user);
                     user.clear();
                     user.put("mobileNumber", phoneNum);
-                    user.put("address", address);
+                    user.put("address", selectedCity);
                     user.put("specialization", specialization);
                     user.put("degree", degree);
                     user.put("courses", instructorCourses);
