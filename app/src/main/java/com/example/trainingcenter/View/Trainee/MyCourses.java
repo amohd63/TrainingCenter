@@ -84,7 +84,8 @@ public class MyCourses extends AppCompatActivity {
                                                                                                     dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
                                                                                                     courseOfferingDoc.getString("venue"),
                                                                                                     courseOfferingDoc.getString("schedule").split(" ")[1],
-                                                                                                    courseDoc.getString("photo")
+                                                                                                    courseDoc.getString("photo"),
+                                                                                                    courseOfferingDoc.getString("status")
                                                                                             );
                                                                                             mainView.addView(test);
                                                                                         }
@@ -115,7 +116,7 @@ public class MyCourses extends AppCompatActivity {
         return true;
     }
 
-    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time, String imgURL) {
+    private CardView createCourseCardView2(String courseID, String instructor, String courseName, String days, String date, String venue, String time, String imgURL, String status) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -260,12 +261,44 @@ public class MyCourses extends AppCompatActivity {
         innerLinearLayout3.addView(innerLinearLayout1);
         innerLinearLayout3.addView(innerLinearLayout2);
 
+        // Create an instance of TextView
+        TextView statusTV = new TextView(this);
+// Set layout parameters
+        statusTV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        statusTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        String statusOut;
+        if (status.equals("Pending")){
+            statusOut = "Course has not started yet!";
+        }else if (status.equals("Ongoing")){
+            statusOut = "Course already started!";
+        }else{
+            statusOut = "Course ended!";
+        }
+        statusTV.setText(statusOut);
+        statusTV.setTextSize(14);
+
 
         innerLayout.addView(titleTV);
         innerLayout.addView(instructorTV);
         innerLayout.addView(testV);
         innerLayout.addView(view);
         innerLayout.addView(innerLinearLayout3);
+
+        view = new LinearLayout(this);
+// Set layout_width and layout_height to match_parent
+        layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (int) (1 * scale + 0.5f)
+        );
+        layoutParams.setMargins(0, marginTop, 0, marginBottom);
+        view.setLayoutParams(layoutParams);
+
+// Set background color
+        view.setBackgroundColor(Color.parseColor("#80D1D1D1"));
+
+        innerLayout.addView(view);
+        innerLayout.addView(statusTV);
+
 
 
         LinearLayout view1 = new LinearLayout(this);

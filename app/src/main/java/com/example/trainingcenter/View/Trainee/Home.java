@@ -143,10 +143,10 @@ public class Home extends AppCompatActivity
                     String body = notificationDoc.getString("body");
                     Timestamp noteDate = notificationDoc.getTimestamp("noteDate");
                     Boolean fetched = notificationDoc.getBoolean("fetch");
-                    if (userID == null){
+                    if (userID == null) {
                         continue;
                     }
-                    if (userID.equals("all") || (userID.equals(email) && Boolean.FALSE.equals(fetched))) {
+                    if ((userID.equals("all") && Boolean.FALSE.equals(fetched))|| (userID.equals(email) && Boolean.FALSE.equals(fetched))) {
 
                         createNotification(documentId, title, body);
                         displayNotifications();
@@ -265,9 +265,9 @@ public class Home extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Intent intent = new Intent(getApplicationContext(), MyProfile.class);
-        intent.putExtra("email", email);
-        startActivity(intent);
+//        Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+//        intent.putExtra("email", email);
+//        startActivity(intent);
         return super.onOptionsItemSelected(item);
 
     }
@@ -301,7 +301,7 @@ public class Home extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
 //            finish();
-        }else if (id == R.id.nav_previous_courses){
+        } else if (id == R.id.nav_previous_courses) {
             Intent intent = new Intent(getApplicationContext(), TraineeCourseHistory.class);
             intent.putExtra("email", email);
             startActivity(intent);
@@ -324,7 +324,7 @@ public class Home extends AppCompatActivity
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                1200, ViewGroup.LayoutParams.WRAP_CONTENT);
+                1380, ViewGroup.LayoutParams.WRAP_CONTENT);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);
@@ -606,8 +606,11 @@ public class Home extends AppCompatActivity
         return cardView;
     }
 
-    private void displayNotifications(){
+    private void displayNotifications() {
         mainLayout.removeAllViews();
+        CardView emptyNotification = createEmptyCardView("You don't have any notifications!");
+        mainLayout.addView(emptyNotification);
+        final boolean[] flag = {false};
         db.collection("Notification")
                 .orderBy("noteDate", Query.Direction.DESCENDING)
                 .get()
@@ -616,10 +619,14 @@ public class Home extends AppCompatActivity
                     public void onComplete(@NonNull Task<QuerySnapshot> regTask) {
                         if (regTask.isSuccessful()) {
                             for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
-                                if (regDoc.getString("userID").equals(email)) {
+                                if (regDoc.getString("userID").equals(email) || regDoc.getString("userID").equals("all")) {
                                     SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.getDefault());
                                     String formattedTimestamp = sdf.format(regDoc.getTimestamp("noteDate").toDate());
                                     CardView cv = createNotificationCard(regDoc.getString("title"), regDoc.getString("body"), formattedTimestamp);
+                                    if (!flag[0]) {
+                                        flag[0] = true;
+                                        mainLayout.removeAllViews();
+                                    }
                                     mainLayout.addView(cv);
                                 }
                             }
@@ -628,6 +635,7 @@ public class Home extends AppCompatActivity
                     }
                 });
     }
+
     protected void onResume() {
         super.onResume();
         ImageView profileImg = profile.findViewById(R.id.profileimage);
@@ -866,13 +874,13 @@ public class Home extends AppCompatActivity
                                                                         String courseTitle = courseDoc.getString("courseTitle");
                                                                         Log.d("StatusUpdater ", regDoc.getString("traineeID"));
                                                                         String title = "Reminder | " + courseTitle;
-                                                                        String body = "Today [" + date + "] at " + time + ", "+courseTitle+" lectures begin. Please be ready!";
+                                                                        String body = "Today [" + date + "] at " + time + ", " + courseTitle + " lectures begin. Please be ready!";
                                                                         Map<String, Object> note = new HashMap<>();
-                                                                        note.put("body",body);
-                                                                        note.put("title",title);
+                                                                        note.put("body", body);
+                                                                        note.put("title", title);
                                                                         note.put("userID", regDoc.getString("traineeID"));
                                                                         Timestamp timestampNote = Timestamp.now();
-                                                                        note.put("noteDate",timestampNote);
+                                                                        note.put("noteDate", timestampNote);
                                                                         note.put("fetch", false);
 
                                                                         db.collection("Notification")
@@ -881,7 +889,7 @@ public class Home extends AppCompatActivity
                                                                                 .get()
                                                                                 .addOnCompleteListener(notificationTask -> {
                                                                                     if (notificationTask.isSuccessful()) {
-                                                                                        if (notificationTask.getResult().isEmpty()){
+                                                                                        if (notificationTask.getResult().isEmpty()) {
                                                                                             db.collection("Notification").document().set(note);
                                                                                         }
                                                                                     } else {
