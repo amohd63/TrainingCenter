@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -153,7 +154,8 @@ public class add_courses extends AppCompatActivity {
             }
         });
 
-
+        final boolean[] flag = {false};
+        final boolean[] flag2 = {false};
         coursePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -162,51 +164,63 @@ public class add_courses extends AppCompatActivity {
                 startActivityForResult(iGallery, GALLERY_REQ_CODE);
             }
         });
+        if(cName.getText().toString().trim().length() == 0){
+            flag[0] = true;
+        }
+        if(cMainTopics.getText().toString().trim().length() == 0){
+            flag2[0] = true;
+        }
         addCourseAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String c_name = cName.getText().toString();
+                if(flag[0] == true){
+                    Toast.makeText(add_courses.this, "Course title is empty", Toast.LENGTH_SHORT).show();
+                } else if (flag2[0] == true) {
+                    Toast.makeText(add_courses.this, "Course main is empty", Toast.LENGTH_SHORT).show();
+                }else {
+                    String c_name = cName.getText().toString();
 
-                String c_main_topics[] = cMainTopics.getText().toString().split(",");
-                ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(c_main_topics));
+                    String c_main_topics[] = cMainTopics.getText().toString().split(",");
+                    ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(c_main_topics));
 
-                String c_pre[] = cPre.getText().toString().split(",");
+                    String c_pre[] = cPre.getText().toString().split(",");
 
-                UUID uuid = UUID.randomUUID();
-                String courseID = uuid.toString().replace("-", "").substring(0, 20);
+                    UUID uuid = UUID.randomUUID();
+                    String courseID = uuid.toString().replace("-", "").substring(0, 20);
 
-                Map<String, Object> course = new HashMap<>();
-                course.put("courseTitle", c_name);
-                course.put("mainTopics", arrayList);
-                course.put("isAvailableForRegistration", true);
-                course.put("courseID", courseID);
-                course.put("photo",imgUrl);
-                for (int i = 0; i < c_pre.length; i++) {
-                    CollectionReference courseRef = db.collection("Course");
-                    Query courseQuery = courseRef.whereEqualTo("courseTitle", c_pre[i]);
-                    courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    String courseId2 = document.getId();
-                                    UUID uuid = UUID.randomUUID();
-                                    String prerequisiteID = uuid.toString().replace("-", "").substring(0, 20);
-                                    Map<String, Object> pre = new HashMap<>();
-                                    pre.put("courseID",courseID);
-                                    pre.put("prerequisiteCourseID",courseId2);
-                                    pre.put("prerequisiteID",prerequisiteID);
-                                    db.collection("Prerequisite").document(prerequisiteID).set(pre);
+                    Map<String, Object> course = new HashMap<>();
+                    course.put("courseTitle", c_name);
+                    course.put("mainTopics", arrayList);
+                    course.put("isAvailableForRegistration", true);
+                    course.put("courseID", courseID);
+                    course.put("photo", imgUrl);
+                    for (int i = 0; i < c_pre.length; i++) {
+                        CollectionReference courseRef = db.collection("Course");
+                        Query courseQuery = courseRef.whereEqualTo("courseTitle", c_pre[i]);
+                        courseQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        String courseId2 = document.getId();
+                                        UUID uuid = UUID.randomUUID();
+                                        String prerequisiteID = uuid.toString().replace("-", "").substring(0, 20);
+                                        Map<String, Object> pre = new HashMap<>();
+                                        pre.put("courseID", courseID);
+                                        pre.put("prerequisiteCourseID", courseId2);
+                                        pre.put("prerequisiteID", prerequisiteID);
+                                        db.collection("Prerequisite").document(prerequisiteID).set(pre);
+                                    }
                                 }
                             }
-                        }
 
-                    });
+                        });
+                    }
+                    db.collection("Course").document(courseID).set(course);
+                    cName.setText("");
+                    cMainTopics.setText("");
+                    cPre.setText("");
                 }
-                db.collection("Course").document(courseID).set(course);
-                cName.setText("");
-                cMainTopics.setText("");
-                cPre.setText("");
             }
         });
     }

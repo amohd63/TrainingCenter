@@ -129,6 +129,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -173,10 +175,11 @@ public class update_dialog extends AppCompatDialogFragment {
     Uri selectedImageUri;
     private ImageButton im;
     FirebaseFirestore db;
-
     private ImageView coursePhoto;
     String nameTosent;
     UUID uuid;
+
+    AlertDialog dialog;
 
     boolean flag= false;
     private String imgUrl = "https://firebasestorage.googleapis.com/v0/b/training-center-new.appspot.com/o/images%2Fcourse_default.png?alt=media&token=68dd1b73-90b6-4cb9-ac91-460e3dfe6768&fbclid=IwAR0iXsAX8uaRcIH71NxiN0bDtrkUFm0MS_aZaLxUKhtZj4PUxrW_jZ0DEEE";
@@ -193,6 +196,7 @@ public class update_dialog extends AppCompatDialogFragment {
         im = view.findViewById(R.id.close_update_dialog_now);
         coursePhoto = view.findViewById(R.id.updateCoursePhoto);
         db =  FirebaseFirestore.getInstance();
+        dialog = builder.create();
         coursePhoto.setVisibility(View.INVISIBLE);
         value.setVisibility(View.INVISIBLE);
         // Create an ArrayAdapter for the spinner
@@ -217,6 +221,9 @@ public class update_dialog extends AppCompatDialogFragment {
                 } else if(filed.equals("Photo")){
                     coursePhoto.setVisibility(View.VISIBLE);
                     value.setVisibility(View.INVISIBLE);
+                }else if(filed.equals("Make Available For Registration")){
+                    coursePhoto.setVisibility(View.INVISIBLE);
+                    value.setVisibility(View.INVISIBLE);
                 }
                 coursePhoto.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -226,30 +233,48 @@ public class update_dialog extends AppCompatDialogFragment {
                         startActivityForResult(iGallery, GALLERY_REQ_CODE);
                     }
                 });
+                final boolean[] flag1 = {false};
+                final boolean[] flag2 = {false};
+
+                if(value.getText().toString().trim().length() == 0){
+                    flag1[0] = true;
+                }
                 updateB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if(filed.equals("Course title")){
-                            String newValue = value.getText().toString();
-                            docRef.update("courseTitle", newValue)
-                                    .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
-                                    .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
-                            sendNotifacation(newValue);
+                            if(flag1[0] == true){
+                                Toast.makeText(dialog.getContext(), "Course title is empty", Toast.LENGTH_SHORT).show();
+                            }else {
+                                String newValue = value.getText().toString();
+                                docRef.update("courseTitle", newValue)
+                                        .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
+                                        .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
+                                sendNotifacation(newValue);
+                                dismiss();
+                                getActivity().recreate();
+                            }
                         } else if(filed.equals("Main topics")) {
-                            String newValue[] = value.getText().toString().split(",");
-                            ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(newValue));
-                            docRef.update("mainTopics", arrayList)
-                                    .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
-                                    .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
-                            sendNotifacation(nameTosent);
+                            if(flag1[0] == true){
+                                Toast.makeText(dialog.getContext(), "Course title is empty", Toast.LENGTH_SHORT).show();
+                            }else {
+                                String newValue[] = value.getText().toString().split(",");
+                                ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(newValue));
+                                docRef.update("mainTopics", arrayList)
+                                        .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
+                                        .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
+                                sendNotifacation(nameTosent);
+                                dismiss();
+                                getActivity().recreate();
+                            }
                         }else if(filed.equals("Photo")){
                             docRef.update("photo", imgUrl)
                                     .addOnSuccessListener(aVoid -> System.out.println("Document updated successfully"))
                                     .addOnFailureListener(e -> System.out.println("Error updating document: " + e.getMessage()));
                             sendNotifacation(nameTosent);
+                            dismiss();
+                            getActivity().recreate();
                         }
-                        dismiss();
-                        getActivity().recreate();
                     }
                 });
                 im.setOnClickListener(new View.OnClickListener() {
@@ -310,7 +335,7 @@ public class update_dialog extends AppCompatDialogFragment {
                                                                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                                                                         String formattedDateTime = currentDateTime.format(formatter);
                                                                         Timestamp timestampNote = Timestamp.valueOf(formattedDateTime);
-                                                                        String title = "Update course";
+                                                                        String title = "Update course | " + nameTosent;
                                                                         String body;
                                                                         if(nameTosent.equals(data)) {
                                                                              body = "The course " + nameTosent + " has been updated";
@@ -360,7 +385,7 @@ public class update_dialog extends AppCompatDialogFragment {
                             storageRef.getDownloadUrl()
                                     .addOnSuccessListener(uri -> {
                                         String imageUrl = uri.toString();
-                                        Picasso.get().load(imageUrl).into(im);
+                                        Picasso.get().load(imageUrl).into(coursePhoto);
                                         imgUrl = uri.toString();
                                     })
                                     .addOnFailureListener(exception -> {

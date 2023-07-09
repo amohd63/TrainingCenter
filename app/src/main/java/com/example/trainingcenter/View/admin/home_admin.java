@@ -158,13 +158,6 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
             }
         }
 
-//        @Override
-//        public boolean onCreateOptionsMenu(Menu menu) {
-//            // Inflate the menu; this adds items to the action bar if it is present.
-//            getMenuInflater().inflate(R.menu.home, menu);
-//            return true;
-//        }
-
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             // Handle action bar item clicks here. The action bar will
@@ -301,7 +294,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 50);
+                850, ViewGroup.LayoutParams.MATCH_PARENT, 50);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);
@@ -428,7 +421,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+               850, ViewGroup.LayoutParams.WRAP_CONTENT);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);

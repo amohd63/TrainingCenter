@@ -251,7 +251,6 @@ public class Home extends AppCompatActivity
         } else {
             //super.onBackPressed();
             moveTaskToBack(true);
-
         }
     }
 
@@ -300,7 +299,7 @@ public class Home extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
-//            finish();
+            finish();
         } else if (id == R.id.nav_previous_courses) {
             Intent intent = new Intent(getApplicationContext(), TraineeCourseHistory.class);
             intent.putExtra("email", email);

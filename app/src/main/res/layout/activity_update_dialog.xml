@@ -51,25 +51,18 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
-
-<!--            <EditText-->
-<!--                android:id="@+id/new_value"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:gravity="center"-->
-<!--                android:hint="New Value"-->
-<!--                android:textColorHint="@color/black"-->
-<!--                android:textSize="20sp" />-->
+            <!--            <EditText-->
+            <!--                android:id="@+id/new_value"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="20dp"-->
+            <!--                android:gravity="center"-->
+            <!--                android:hint="New Value"-->
+            <!--                android:textColorHint="@color/black"-->
+            <!--                android:textSize="20sp" />-->
 
             <EditText
                 android:id="@+id/new_value"
@@ -83,6 +76,8 @@
                 android:textColor="@color/black" />
 
         </LinearLayout>
+
+
 
         <Button
             android:id="@+id/update_in_dialog_update"

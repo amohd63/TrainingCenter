@@ -273,7 +273,6 @@ public class CourseDetails extends AppCompatDialogFragment {
                 });
         //must check deadline, number of students
         Timestamp timestamp = Timestamp.now();
-        boolean isClicked = false;
         enroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -313,7 +312,7 @@ public class CourseDetails extends AppCompatDialogFragment {
                         }
                         dismiss();
                     }
-                }, 3000); // Delay time in milliseconds (e.g., 3000ms = 3 second)
+                }, 1500); // Delay time in milliseconds (e.g., 3000ms = 3 second)
             }
         });
 

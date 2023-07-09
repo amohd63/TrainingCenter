@@ -145,8 +145,11 @@ public class SignupActivityTrainee extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Address field is required", Toast.LENGTH_SHORT).show();
                 }
                 else if (phoneNum.isEmpty()) {
+                    address.setError(null);
                     reInitializeEditText();
                     phoneNumField.setError("Phone number field is required");
+                    phoneNumField.setBackgroundResource(R.drawable.edittext_error);
+                    Toast.makeText(getApplicationContext(), "Phone number field is required", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     reInitializeEditText();
@@ -154,11 +157,11 @@ public class SignupActivityTrainee extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(SignupActivityTrainee.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivityTrainee.this, "Signed up successfully", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(SignupActivityTrainee.this, LoginActivity.class));
                                 finish();
                             } else {
-                                Toast.makeText(SignupActivityTrainee.this, "SignUp Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignupActivityTrainee.this, "Signup failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
