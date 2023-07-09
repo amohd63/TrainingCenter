@@ -218,7 +218,7 @@ public class Home extends AppCompatActivity
     }
     private void fillOnGoingClass(){
         final int[] flag = {0};
-        CardView emptyOnGoing = createEmptyCardView("There is no Classes Today!");
+        CardView emptyOnGoing = createEmptyCardView("you don't have any courses this semester!");
         onGoingCourses.addView(emptyOnGoing);
         final SimpleDateFormat[] dateFormat = {new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)};
         db.collection("Course").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -274,7 +274,7 @@ public class Home extends AppCompatActivity
     }
     private void fillCourses(){
         final int[] flag = {0};
-        CardView emptyOnGoing = createEmptyCardView("you don't have any courses this semester!");
+        CardView emptyOnGoing = createEmptyCardView("There is no Classes Today!");
         todayCourses.addView(emptyOnGoing);
         final SimpleDateFormat[] dateFormat = {new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)};
         db.collection("Course")

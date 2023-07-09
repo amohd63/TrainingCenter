@@ -211,7 +211,6 @@
                         android:padding="8dp"
                         android:text=""
                         android:textColor="@color/lavender"
-                        android:textColorHint="@color/black"
                         android:textSize="16sp"
                         android:theme="@style/custom_cursor" />
                 </LinearLayout>

@@ -310,7 +310,34 @@
                             android:text=""
                             android:textColor="@color/lavender"
                             android:textSize="16sp" />
+                    </LinearLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="#80D1D1D1" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/courseInsert"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="0dp"
+                            android:layout_weight="50"
+                            android:background="@android:color/transparent"
+                            android:drawableLeft="@drawable/baseline_drive_file_rename_outline_24"
+                            android:drawableEnd="@android:drawable/arrow_down_float"
+                            android:drawablePadding="8dp"
+                            android:hint="Select Courses"
+                            android:padding="8dp"
+                            android:text=""
+                            android:textSize="16sp"
+                            android:theme="@style/custom_cursor" />
                     </LinearLayout>
 
                     <View

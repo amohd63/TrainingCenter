@@ -1,5 +1,7 @@
 package com.example.trainingcenter.View.Instructor;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,13 +21,20 @@ import com.example.trainingcenter.Model.Instructor;
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class MyProfile extends AppCompatActivity {
@@ -36,7 +45,14 @@ public class MyProfile extends AppCompatActivity {
     private ImageView personalPhoto;
     private Instructor instructor;
     private String degree;
-
+    private TextView courseTextView;
+    private ArrayList<String> instructorCourses = new ArrayList<>();
+    ArrayList<String> myList = new ArrayList<>();
+    ArrayList<Integer> courseList = new ArrayList<>();
+    ArrayList<String> coursesIDs = new ArrayList<>();
+    String[] courseArray;
+    boolean[] selectedCourses;
+    String[] insCourses;
     private boolean radioButtonFlag = false;
 
     @Override
@@ -58,6 +74,7 @@ public class MyProfile extends AppCompatActivity {
         EditText spec = findViewById(R.id.specialization);
         TextView name = findViewById(R.id.name);
         RadioGroup degreeRadioGroup = findViewById(R.id.degreeRadioGroup);
+        courseTextView = findViewById(R.id.courseInsert);
 
         instructor = new Instructor();
         degree = "";
@@ -93,6 +110,8 @@ public class MyProfile extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+                        List<String> coursesList1 = ((List<String>) document.get("courses"));
+                        insCourses = coursesList1.toArray(new String[coursesList1.size()]);
                         instructor.setAddress(document.getString("address"));
                         instructor.setSpecialization(document.getString("specialization"));
                         instructor.setMobileNumber(document.getString("mobileNumber"));
@@ -116,6 +135,101 @@ public class MyProfile extends AppCompatActivity {
                     }
                 } else {
                 }
+            }
+        });
+
+        CollectionReference collectionRef = db.collection("Course");
+        collectionRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null) {
+                    for (QueryDocumentSnapshot document : querySnapshot) {
+                        String courseTitle = (String) document.get("courseTitle");
+                        myList.add(courseTitle);
+                        coursesIDs.add(document.getString("courseID"));
+                    }
+                    courseArray = myList.toArray(new String[myList.size()]);
+                    selectedCourses = new boolean[courseArray.length];
+
+                    for(int i = 0; i < insCourses.length; i++){
+                        for(int j=0; j < courseArray.length; j++){
+                            if(insCourses[i].equals(courseArray[j])){
+                                selectedCourses[j] = true;
+                                courseList.add(j);
+                            }
+                        }
+                    }
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for(int j = 0; j< insCourses.length; j++) {
+                        stringBuilder.append(insCourses[j]);
+                        if(j != insCourses.length - 1){
+                            stringBuilder.append(",");
+                        }
+                    }
+                    courseTextView.setText(stringBuilder.toString());
+                }
+            }
+        });
+
+        courseTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        MyProfile.this
+                );
+
+                builder.setTitle("Select Courses");
+                builder.setCancelable(false);
+                builder.setMultiChoiceItems(courseArray, selectedCourses, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                        if(b) {
+                            courseList.add(i);
+                            Collections.sort(courseList);
+                        }else {
+                            if(courseList.contains(i)) {
+                                courseList.remove((Integer) i);
+                            }
+                        }
+                    }
+                });
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for(int j = 0; j < courseList.size(); j++) {
+                            stringBuilder.append(courseArray[courseList.get(j)]);
+                            if(j != courseList.size() - 1){
+                                stringBuilder.append(",");
+                            }
+                        }
+                        courseTextView.setText(stringBuilder.toString());
+                        String[] data = stringBuilder.toString().split(",");
+                        ArrayList<String> data_n= new ArrayList<String>(Arrays.asList(data));
+                        db.collection("User").document(email).collection("Instructor").document(email).update("courses", data_n);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        for(int j = 0; j< courseList.size(); j++) {
+                            try {
+                                selectedCourses[j] = false;
+                            }catch (ArrayIndexOutOfBoundsException ignored){
+
+                            }
+                            courseTextView.setText("");
+                        }
+                        courseList.clear();
+                    }
+                });
+                builder.show();
             }
         });
 

@@ -122,7 +122,8 @@ public class ListOfStudents extends AppCompatActivity {
                                         String insName = document.getString("courseTitle");
                                         String days = Objects.requireNonNull(documentOfferings.getString("schedule")).split(" ")[0];
                                         String venue = documentOfferings.getString("venue");
-                                        CardView cardView = createCourseCardView(courseId, insName, courseTitle, days, date, venue, courseTime);
+                                        String status = documentOfferings.getString("status");
+                                        CardView cardView = createCourseCardView(courseId, insName, courseTitle, days, date, venue, courseTime, status);
                                         mainView.addView(cardView);
                                         cardView.setOnClickListener(new View.OnClickListener() {
                                             @Override
@@ -148,7 +149,7 @@ public class ListOfStudents extends AppCompatActivity {
     }
 
 
-    private CardView createCourseCardView(String courseID, String instructor, String courseName, String days, String date, String venue, String time) {
+    private CardView createCourseCardView(String courseID, String instructor, String courseName, String days, String date, String venue, String time, String status) {
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
@@ -293,12 +294,30 @@ public class ListOfStudents extends AppCompatActivity {
         innerLinearLayout3.addView(innerLinearLayout1);
         innerLinearLayout3.addView(innerLinearLayout2);
 
+        TextView statusTV = new TextView(this);
+// Set layout parameters
+        statusTV.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        statusTV.setTypeface(ResourcesCompat.getFont(this, R.font.calibri));
+        String statusOut;
+        if (status.equals("Pending")) {
+            statusOut = "\nCourse has not started yet!";
+        } else if (status.equals("Ongoing")) {
+            statusOut = "\nCourse already started!";
+        } else {
+            statusOut = "\nCourse ended!";
+        }
+        statusTV.setText(statusOut);
+        statusTV.setTextSize(14);
+
+
 
         innerLayout.addView(titleTV);
         innerLayout.addView(instructorTV);
         innerLayout.addView(testV);
         innerLayout.addView(view);
         innerLayout.addView(innerLinearLayout3);
+
+        innerLayout.addView(statusTV);
 
 
         LinearLayout view1 = new LinearLayout(this);
