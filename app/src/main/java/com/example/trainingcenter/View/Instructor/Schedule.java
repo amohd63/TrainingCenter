@@ -7,11 +7,13 @@ import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
 import com.example.trainingcenter.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,6 +36,7 @@ public class Schedule extends AppCompatActivity {
     private TextView Fri[] = new TextView[6];
     private TextView Sat[] = new TextView[6];
     SimpleDateFormat dateFormat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,35 +120,49 @@ public class Schedule extends AppCompatActivity {
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        String courseTitle = document.getString("courseTitle");
-                                                        String courseTime = documentOfferings.getString("schedule").split(" ")[1];
-                                                        String date = dateFormat.format(documentOfferings.getTimestamp("startDate").toDate());
-                                                        String insName = document.getString("courseTitle");
-                                                        String days = documentOfferings.getString("schedule").split(" ")[0];
-                                                        String[] day = days.split(",");
-                                                        String time= courseTime.split("-")[0];
-                                                        String venue = documentOfferings.getString("venue");
-                                                        int i = calcPos(time);
-                                                        if(day[0].equals("S") || day[1].equals("S")){
-                                                            Sat[i].setText(courseTitle+"\n"+venue);
-                                                        }
-                                                        if(day[0].equals("M") || day[1].equals("M")){
-                                                            Mon[i].setText(courseTitle+"\n"+venue);
-                                                        }
-                                                        if(day[0].equals("T") || day[1].equals("T")){
-                                                            Thu[i].setText(courseTitle+"\n"+venue);
-                                                        }
-                                                        if(day[0].equals("W") || day[1].equals("W")){
-                                                            Wed[i].setText(courseTitle+"\n"+venue);
-                                                        }
-                                                        if(day[0].equals("R") || day[1].equals("R")){
-                                                            Thu[i].setText(courseTitle+"\n"+venue);
-                                                        }
-                                                        if(day[0].equals("F") || day[1].equals("F")){
-                                                            Fri[i].setText(courseTitle+"\n"+venue);
-
-                                                        }
-                                                    }
+                                        String courseTitle = document.getString("courseTitle");
+                                        String courseTime = documentOfferings.getString("schedule").split(" ")[1];
+                                        String date = dateFormat.format(documentOfferings.getTimestamp("startDate").toDate());
+                                        String insName = document.getString("courseTitle");
+                                        String days = documentOfferings.getString("schedule").split(" ")[0];
+                                        String[] day = days.split(",");
+                                        String time = courseTime.split("-")[0];
+                                        String venue = documentOfferings.getString("venue");
+                                        String status = documentOfferings.getString("status");
+                                        int i = calcPos(time);
+                                        if(status.equals("Ongoing")) {
+                                            if (day[0].equals("S") || day[1].equals("S")) {
+                                                Sat[i].setText(courseTitle + "\n" + venue);
+                                                Sat[i].setTextColor(Color.BLACK);
+                                                Sat[i].setBackgroundColor(Color.rgb(153, 255, 204));
+                                            }
+                                            if (day[0].equals("M") || day[1].equals("M")) {
+                                                Mon[i].setText(courseTitle + "\n" + venue);
+                                                Mon[i].setTextColor(Color.BLACK);
+                                                Mon[i].setBackgroundColor(Color.rgb(153, 255, 204));
+                                            }
+                                            if (day[0].equals("T") || day[1].equals("T")) {
+                                                Tue[i].setText(courseTitle + "\n" + venue);
+                                                Tue[i].setTextColor(Color.BLACK);
+                                                Tue[i].setBackgroundColor(Color.rgb(153, 255, 204));
+                                            }
+                                            if (day[0].equals("W") || day[1].equals("W")) {
+                                                Wed[i].setText(courseTitle + "\n" + venue);
+                                                Wed[i].setTextColor(Color.BLACK);
+                                                Wed[i].setBackgroundColor(Color.rgb(153, 255, 204));
+                                            }
+                                            if (day[0].equals("R") || day[1].equals("R")) {
+                                                Thu[i].setText(courseTitle + "\n" + venue);
+                                                Thu[i].setTextColor(Color.BLACK);
+                                                Thu[i].setBackgroundColor(Color.rgb(153, 255, 204));
+                                            }
+                                            if (day[0].equals("F") || day[1].equals("F")) {
+                                                Fri[i].setText(courseTitle + "\n" + venue);
+                                                Fri[i].setTextColor(Color.BLACK);
+                                                Fri[i].setBackgroundColor(Color.rgb(153, 255, 204));
+                                            }
+                                        }
+                                    }
                                 } else {
                                     Log.w("Firestore", "Error getting documents.", task.getException());
                                 }
@@ -158,8 +175,9 @@ public class Schedule extends AppCompatActivity {
             }
         });
     }
-    private int calcPos(String time){
-        switch (time){
+
+    private int calcPos(String time) {
+        switch (time) {
             case "8:30":
                 return 0;
             case "10:00":
