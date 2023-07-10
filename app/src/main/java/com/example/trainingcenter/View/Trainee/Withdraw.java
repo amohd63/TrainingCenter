@@ -81,7 +81,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
                                                                                             CardView cardView = createCourseCardView2(
                                                                                                     regDoc.getString("status"),
                                                                                                     courseDoc.getString("courseID"),
-                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                                    userDoc.getString("firstName") + " " + userDoc.getString("lastName"),
                                                                                                     courseDoc.getString("courseTitle"),
                                                                                                     courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                                     dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
@@ -444,7 +444,7 @@ public class Withdraw extends AppCompatActivity implements WithdrawDialog.Withdr
                                                                                                     CardView cardView = createCourseCardView2(
                                                                                                             regDoc.getString("status"),
                                                                                                             courseDoc.getString("courseID"),
-                                                                                                            userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                                            userDoc.getString("firstName") + " " + userDoc.getString("lastName"),
                                                                                                             courseDoc.getString("courseTitle"),
                                                                                                             courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                                             dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),

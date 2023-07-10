@@ -59,11 +59,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Timer;
 
 public class Home extends AppCompatActivity
@@ -619,6 +621,7 @@ public class Home extends AppCompatActivity
                         if (regTask.isSuccessful()) {
                             for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                 if (regDoc.getString("userID").equals(email) || regDoc.getString("userID").equals("all")) {
+                                    TimeZone.setDefault(TimeZone.getTimeZone("EET"));
                                     SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.getDefault());
                                     String formattedTimestamp = sdf.format(regDoc.getTimestamp("noteDate").toDate());
                                     CardView cv = createNotificationCard(regDoc.getString("title"), regDoc.getString("body"), formattedTimestamp);
@@ -683,6 +686,7 @@ public class Home extends AppCompatActivity
                             for (QueryDocumentSnapshot regDoc : regTask.getResult()) {
                                 db.collection("CourseOffering")
                                         .whereEqualTo("offeringID", regDoc.getString("offeringID"))
+                                        .whereIn("status", Arrays.asList("Ongoing", "Pending"))
                                         .get()
                                         .addOnCompleteListener(courseOfferingTask -> {
                                             if (courseOfferingTask.isSuccessful()) {
@@ -695,6 +699,7 @@ public class Home extends AppCompatActivity
                                                                     if (courseTask.isSuccessful()) {
                                                                         for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
                                                                             String schedule = courseOfferingDoc.getString("schedule");
+                                                                            TimeZone.setDefault(TimeZone.getTimeZone("EET"));
                                                                             Calendar calendar = Calendar.getInstance();
                                                                             calendar.setTime(timestamp.toDate());
                                                                             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -710,7 +715,7 @@ public class Home extends AppCompatActivity
                                                                                                 for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
                                                                                                     CardView test = createCourseCardView2(
                                                                                                             courseDoc.getString("courseID"),
-                                                                                                            userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                                            userDoc.getString("firstName") + " " + userDoc.getString("lastName"),
                                                                                                             courseDoc.getString("courseTitle"),
                                                                                                             courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                                             dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
@@ -778,7 +783,7 @@ public class Home extends AppCompatActivity
                                                                                         for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
                                                                                             CardView test = createCourseCardView2(
                                                                                                     courseDoc.getString("courseID"),
-                                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                                    userDoc.getString("firstName") + " " +  userDoc.getString("lastName"),
                                                                                                     courseDoc.getString("courseTitle"),
                                                                                                     courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                                     dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
@@ -869,15 +874,14 @@ public class Home extends AppCompatActivity
                                                             .addOnCompleteListener(courseTask -> {
                                                                 if (courseTask.isSuccessful()) {
                                                                     for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
-
                                                                         String courseTitle = courseDoc.getString("courseTitle");
-                                                                        Log.d("StatusUpdater ", regDoc.getString("traineeID"));
                                                                         String title = "Reminder | " + courseTitle;
                                                                         String body = "Today [" + date + "] at " + time + ", " + courseTitle + " lectures begin. Please be ready!";
                                                                         Map<String, Object> note = new HashMap<>();
                                                                         note.put("body", body);
                                                                         note.put("title", title);
                                                                         note.put("userID", regDoc.getString("traineeID"));
+                                                                        TimeZone.setDefault(TimeZone.getTimeZone("EET"));
                                                                         Timestamp timestampNote = Timestamp.now();
                                                                         note.put("noteDate", timestampNote);
                                                                         note.put("fetch", false);

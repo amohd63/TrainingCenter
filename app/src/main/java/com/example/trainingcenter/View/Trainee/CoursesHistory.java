@@ -51,7 +51,7 @@ public class CoursesHistory extends AppCompatActivity {
                             for (QueryDocumentSnapshot courseDoc : courseTask.getResult()) {
                                 db.collection("CourseOffering")
                                         .whereEqualTo("courseID", courseDoc.getString("courseID"))
-                                        .whereEqualTo("status", "Ended")
+                                        //.whereEqualTo("status", "Ended")
                                         .get()
                                         .addOnCompleteListener(courseOfferingTask -> {
                                             if (courseOfferingTask.isSuccessful()) {
@@ -64,7 +64,7 @@ public class CoursesHistory extends AppCompatActivity {
                                                                     for (QueryDocumentSnapshot userDoc : userTask.getResult()) {
                                                                         CardView test = createCourseCardView2(
                                                                                 courseDoc.getString("courseID"),
-                                                                                userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                userDoc.getString("firstName") + " " + userDoc.getString("lastName"),
                                                                                 courseDoc.getString("courseTitle"),
                                                                                 courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                 dateFormat.format(courseOfferingDoc.getTimestamp("startDate").toDate()),
