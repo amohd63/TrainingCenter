@@ -421,7 +421,7 @@ public class home_admin extends AppCompatActivity implements NavigationView.OnNa
         // Create the CardView inside the courses_list LinearLayout
         CardView cardView = new CardView(this);
         LinearLayout.LayoutParams cardViewParams = new LinearLayout.LayoutParams(
-               850, ViewGroup.LayoutParams.WRAP_CONTENT);
+               1000, ViewGroup.LayoutParams.WRAP_CONTENT);
         cardViewParams.setMargins(4, 0, 0, 0);
         cardView.setLayoutParams(cardViewParams);
         cardView.setRadius(32);

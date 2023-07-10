@@ -210,12 +210,17 @@ public class available_dialog extends AppCompatDialogFragment {
         mKa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (venue.getText().toString().trim().length() == 0) {
-                    flag2[0] = true;
-                }
-                if(flag2[0] == true){
-                    Toast.makeText(dialog.getContext(), "Please select a place for the section", Toast.LENGTH_SHORT).show();
-                }else {
+                if(registration_deadline.getText().toString().isEmpty()){
+                    Toast.makeText(dialog.getContext(), "Please select a registration deadline for the section", Toast.LENGTH_SHORT).show();
+                } else if (course_start_date.getText().toString().isEmpty()) {
+                    Toast.makeText(dialog.getContext(), "Please select a course start date for the section", Toast.LENGTH_SHORT).show();
+                } else if (course_schedule.getText().toString().isEmpty()) {
+                    Toast.makeText(dialog.getContext(), "Please select a course schedule for the section", Toast.LENGTH_SHORT).show();
+                } else if (venue.getText().toString().isEmpty()) {
+                    Toast.makeText(dialog.getContext(), "Please select a venue for the section", Toast.LENGTH_SHORT).show();
+                } else if (address.getText().toString().isEmpty()) {
+                    Toast.makeText(dialog.getContext(), "Please select a instructor for the section", Toast.LENGTH_SHORT).show();
+                } else {
                     Timestamp timestamp1 = Timestamp.valueOf(registration_deadline.getText().toString());
                     Timestamp timestamp2 = Timestamp.valueOf(course_start_date.getText().toString());
                     String venuePlace = venue.getText().toString();
