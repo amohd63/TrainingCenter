@@ -243,7 +243,7 @@ public class Home extends AppCompatActivity
                                                                         if(status.equals("Ongoing")) {
                                                                             CardView test = createCourseCardView4(
                                                                                     courseDoc.getString("courseID"),
-                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                    userDoc.getString("firstName") + " " + userDoc.getString("lastName"),
                                                                                     courseDoc.getString("courseTitle"),
                                                                                     courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                     dateFormat[0].format(courseOfferingDoc.getTimestamp("startDate").toDate()),
@@ -300,7 +300,7 @@ public class Home extends AppCompatActivity
                                                                         if(status.equals("Ongoing") && courseOfferingDoc.getString("schedule").split(" ")[0].contains(String.valueOf(getCurrentDay()))) {
                                                                             CardView test = createCourseCardView4(
                                                                                     courseDoc.getString("courseID"),
-                                                                                    userDoc.getString("firstName") + userDoc.getString("lastName"),
+                                                                                    userDoc.getString("firstName") + " " + userDoc.getString("lastName"),
                                                                                     courseDoc.getString("courseTitle"),
                                                                                     courseOfferingDoc.getString("schedule").split(" ")[0],
                                                                                     dateFormat[0].format(courseOfferingDoc.getTimestamp("startDate").toDate()),
