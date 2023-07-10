@@ -169,8 +169,6 @@ public class add_courses extends AppCompatActivity {
                     Toast.makeText(add_courses.this, "Course title is empty", Toast.LENGTH_SHORT).show();
                 }else if (cMainTopics.getText().toString().isEmpty()){
                     Toast.makeText(add_courses.this, "Course main topics is empty", Toast.LENGTH_SHORT).show();
-                }else if (cPre.getText().toString().isEmpty()){
-                    Toast.makeText(add_courses.this, "Prerequisites is empty", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(add_courses.this, "Course added successfully", Toast.LENGTH_SHORT).show();
                     String c_name = cName.getText().toString();
